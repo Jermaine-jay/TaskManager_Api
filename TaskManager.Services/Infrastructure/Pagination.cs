@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TaskManager.Services.Infrastructure
 {
-    internal class Pagination
+    public class Pagination
     {
     }
 }

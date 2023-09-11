@@ -6,7 +6,7 @@ string? connectionString = builder.Configuration.GetConnectionString("DefaultCon
 builder.Services.RegisterDbContext(connectionString);
 
 builder.Services.RegisterServices();
-//builder.Services.ConfigurationBinder(builder.Configuration);
+builder.Services.ConfigurationBinder(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.ConfigureCors();
@@ -28,7 +28,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.ConfigureException(builder.Environment);
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

@@ -1,7 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using TaskManager.Data.Context;
 using TaskManager.Models.Entities;
+using TaskManager.Services.Configurations.Email;
+using TaskManager.Services.Configurations.Jwt;
+using TaskManager.Services.Infrastructure;
+using TaskManager.Services.Interfaces;
 
 namespace TaskManager.Api.Extensions
 {
@@ -10,7 +17,7 @@ namespace TaskManager.Api.Extensions
         {
             public static void RegisterServices(this IServiceCollection services)
             {
-                
+                    services.AddScoped<IJwtAuthenticator, JwtAuthenticator>();
             }
 
 
@@ -55,25 +62,69 @@ namespace TaskManager.Api.Extensions
                    .AddDefaultTokenProviders();
             }
 
-            /*public static void ConfigurationBinder(this IServiceCollection services, IConfiguration configuration)
+
+        public static void ConfigureJWT(this IServiceCollection services, JwtConfig jwtConfig)
+        {
+            var jwtSettings = jwtConfig;
+            var secretKey = jwtSettings.Secret;
+
+            services.AddAuthentication(opt =>
             {
-                Settings setting = configuration.Get<Settings>()!;
-                services.AddSingleton(setting);
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
 
-                JwtConfig jwtConfig = setting.JwtConfig;
-                services.AddSingleton(jwtConfig);
 
-                RedisConfig redisConfig = setting.redisConfig;
-                services.AddSingleton(redisConfig);
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidAudience = jwtSettings.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey))
+                };
+            });
 
-                ZeroBounceConfig zeroBounceConfig = setting.ZeroBounceConfig;
-                services.AddSingleton(zeroBounceConfig);
-
-                EmailSenderOptions emailSenderOptions = setting.EmailSenderOptions;
-                services.AddSingleton(emailSenderOptions);
-
-                Authentication authentication = setting.Authentication;
-                services.AddSingleton(authentication);
-            }*/
+            /*services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Authorization", policy =>
+                {
+                    policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+                    policy.RequireAuthenticatedUser();
+                    policy.Requirements.Add(new AuthRequirement());
+                    policy.Build();
+                });
+            });*/
         }
+
+        public static void ConfigurationBinder(this IServiceCollection services, IConfiguration configuration)
+        {
+            Settings setting = configuration.Get<Settings>()!;
+            services.AddSingleton(setting);
+
+            JwtConfig jwtConfig = setting.JwtConfig;
+            services.AddSingleton(jwtConfig);
+
+            /*RedisConfig redisConfig = setting.redisConfig;
+            services.AddSingleton(redisConfig);*/
+
+            ZeroBounceConfig zeroBounceConfig = setting.ZeroBounceConfig;
+            services.AddSingleton(zeroBounceConfig);
+
+            EmailSenderOptions emailSenderOptions = setting.EmailSenderOptions;
+            services.AddSingleton(emailSenderOptions);
+
+            /*Authentication authentication = setting.Authentication;
+            services.AddSingleton(authentication);*/
+
+            services.ConfigureJWT(jwtConfig);
+        }
+    }
 }

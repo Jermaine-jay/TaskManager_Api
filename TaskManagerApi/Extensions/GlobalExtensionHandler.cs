@@ -2,12 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using TaskManager.Services.Infrastructure;
 
 namespace TaskManager.Api.Extensions
 {
-    public class GlobalExtensionHandler
-    {
-        
+    public static class GlobalExtensionHandler
+    {     
             public static void ConfigureException(this IApplicationBuilder app, IWebHostEnvironment hostEnvironment)
             {
 
