@@ -1,4 +1,5 @@
-﻿using TaskManager.Models.Entities;
+﻿using TaskManager.Models.Dtos.Response;
+using TaskManager.Models.Entities;
 using TaskManager.Services.Configurations.Jwt;
 
 namespace TaskManager.Services.Interfaces

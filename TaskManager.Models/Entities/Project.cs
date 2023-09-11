@@ -14,7 +14,6 @@ namespace TaskManager.Models.Entities
         [MaxLength(500, ErrorMessage = "Text must be less than 500 words")]
         public string? Description { get; set; }
 
-
         [ForeignKey("ApplicationUser")]
         public Guid? ApplicationUserId { get; set; }
 

@@ -1,4 +1,5 @@
 using TaskManager.Api.Extensions;
+using TaskManager.Data.Seeds;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +11,8 @@ builder.Services.ConfigurationBinder(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.ConfigureCors();
-builder.Services.ConfigureIdentity(builder.Configuration);
+builder.Services.ConfigureIdentity();
+builder.Services.ConfigureIISIntegration();
 
 // Add services to the container.
 
@@ -28,11 +30,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.ConfigureException(builder.Environment);
+//app.ConfigureException(builder.Environment);
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+await app.SeedRole();
 
 app.Run();

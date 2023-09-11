@@ -6,7 +6,7 @@ using TaskManager.Models.Entities;
 using TaskManager.Services.Interfaces;
 using TaskManager.Models.Enums;
 using Microsoft.IdentityModel.Tokens;
-
+using TaskManager.Models.Dtos.Response;
 
 namespace TaskManager.Services.Configurations.Jwt
 {
