@@ -1,8 +1,8 @@
-﻿using MailKit;
+﻿using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
-using System.Text;
 using TaskManager.Models.Dtos.Request;
 using TaskManager.Models.Dtos.Response;
 using TaskManager.Models.Entities;
@@ -20,13 +20,15 @@ namespace TaskManager.Services.Implementations
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IJwtAuthenticator _jwtAuthenticator;
+        private readonly IConfiguration _configuration;
 
-        public AuthService(IJwtAuthenticator jwtAuthenticator, IServiceFactory serviceFactory, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
+        public AuthService( IJwtAuthenticator jwtAuthenticator, IServiceFactory serviceFactory, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IConfiguration configuration)
         {
             _roleManager = roleManager;
             _serviceFactory = serviceFactory;
             _userManager = userManager;
             _jwtAuthenticator = jwtAuthenticator;
+            _configuration = configuration;
         }
 
 
@@ -56,6 +58,9 @@ namespace TaskManager.Services.Implementations
                 PhoneNumber = request.PhoneNumber,
                 Active = true,
                 UserType = UserType.User,
+                Projects = new List<Project>(),
+                EmailConfirmed = true,
+                
             };
 
             IdentityResult result = await _userManager.CreateAsync(user, request.Password);
@@ -178,7 +183,7 @@ namespace TaskManager.Services.Implementations
                 Code = result,
                 Success = true
             };
-            
+
         }
 
 
@@ -213,31 +218,53 @@ namespace TaskManager.Services.Implementations
         }
 
 
-        public class ForgotPasswordRequest
+        public async Task<object> GoogleAuth(ExternalAuthRequest externalAuthDto)
         {
-            [Required, DataType(DataType.EmailAddress)]
-            public string Email { get; set; }
+            externalAuthDto.Provider = "Google";
+            var settings = new GoogleJsonWebSignature.ValidationSettings()
+            {
+                Audience = new List<string>() { _configuration.GetSection("Authentication:Google:clientId").Value }
+            };
+            var payload = await GoogleJsonWebSignature.ValidateAsync(externalAuthDto.IdToken, settings);
+
+
+            if (payload == null)
+                throw new InvalidOperationException("Invalid Payload");
+
+            var info = new UserLoginInfo(externalAuthDto.Provider, payload.Subject, externalAuthDto.Provider);
+            var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+            if (user == null)
+            {
+                user = await _userManager.FindByEmailAsync(payload.Email);
+                if (user == null)
+                {
+                    user = new ApplicationUser
+                    {
+                        Email = payload.Email,
+                        UserName = payload.Name,
+                        FirstName = payload.GivenName,
+                        LastName = payload.FamilyName,
+                        Active = true,
+                        UserType = UserType.User,
+                        EmailConfirmed = true,
+                    };
+
+                    await _userManager.CreateAsync(user);
+                    var role = UserType.User.GetStringValue();
+
+                    await _userManager.AddToRoleAsync(user,role);
+                    await _userManager.AddLoginAsync(user, info);
+
+                    return true;
+                }
+                else
+                {
+                    await _userManager.AddLoginAsync(user, info);
+                }
+            }
+            
+             return false;     
         }
 
-
-        public class ChangePasswordResponse
-        {
-            public string? Message { get; set; }
-            public string? Code { get; set; }
-            public string? Token { get; set; }
-            public bool Success { get; set; }
-        }
-
-        public class ResetPasswordRequest
-        {
-            [Required]
-            public string Token { get; set; }
-
-            [Required, DataType(DataType.Password)]
-            public string NewPassword { get; set; }
-
-            [Required, DataType(DataType.Password), Compare(nameof(NewPassword))]
-            public string ConfirmPassword { get; set; }
-        }
     }
 }

@@ -16,8 +16,8 @@ namespace TaskManager.Models.Entities
         public DateTime Timestamp { get; set; }
 
         [ForeignKey("ApplicationUser")]
-        public Guid? ApplicationUserId { get; set; }
+        public Guid? UserId { get; set; }
 
-        public virtual ApplicationUser? ApplicationUser { get; set; }
+        public virtual ApplicationUser? User { get; set; }
     }
 }

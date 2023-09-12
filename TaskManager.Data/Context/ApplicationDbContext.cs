@@ -17,6 +17,11 @@ namespace TaskManager.Data.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(u => u.Tasks)
+                .WithOne(t => t.ApplicationUser)
+                .HasForeignKey(t => t.ApplicationUserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ApplicationUser>()        
                  .HasMany(n => n.Notifications)
@@ -29,21 +34,7 @@ namespace TaskManager.Data.Context
               .HasMany(t => t.Tasks)
               .WithOne(p => p.Project)
               .HasForeignKey(t => t.ProjectId)
-              .OnDelete(DeleteBehavior.Restrict);
-
-
-            modelBuilder.Entity<ApplicationUser>()
-              .HasMany(u => u.Projects)
-              .WithOne(n => n.ApplicationUser)
-              .HasForeignKey(n => n.ApplicationUserId)
-              .OnDelete(DeleteBehavior.Cascade);
-
-
-            modelBuilder.Entity<ApplicationUser>()
-              .HasMany(u => u.Projects)
-              .WithOne(n => n.ApplicationUser)
-              .HasForeignKey(n => n.ApplicationUserId)
-              .OnDelete(DeleteBehavior.Cascade);
+              .OnDelete(DeleteBehavior.SetNull);
 
 
             modelBuilder.Entity<ApplicationRole>(b =>

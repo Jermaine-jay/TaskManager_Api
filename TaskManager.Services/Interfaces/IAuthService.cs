@@ -1,7 +1,6 @@
 ﻿using TaskManager.Models.Dtos.Request;
 using TaskManager.Models.Dtos.Response;
 using TaskManager.Services.Infrastructure;
-using static TaskManager.Services.Implementations.AuthService;
 
 namespace TaskManager.Services.Interfaces
 {
@@ -12,5 +11,6 @@ namespace TaskManager.Services.Interfaces
         Task<AuthenticationResponse> UserLogin(LoginRequest request);
         Task<SuccessResponse> ResetPassword(ResetPasswordRequest request);
         Task<ChangePasswordResponse> ForgotPassword(ForgotPasswordRequest request);
+        Task<object> GoogleAuth(ExternalAuthRequest externalAuthDto);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Runtime.InteropServices;
 using TaskManager.Models.Dtos.Request;
 using TaskManager.Models.Dtos.Response;
 using TaskManager.Services.Infrastructure;
@@ -62,6 +63,19 @@ namespace TaskManager.Api.Controllers
         public async Task<IActionResult> LoginUser([FromBody] LoginRequest loginRequest)
         {
             var response = await _authService.UserLogin(loginRequest);
+            return Ok(response);
+        }
+
+
+        [AllowAnonymous]
+        [HttpPost("signin-google", Name = "signin-google")]
+        [SwaggerOperation(Summary = "Authenticates user")]
+        [SwaggerResponse(StatusCodes.Status200OK, Description = "returns user Id", Type = typeof(AuthenticationResponse))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "Invalid username or password", Type = typeof(ErrorResponse))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
+        public async Task<IActionResult> GoogleLogin([FromBody] ExternalAuthRequest loginRequest)
+        {
+            var response = await _authService.GoogleAuth(loginRequest);
             return Ok(response);
         }
 

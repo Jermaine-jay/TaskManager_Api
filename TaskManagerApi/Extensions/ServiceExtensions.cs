@@ -6,6 +6,8 @@ using StackExchange.Redis;
 using System.Security.Authentication;
 using System.Text;
 using TaskManager.Data.Context;
+using TaskManager.Data.Implementations;
+using TaskManager.Data.Interfaces;
 using TaskManager.Models.Entities;
 using TaskManager.Services.Configurations.Cache.CacheServices;
 using TaskManager.Services.Configurations.Cache.Otp;
@@ -25,10 +27,12 @@ namespace TaskManager.Api.Extensions
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IJwtAuthenticator, JwtAuthenticator>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IServiceFactory, ServiceFactory>();
             services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<IOtpService, OtpService>();
             services.AddScoped<IGenerateEmailPage, GenerateEmailPage>();
+            services.AddScoped<IUnitOfWork, UnitOfWork<ApplicationDbContext>>();
         }
 
         public static void ConfigureIISIntegration(this IServiceCollection services) =>
@@ -61,7 +65,7 @@ namespace TaskManager.Api.Extensions
         }
 
 
-        public static void ConfigureIdentity(this IServiceCollection services)
+        public static void ConfigureIdentity(this IServiceCollection services, IConfiguration configuration)
         {
 
             services.AddIdentity<ApplicationUser, ApplicationRole>(o =>
@@ -76,6 +80,13 @@ namespace TaskManager.Api.Extensions
             })
                .AddEntityFrameworkStores<ApplicationDbContext>()
                .AddDefaultTokenProviders();
+
+            services.AddAuthentication()
+                 .AddGoogle(options =>
+                 {
+                     options.ClientId = configuration["Authentication:Google:ClientId"];
+                     options.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+                 });
         }
 
 
