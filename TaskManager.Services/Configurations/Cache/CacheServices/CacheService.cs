@@ -18,12 +18,11 @@ namespace TaskManager.Services.Configurations.Cache.CacheServices
         public async Task WriteToCache<T>(string key, T payload, CacheKeySets? cacheKeySets, TimeSpan? absoluteExpireTime)
         {
             string stringifiedJson = JsonConvert.SerializeObject(payload);
-            _ = await _redis.StringSetAsync(key, stringifiedJson, absoluteExpireTime, When.Always).ConfigureAwait(true);
+            await _redis.StringSetAsync(key, stringifiedJson, absoluteExpireTime, When.Always).ConfigureAwait(true);
 
-            if (cacheKeySets.HasValue)
-            {
-                _ = await _redis.SetAddAsync(cacheKeySets.Value.ToString(), key);
-            }
+            if (cacheKeySets.HasValue)            
+                await _redis.SetAddAsync(cacheKeySets.Value.ToString(), key);
+            
         }
 
 

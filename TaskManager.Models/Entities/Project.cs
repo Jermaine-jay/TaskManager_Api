@@ -19,6 +19,6 @@ namespace TaskManager.Models.Entities
 
         public virtual ApplicationUser User { get; set; }
 
-        public virtual ICollection<Task> Tasks { get; set; } = new List<Task>();
+        public virtual ICollection<Task> Tasks { get; set; }
     }
 }

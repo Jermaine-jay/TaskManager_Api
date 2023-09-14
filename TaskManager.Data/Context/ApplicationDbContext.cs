@@ -14,27 +14,44 @@ namespace TaskManager.Data.Context
         public DbSet<Project> Projects { get; set; }
         public DbSet<Task> Tasks { get; set; }
         public DbSet<Notification> Notifications { get; set; }
+        public DbSet<UserTask> UserTasks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<UserTask>()
+            .HasKey(uta => new { uta.UserId, uta.TaskId });
+
+            modelBuilder.Entity<UserTask>()
+                .HasOne(uta => uta.User)
+                .WithMany(u => u.UserTasks)
+                .HasForeignKey(uta => uta.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<UserTask>()
+                .HasOne(uta => uta.Task)
+                .WithMany(t => t.UserTasks)
+                .HasForeignKey(uta => uta.TaskId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<ApplicationUser>()
-                .HasMany(u => u.Tasks)
-                .WithOne(t => t.ApplicationUser)
-                .HasForeignKey(t => t.ApplicationUserId)
+                .HasMany(u => u.Projects)
+                .WithOne(t => t.User)
+                .HasForeignKey(t => t.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ApplicationUser>()        
                  .HasMany(n => n.Notifications)
-                 .WithOne(u => u.ApplicationUser)
-                 .HasForeignKey(n => n.ApplicationUserId)
+                 .WithOne(u => u.User)
+                 .HasForeignKey(n => n.UserId)
                  .OnDelete(DeleteBehavior.Restrict);
 
 
-            modelBuilder.Entity<Project>()
-              .HasMany(t => t.Tasks)
-              .WithOne(p => p.Project)
-              .HasForeignKey(t => t.ProjectId)
-              .OnDelete(DeleteBehavior.SetNull);
+                modelBuilder.Entity<Project>()
+                  .HasMany(t => t.Tasks)
+                  .WithOne(p => p.Project)
+                  .HasForeignKey(t => t.ProjectId)
+                  .OnDelete(DeleteBehavior.SetNull);
 
 
             modelBuilder.Entity<ApplicationRole>(b =>

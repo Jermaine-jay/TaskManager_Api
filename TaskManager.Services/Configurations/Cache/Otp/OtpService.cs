@@ -26,7 +26,7 @@ namespace TaskManager.Services.Configurations.Cache.Otp
             
             otpCode = new(CacheKeySelector.GenerateToken());
             
-            await _cacheService.WriteToCache(cacheKey, otpCode, null, OtpValidity);
+           await _cacheService.WriteToCache(cacheKey, otpCode, null, OtpValidity);
             return otpCode.Otp;
         }
 

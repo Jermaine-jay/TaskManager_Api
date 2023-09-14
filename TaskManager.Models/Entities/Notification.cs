@@ -11,7 +11,7 @@ namespace TaskManager.Models.Entities
 
         [MaxLength(500)]
         public string Message { get; set; }
-
+        public bool Read { get; set; }
         [Required]
         public DateTime Timestamp { get; set; }
 

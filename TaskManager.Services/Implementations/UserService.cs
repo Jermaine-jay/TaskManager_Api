@@ -1,13 +1,16 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Net;
 using TaskManager.Data.Interfaces;
+using TaskManager.Models.Dtos.Request;
+using TaskManager.Models.Dtos.Response;
 using TaskManager.Models.Entities;
 using TaskManager.Models.Enums;
 using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Interfaces;
 using Task = TaskManager.Models.Entities.Task;
+
 
 namespace TaskManager.Services.Implementations
 {
@@ -37,7 +40,7 @@ namespace TaskManager.Services.Implementations
 
             ApplicationUser user = await _userManager.FindByIdAsync(userId);
             if (user == null)
-                throw new InvalidOperationException("Invalid User");
+                throw new InvalidOperationException("User Not Found");
 
 
             await _userManager.ChangePasswordAsync(user, request.NewPassword, request.CurrentPassword);
@@ -47,12 +50,11 @@ namespace TaskManager.Services.Implementations
             };
         }
 
-
         public async Task<SuccessResponse> DeleteUser(string userId)
         {
             var user = await _userRepo.GetSingleByAsync(user => user.Id.ToString() == userId);
             if (user == null)
-                throw new InvalidOperationException("User does not exist");
+                throw new InvalidOperationException("User Not Found");
 
             await _userRepo.DeleteAsync(user);
             return new SuccessResponse
@@ -61,41 +63,24 @@ namespace TaskManager.Services.Implementations
             };
         }
 
-        public async Task<Object> CreateTask(string userId, CreateTaskRequest request)
+
+        public async Task<SuccessResponse> UpdateUser(string userId, UpdateUserRequest request)
         {
-            var user = await _userRepo.GetSingleByAsync(u => u.Id.ToString() == userId, include: u=> u.Include(u=>u.Tasks));
+            var user = await _userRepo.GetSingleByAsync(user => user.Id.ToString() == userId);
             if (user == null)
-                throw new InvalidOperationException("Invalid user");
-            var project =  await _projectRepo.GetSingleByAsync(p=> p.Equals(user));
-            throw new InvalidOperationException("Invalid username or password");
-        }
+                throw new InvalidOperationException("User Not Found");
 
-        public class ChangePasswordRequest
-        {
+            user.Email = request.Email;
+            user.PhoneNumber = request.PhoneNumber;
+            user.FirstName = request.FirstName; 
+            user.LastName = request.LastName;
+            
+            await _userManager.UpdateAsync(user);
+            return new SuccessResponse
+            {
+                Success = true
+            };
+        }     
 
-            [Required, DataType(DataType.Password)]
-            public string CurrentPassword { get; set; }
-
-            [Required, DataType(DataType.Password)]
-            public string NewPassword { get; set; }
-        }
-
-        public class CreateTaskRequest
-        {
-            [Required]
-            public string Title { get; set; }
-
-            [Required]
-            public string Description { get; set; }
-
-            [Required]
-            public string? DueDate { get; set; }
-
-            public string? Priority { get; set; }
-
-            public string? Status { get; set; } 
-
-            public 
-        }
     }
 }

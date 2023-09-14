@@ -17,6 +17,7 @@ using TaskManager.Services.Implementations;
 using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Interfaces;
 
+
 namespace TaskManager.Api.Extensions
 {
 
@@ -28,11 +29,15 @@ namespace TaskManager.Api.Extensions
             services.AddScoped<IJwtAuthenticator, JwtAuthenticator>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ITaskService, TaskService>();
+            services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IServiceFactory, ServiceFactory>();
             services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<IOtpService, OtpService>();
             services.AddScoped<IGenerateEmailPage, GenerateEmailPage>();
             services.AddScoped<IUnitOfWork, UnitOfWork<ApplicationDbContext>>();
+            services.AddScoped<IRoleService, RoleService>();
         }
 
         public static void ConfigureIISIntegration(this IServiceCollection services) =>
@@ -118,16 +123,16 @@ namespace TaskManager.Api.Extensions
                 };
             });
 
-            /*services.AddAuthorization(options =>
+            services.AddAuthorization(options =>
             {
                 options.AddPolicy("Authorization", policy =>
                 {
                     policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
                     policy.RequireAuthenticatedUser();
-                    policy.Requirements.Add(new AuthRequirement());
+                    //policy.Requirements.Add(new AuthRequirement());
                     policy.Build();
                 });
-            });*/
+            });
         }
 
         public static void AddRedisCache(this IServiceCollection services, RedisConfig redisConfig)
@@ -179,9 +184,6 @@ namespace TaskManager.Api.Extensions
 
             EmailSenderOptions emailSenderOptions = setting.EmailSenderOptions;
             services.AddSingleton(emailSenderOptions);
-
-            /*Authentication authentication = setting.Authentication;
-            services.AddSingleton(authentication);*/
 
             services.ConfigureJWT(jwtConfig);
             services.AddRedisCache(redisConfig);

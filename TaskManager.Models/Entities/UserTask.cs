@@ -6,8 +6,10 @@ namespace TaskManager.Models.Entities
     {
         [ForeignKey("ApplicationUser")]
         public Guid? UserId { get; set; }
+        public ApplicationUser User { get; set; }
 
-        public virtual ApplicationUser User { get; set; }
-        public Guid TaskId { get; set; }
+        [ForeignKey("Task")]
+        public Guid? TaskId { get; set; }
+        public Task Task { get; set; }
     }
 }

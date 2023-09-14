@@ -13,5 +13,6 @@ namespace TaskManager.Models.Entities
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public virtual ICollection<Notification>? Notifications { get; set; }
         public virtual ICollection<Project> Projects { get; set; }
+        public virtual ICollection<UserTask> UserTasks { get; set; }
     }
 }
