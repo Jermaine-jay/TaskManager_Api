@@ -1,6 +1,7 @@
 ﻿using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using StackExchange.Redis;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using TaskManager.Models.Dtos.Request;
@@ -22,7 +23,7 @@ namespace TaskManager.Services.Implementations
         private readonly IJwtAuthenticator _jwtAuthenticator;
         private readonly IConfiguration _configuration;
 
-        public AuthService( IJwtAuthenticator jwtAuthenticator, IServiceFactory serviceFactory, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IConfiguration configuration)
+        public AuthService(IJwtAuthenticator jwtAuthenticator, IServiceFactory serviceFactory, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IConfiguration configuration)
         {
             _roleManager = roleManager;
             _serviceFactory = serviceFactory;
@@ -132,13 +133,19 @@ namespace TaskManager.Services.Implementations
 
         public async Task<AuthenticationResponse> UserLogin(LoginRequest request)
         {
-            ApplicationUser user = await _userManager.FindByEmailAsync(request.Email.ToLower().Trim());
+            ApplicationUser? user = await _userManager.FindByEmailAsync(request.Email.ToLower().Trim());
 
             if (user == null)
                 throw new InvalidOperationException("Invalid username or password");
 
             if (!user.Active)
                 throw new InvalidOperationException("Account is not active");
+
+            if (!user.EmailConfirmed)
+                throw new InvalidOperationException("User Not Found");
+
+            if (user.LockoutEnd != null)
+                throw new InvalidOperationException($"User Suspended. Time Left {user.LockoutEnd - DateTimeOffset.UtcNow}");
 
             bool result = await _userManager.CheckPasswordAsync(user, request.Password);
 
@@ -175,12 +182,15 @@ namespace TaskManager.Services.Implementations
             if (user == null || !isConfrimed)
                 throw new InvalidOperationException($"User does not exist");
 
+            if (user.LockoutEnd != null)
+                throw new InvalidOperationException($"User Suspended. Time Left {user.LockoutEnd - DateTimeOffset.UtcNow}");
+
 
             var result = await _serviceFactory.GetService<IEmailService>().ResetPasswordMail(user);
             return new ChangePasswordResponse
             {
                 Message = "Token sent",
-                Code = result,
+                Token = result,
                 Success = true
             };
 
@@ -255,15 +265,24 @@ namespace TaskManager.Services.Implementations
                     await _userManager.AddToRoleAsync(user,role);
                     await _userManager.AddLoginAsync(user, info);
 
-                    return true;
                 }
                 else
                 {
                     await _userManager.AddLoginAsync(user, info);
                 }
             }
-            
-             return false;     
+
+
+            var fullName = $"{user.LastName} {user.FirstName}";
+            JwtToken userToken = await _jwtAuthenticator.GenerateJwtToken(user);
+            return new AuthenticationResponse
+            {
+                JwtToken = userToken,
+                UserType = user.UserType.GetStringValue().Normalize(),
+                FullName = fullName,
+                TwoFactor = false,
+                UserId = user.Id.ToString()
+            };
         }
 
     }

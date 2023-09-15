@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using TaskManager.Services.Infrastructure;
+using Task = TaskManager.Models.Entities.Task;
 
 namespace TaskManager.Services.Interfaces
 {
@@ -10,5 +11,6 @@ namespace TaskManager.Services.Interfaces
     {
         Task<object> ToggleNotification(string notiId);
         Task<object> CreateNotification(Task? task, int type);
+        Task<SuccessResponse> GetNotifications(string userId);
     }
 }

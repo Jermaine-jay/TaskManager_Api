@@ -2,14 +2,14 @@
 
 namespace TaskManager.Models.Entities
 {
-    public class UserTask : BaseEntity
+    public class UserTask
     {
         [ForeignKey("ApplicationUser")]
         public Guid? UserId { get; set; }
-        public ApplicationUser User { get; set; }
+        public virtual ApplicationUser? User { get; set; }
 
         [ForeignKey("Task")]
         public Guid? TaskId { get; set; }
-        public Task Task { get; set; }
+        public virtual Task? Task { get; set; }
     }
 }

@@ -29,8 +29,7 @@ namespace TaskManager.Api.Controllers
         [SwaggerOperation(Summary = "Create new project")]
         [SwaggerResponse(StatusCodes.Status201Created, Description = "project", Type = typeof(CreateTaskResponse))]
         [SwaggerResponse(StatusCodes.Status404NotFound, Description = "User Not Found", Type = typeof(ErrorResponse))]
-        [SwaggerResponse(StatusCodes.Status404NotFound, Description = "Project does not exist", Type = typeof(ErrorResponse))]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "Task Tile already Exist", Type = typeof(ErrorResponse))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "Project name already Exist", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
         public async Task<IActionResult> CreateProject([FromBody] CreateProjectRequest request)
         {

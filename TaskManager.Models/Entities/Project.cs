@@ -8,17 +8,17 @@ namespace TaskManager.Models.Entities
     {
 
         [Required]
-        [MaxLength(100)]
+        [MaxLength(150)]
         public string Name { get; set; }
 
-        [MaxLength(500)]
+        [MaxLength(800)]
         public string Description { get; set; }
         
         [ForeignKey("ApplicationUser")]
         public Guid? UserId { get; set; }
 
-        public virtual ApplicationUser User { get; set; }
+        public virtual ApplicationUser? User { get; set; }
 
-        public virtual ICollection<Task> Tasks { get; set; }
+        public virtual ICollection<Task>? Tasks { get; set; }
     }
 }

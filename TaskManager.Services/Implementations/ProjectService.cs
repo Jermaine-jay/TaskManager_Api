@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using TaskManager.Data.Interfaces;
 using TaskManager.Models.Dtos.Request;
 using TaskManager.Models.Dtos.Response;
 using TaskManager.Models.Entities;
+using TaskManager.Models.Enums;
 using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Interfaces;
 using Task = TaskManager.Models.Entities.Task;
@@ -42,7 +44,7 @@ namespace TaskManager.Services.Implementations
 
             var project = await _projectRepo.GetSingleByAsync(p => p.Equals(request.Name.ToLower()));
             if (project == null)
-                throw new InvalidOperationException("Project name already exist");
+                throw new InvalidOperationException("Project Name already exist");
 
 
             var newProj = new Project
@@ -53,6 +55,7 @@ namespace TaskManager.Services.Implementations
             };
 
             await _projectRepo.AddAsync(newProj);
+            //user.Projects.Add(newProj);
             return new CreateTaskResponse
             {
                 Message = "Project Created",
@@ -89,6 +92,7 @@ namespace TaskManager.Services.Implementations
             var project = user.Projects.Where(u => u.Id.ToString() == request.ProjectId).FirstOrDefault();
             if (project == null)
                 throw new InvalidOperationException("Project does not exist");
+
             var newProj = new Project
             {
                 Name = request.Name,

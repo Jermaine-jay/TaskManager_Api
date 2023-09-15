@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using TaskManager.Data.Interfaces;
 using TaskManager.Models.Dtos.Request;
@@ -25,10 +20,11 @@ namespace TaskManager.Services.Implementations
         private readonly IRepository<ApplicationUser> _userRepo;
         private readonly IRepository<Task> _taskRepo;
         private readonly IRepository<Project> _projectRepo;
+        private readonly INotificationService _notificationService;
         private readonly IUnitOfWork _unitOfWork;
 
 
-        public TaskService(IServiceFactory serviceFactory, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
+        public TaskService(IServiceFactory serviceFactory, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
             _serviceFactory = serviceFactory;
@@ -36,6 +32,7 @@ namespace TaskManager.Services.Implementations
             _taskRepo = _unitOfWork.GetRepository<Task>();
             _projectRepo = _unitOfWork.GetRepository<Project>();
             _userRepo = _unitOfWork.GetRepository<ApplicationUser>();
+            _notificationService = notificationService;
         }
 
 
@@ -48,6 +45,9 @@ namespace TaskManager.Services.Implementations
             var project = await _projectRepo.GetSingleByAsync(p => p.Equals(request.ProjectId));
             if (project == null)
                 throw new InvalidOperationException("Project does not exist");
+
+            if (project.UserId != user.Id)
+                throw new InvalidOperationException("Youn cannot add task to this project");
 
             var existingTile = project.Tasks.Any(u => u.Title == request.Title);
             if (existingTile)
@@ -99,7 +99,7 @@ namespace TaskManager.Services.Implementations
             var task = project.Tasks.Where(u => u.Id.ToString() == taskId).FirstOrDefault();
             if (task == null)
                 throw new InvalidOperationException("Task does not exist");
-         
+
             await _taskRepo.DeleteAsync(task);
             return new SuccessResponse
             {
@@ -160,6 +160,7 @@ namespace TaskManager.Services.Implementations
                     break;
             }
 
+            await _notificationService.CreateNotification(task, (int)NotificationType.StatusUpdate);
             return new UpdateTaskResponse
             {
                 Message = "Status Updated",
@@ -196,6 +197,7 @@ namespace TaskManager.Services.Implementations
                     break;
             }
 
+            await _notificationService.CreateNotification(task, (int)NotificationType.PriorityUpdate);
             return new UpdateTaskResponse
             {
                 Message = "Priority Updated",
@@ -206,12 +208,18 @@ namespace TaskManager.Services.Implementations
         }
 
 
-        public class UpdateTaskRequest
+        public async System.Threading.Tasks.Task AllTask()
         {
-            public string? TaskId { get; set; }
-            public string? Title { get; set; }
-            public string? Description { get; set; }
-            public string? DueDate { get; set; }
+            var tasks = await _taskRepo.GetAllAsync(include: u=> u.Include(u=> u.UserTasks));
+            if(tasks == null)
+                throw new InvalidOperationException("No task Found");
+
+            var results = tasks.Where(u=> u.DueDate == u.DueDate.AddHours(-48));
+            foreach(var task in results)
+            {
+                await _notificationService.CreateNotification(task, (int)NotificationType.DueDateReminder);
+            }
         }
+
     }
 }

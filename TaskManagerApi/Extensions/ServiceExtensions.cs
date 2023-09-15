@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using System.Security.Authentication;
 using System.Text;
+using TaskManager.Api.Attribute;
 using TaskManager.Data.Context;
 using TaskManager.Data.Implementations;
 using TaskManager.Data.Interfaces;
@@ -29,6 +31,8 @@ namespace TaskManager.Api.Extensions
             services.AddScoped<IJwtAuthenticator, JwtAuthenticator>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthorizationHandler, AuthHandler>();
+            services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<ITaskService, TaskService>();
             services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<INotificationService, NotificationService>();
@@ -38,6 +42,7 @@ namespace TaskManager.Api.Extensions
             services.AddScoped<IGenerateEmailPage, GenerateEmailPage>();
             services.AddScoped<IUnitOfWork, UnitOfWork<ApplicationDbContext>>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IRoleClaimService, RoleClaimService>();
         }
 
         public static void ConfigureIISIntegration(this IServiceCollection services) =>
@@ -129,7 +134,7 @@ namespace TaskManager.Api.Extensions
                 {
                     policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
                     policy.RequireAuthenticatedUser();
-                    //policy.Requirements.Add(new AuthRequirement());
+                    policy.Requirements.Add(new AuthRequirement());
                     policy.Build();
                 });
             });

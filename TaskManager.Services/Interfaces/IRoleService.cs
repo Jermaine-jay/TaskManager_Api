@@ -1,5 +1,5 @@
 ﻿using TaskManager.Services.Infrastructure;
-using static TaskManager.Services.Implementations.RoleService;
+using TaskManager.Services.Implementations;
 
 namespace TaskManager.Services.Interfaces
 {

@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace TaskManager.Models.Dtos.Request
 {
-    public class CreateProjectRequest
+    public class LockUserRequest
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
-
+        public string UserId { get; set; }
+        public int Duration { get; set; }
     }
 }

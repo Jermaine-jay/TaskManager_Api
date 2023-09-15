@@ -37,6 +37,7 @@ namespace TaskManager.Api.Controllers
         }
 
 
+
         [AllowAnonymous]
         [HttpPost("confirm-email", Name = "confirm-email")]
         [SwaggerOperation(Summary = "Confirms a user's email")]
@@ -52,6 +53,7 @@ namespace TaskManager.Api.Controllers
         }
 
 
+
         [AllowAnonymous]
         [HttpPost("login", Name = "login")]
         [SwaggerOperation(Summary = "Authenticates user")]
@@ -63,6 +65,7 @@ namespace TaskManager.Api.Controllers
             var response = await _authService.UserLogin(loginRequest);
             return Ok(response);
         }
+
 
 
         [AllowAnonymous]
@@ -92,6 +95,7 @@ namespace TaskManager.Api.Controllers
 
             return Ok(response);
         }
+
 
 
         [AllowAnonymous]

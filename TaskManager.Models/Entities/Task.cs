@@ -7,10 +7,10 @@ namespace TaskManager.Models.Entities
     public class Task : BaseEntity
     {
         [Required]
-        [MaxLength(100, ErrorMessage ="Title should be less than 100 words")]
+        [MaxLength(150, ErrorMessage ="Title should be less than 100 words")]
         public string Title { get; set; }
 
-        [MaxLength(600, ErrorMessage ="Not more than 500 words")]
+        [MaxLength(800, ErrorMessage ="Not more than 500 words")]
         public string Description { get; set; }
 
         [Required]
@@ -23,8 +23,8 @@ namespace TaskManager.Models.Entities
         [ForeignKey("Project")]
         public Guid? ProjectId { get; set; }
 
-        public virtual Project Project { get; set; }
+        public virtual Project? Project { get; set; }
 
-        public virtual ICollection<UserTask> UserTasks { get; set; }
+        public virtual ICollection<UserTask>? UserTasks { get; set; }
     }
 }

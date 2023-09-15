@@ -21,12 +21,21 @@ namespace TaskManager.Data.Context
 
             modelBuilder.Entity<UserTask>()
             .HasKey(uta => new { uta.UserId, uta.TaskId });
+            
 
             modelBuilder.Entity<UserTask>()
                 .HasOne(uta => uta.User)
                 .WithMany(u => u.UserTasks)
                 .HasForeignKey(uta => uta.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Project>()
+               .HasMany(project => project.Tasks)
+               .WithOne(task => task.Project)
+               .HasForeignKey(task => task.ProjectId)
+               .IsRequired(false)
+               .OnDelete(DeleteBehavior.SetNull);
+
 
             modelBuilder.Entity<UserTask>()
                 .HasOne(uta => uta.Task)
@@ -48,10 +57,10 @@ namespace TaskManager.Data.Context
 
 
                 modelBuilder.Entity<Project>()
-                  .HasMany(t => t.Tasks)
-                  .WithOne(p => p.Project)
-                  .HasForeignKey(t => t.ProjectId)
-                  .OnDelete(DeleteBehavior.SetNull);
+                    .HasMany(task => task.Tasks)
+                    .WithOne(project => project.Project)
+                    .HasForeignKey(t => t.ProjectId)
+                    .OnDelete(DeleteBehavior.SetNull);
 
 
             modelBuilder.Entity<ApplicationRole>(b =>

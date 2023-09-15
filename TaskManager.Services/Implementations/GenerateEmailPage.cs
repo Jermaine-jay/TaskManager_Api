@@ -45,7 +45,7 @@ namespace TaskManager.Services.Implementations
                         a {{
                             display: inline-block;
                             text-decoration: none;
-                            background-color: #4CAF50;
+                            background-color: #344e41;
                             color: #fff;
                             padding: 10px 20px;
                             font-size: 14px;
@@ -119,7 +119,7 @@ namespace TaskManager.Services.Implementations
                         a {{
                             display: inline-block;
                             text-decoration: none;
-                            background-color: #4CAF50;
+                            background-color: #344e41;
                             color: #fff;
                             padding: 10px 20px;
                             font-size: 14px;
