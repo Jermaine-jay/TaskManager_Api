@@ -6,12 +6,13 @@ using TaskManager.Models.Dtos.Request;
 using TaskManager.Models.Dtos.Response;
 using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Interfaces;
-using static TaskManager.Services.Implementations.TaskService;
+
 
 namespace TaskManager.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     public class TaskController : ControllerBase
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -22,6 +23,7 @@ namespace TaskManager.Api.Controllers
             _httpContextAccessor = contextAccessor;
             _taskService = taskService;
         }
+
 
 
         [AllowAnonymous]
@@ -35,6 +37,7 @@ namespace TaskManager.Api.Controllers
         public async Task<IActionResult> CreateTask([FromBody] CreateTaskRequest request)
         {
             string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
+           
             var response = await _taskService.CreateTask(userId, request);
             return Ok(response);
         }
@@ -77,7 +80,8 @@ namespace TaskManager.Api.Controllers
         public async Task<IActionResult> UpdatePriority([FromBody] UpdatePriorityRequest request)
         {
 
-            var response = await _taskService.UpdatePriority(request);
+            string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
+            var response = await _taskService.UpdatePriority(userId,request);
             return Ok(response);
         }
 
@@ -92,7 +96,8 @@ namespace TaskManager.Api.Controllers
         public async Task<IActionResult> UpdateStatus([FromBody] UpdateStatusRequest request)
         {
 
-            var response = await _taskService.UpdateStatus(request);
+            string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
+            var response = await _taskService.UpdateStatus(userId,request);
             return Ok(response);
         }
     }

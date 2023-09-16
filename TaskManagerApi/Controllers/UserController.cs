@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using TaskManager.Api.Extensions;
 using TaskManager.Models.Dtos.Request;
@@ -12,6 +13,7 @@ namespace TaskManager.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
 
@@ -25,6 +27,19 @@ namespace TaskManager.Api.Controllers
             _userService = userService;
             _noteService = noteService;
         }
+
+        [HttpGet("my-account", Name = "my-account")]
+        [SwaggerOperation(Summary = "get loggedin user account ")]
+        [SwaggerResponse(StatusCodes.Status201Created, Description = "user", Type = typeof(SuccessResponse))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, Description = "User Not Found", Type = typeof(ErrorResponse))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
+        public async Task<IActionResult> GetUser()
+        {
+            string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
+            var response = await _userService.GetUser(userId);
+            return Ok(response);
+        }
+
 
 
         [HttpPut("change-password", Name = "change-password")]
@@ -111,7 +126,7 @@ namespace TaskManager.Api.Controllers
 
 
 
-        [HttpGet("add-user-task", Name = "add-user-task")]
+        [HttpPost("add-user-task", Name = "add-user-task")]
         [SwaggerOperation(Summary = "add a user to a task")]
         [SwaggerResponse(StatusCodes.Status201Created, Description = "user task", Type = typeof(SuccessResponse))]
         [SwaggerResponse(StatusCodes.Status404NotFound, Description = "User Not Found", Type = typeof(ErrorResponse))]
@@ -119,7 +134,8 @@ namespace TaskManager.Api.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
         public async Task<IActionResult> AddUserToTask([FromBody] UserTaskRequest request)
         {
-            var response = await _userService.AddUserToTask(request);
+            string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
+            var response = await _userService.AddUserToTask(userId, request);
             return Ok(response);
         }
 

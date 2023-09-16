@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 using TaskManager.Data.Interfaces;
 using TaskManager.Models.Entities;
 using TaskManager.Models.Enums;
@@ -43,8 +42,8 @@ namespace TaskManager.Services.Implementations
                 throw new InvalidOperationException("User Not Found");
 
 
-            var existingtask = await _taskRepo.GetSingleByAsync(t => t.Id.ToString() == task.Id.ToString(), include: u => u.Include(e => e.Project), tracking:true);
-            if (existingtask != null)       
+            var existingtask = await _taskRepo.GetSingleByAsync(t => t.Id.ToString() == task.Id.ToString(), include: u => u.Include(e => e.Project), tracking: true);
+            if (existingtask != null)
                 throw new InvalidOperationException("Task Not Found");
 
 
@@ -57,9 +56,9 @@ namespace TaskManager.Services.Implementations
                 Read = false,
             };
 
-            foreach(var user in userTask)
+            foreach (var user in userTask)
             {
-                var result =await _userRepo.GetSingleByAsync(u=> u.Id.Equals(user.UserId), include: u=> u.Include(e => e.Notifications));
+                var result = await _userRepo.GetSingleByAsync(u => u.Id.Equals(user.UserId), include: u => u.Include(e => e.Notifications));
                 result.Notifications.Add(newNote);
             }
 
@@ -70,7 +69,7 @@ namespace TaskManager.Services.Implementations
 
         public async Task<string> Message(int type, Task task)
         {
-            string reminderMsg = $"This is a reminder that your task {task.Title}, assigned to you on {task.CreatedAt.ToString("dd MM YY")}, is due in 48 hours." +
+            string reminderMsg = $"This is a reminder that your task {task.Title}, assigned to you on {task.CreatedAt.ToString("dd MMMM yyyy HH: mm:ss")}, is due in 48 hours." +
                $"Please make sure that you have completed all of the necessary steps and that your work is ready to be submitted by the deadline.";
 
             string StatusMsg = $"Task {task.Title} status changed to {task.Status}";
@@ -82,15 +81,15 @@ namespace TaskManager.Services.Implementations
             {
                 case (int)NotificationType.DueDateReminder:
                     noteMsg = reminderMsg;
-                    return null;
+                    break;
 
                 case (int)NotificationType.StatusUpdate:
                     noteMsg = StatusMsg;
-                    return null;
+                    break;
 
                 case (int)NotificationType.PriorityUpdate:
                     noteMsg = PriorityMsg;
-                    return null;
+                    break;
             }
 
             return noteMsg;
@@ -100,11 +99,11 @@ namespace TaskManager.Services.Implementations
         public async Task<object> ToggleNotification(string notiId)
         {
             var notif = await _noteRepo.GetSingleByAsync(u => u.Id.ToString() == notiId);
-            if (notif != null) 
+            if (notif != null)
                 throw new InvalidOperationException("Notification Not Found");
 
             notif.Read = true;
-            _noteRepo.UpdateAsync(notif);
+            await _noteRepo.UpdateAsync(notif);
 
             return new SuccessResponse
             {
@@ -116,6 +115,9 @@ namespace TaskManager.Services.Implementations
         public async Task<SuccessResponse> GetNotifications(string userId)
         {
             var notif = await _noteRepo.GetAllAsync(include: u => u.Include(u => u.User));
+            if (notif != null)
+               throw new InvalidOperationException("No notification found");
+
             var result = notif.Where(u => u.UserId.ToString() == userId);
             if (result == null)
                 throw new InvalidOperationException("No notification found");
@@ -123,7 +125,14 @@ namespace TaskManager.Services.Implementations
             return new SuccessResponse
             {
                 Success = true,
-                Data = result
+                Data = result.Select(u => new Notification
+                {
+                    Type = u.Type,
+                    Timestamp = DateTime.Parse(u.Timestamp.ToString("dd MMMM yyyy HH: mm:ss")),
+                    Read = u.Read,
+                    User = u.User,
+
+                })
             };
         }
     }

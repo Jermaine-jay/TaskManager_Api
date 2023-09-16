@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Data.Interfaces;
+using TaskManager.Models.Dtos;
 using TaskManager.Models.Dtos.Request;
 using TaskManager.Models.Entities;
 using TaskManager.Services.Infrastructure;
@@ -12,7 +13,6 @@ namespace TaskManager.Services.Implementations
 {
     public class UserService : IUserService
     {
-        private readonly IServiceFactory _serviceFactory;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IRepository<ApplicationUser> _userRepo;
         private readonly INotificationService _notificationService;
@@ -22,10 +22,9 @@ namespace TaskManager.Services.Implementations
         private readonly IUnitOfWork _unitOfWork;
 
 
-        public UserService(IServiceFactory serviceFactory, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, INotificationService notificationService)
+        public UserService(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, INotificationService notificationService)
         {
-            _unitOfWork = unitOfWork;
-            _serviceFactory = serviceFactory;
+            _unitOfWork = unitOfWork; 
             _userManager = userManager;
             _taskRepo = _unitOfWork.GetRepository<Task>();
             _projectRepo = _unitOfWork.GetRepository<Project>();
@@ -63,6 +62,25 @@ namespace TaskManager.Services.Implementations
             };
         }
 
+        public async Task<ApplicationUserDto> GetUser(string userId)
+        {
+            var user = await _userRepo.GetSingleByAsync(user => user.Id.ToString() == userId);
+            if (user == null)
+                throw new InvalidOperationException("User Not Found");
+
+            return new ApplicationUserDto
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Active = user.Active ? "Active" : "Not Active",
+                EmailConfirmed = user.EmailConfirmed ? "Confirmed" : "Not Confirmed",
+                LockedOut = user.LockoutEnd?.ToString("dd MMMM yyyy HH:mm:ss"),
+                CreatedAt = user.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss"),
+                UpdatedAt = user.UpdatedAt.ToString("dd MMMM yyyy HH:mm:ss"),
+            };
+        }
 
         public async Task<SuccessResponse> UpdateUser(string userId, UpdateUserRequest request)
         {
@@ -112,27 +130,46 @@ namespace TaskManager.Services.Implementations
 
         public async Task<SuccessResponse> GetAllProject(string userId)
         {
-            var project = await _projectRepo.GetAllAsync();
-            var result = project.Where(u => u.UserId.ToString() == userId.ToString()).Select(u => new Project
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                throw new InvalidOperationException("User Not Found");
+
+            var projects = await _projectRepo.GetAllAsync(include: u => u.Include(u => u.Tasks));
+            if (!projects.Any())
+                throw new InvalidOperationException("No project found");
+
+            var result = projects.Where(u => u.UserId.ToString() == user.Id.ToString()).ToList();
+            if (!result.Any())
+                throw new InvalidOperationException("User Projects Not Found");
+
+            var response = result.Select(u => new Project
             {
                 Name = u.Name,
+                Description = u.Description,
             });
 
             return new SuccessResponse
             {
                 Success = true,
-                Data = result
+                Data = response
             };
         }
 
 
         public async Task<SuccessResponse> AllProjectWithTask(string userId)
         {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                throw new InvalidOperationException("User Not Found");
+
             var projects = await _projectRepo.GetAllAsync(include: u => u.Include(u => u.Tasks));
             if (!projects.Any())
                 throw new InvalidOperationException("No project found");
 
-            var result = projects.Where(u => u.UserId.ToString() == userId);
+            var result = projects.Where(u => u.UserId.ToString() == user.Id.ToString());
+            if (!result.Any())
+                throw new InvalidOperationException("User Not Found");
+
             var res = result.Select(u => new Project
             {
                 Name = u.Name,
@@ -155,19 +192,19 @@ namespace TaskManager.Services.Implementations
         }
 
 
-        public async Task<SuccessResponse> AddUserToTask(UserTaskRequest request)
+        public async Task<SuccessResponse> AddUserToTask(string userId, UserTaskRequest request)
         {
             var user = await _userManager.FindByIdAsync(request.UserId);
             if (user == null)
                 throw new InvalidOperationException("User Not Found");
 
-            var task = await _taskRepo.GetSingleByAsync(u => u.Equals(request.TaskId));
+            var task = await _taskRepo.GetSingleByAsync(u => u.Id.ToString() == request.TaskId);
             if (task == null)
                 throw new InvalidOperationException("Task does not exist");
 
             var proj = await _projectRepo.GetAllAsync(include: u => u.Include(u => u.Tasks));
-            var project = proj.Where(u => u.Tasks.Any(u => u.Equals(task.Id))).FirstOrDefault();
-            if (project.UserId != user.Id)
+            var project = proj.Where(u => u.Tasks.Any(u => u.Id == task.Id)).FirstOrDefault();
+            if (project.UserId.ToString() != userId)
                 throw new InvalidOperationException("You cannot perform this operation");
 
             var newUserTask = new UserTask

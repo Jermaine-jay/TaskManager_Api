@@ -42,8 +42,8 @@ namespace TaskManager.Services.Implementations
             if (user == null)
                 throw new InvalidOperationException("User Not Found");
 
-            var project = await _projectRepo.GetSingleByAsync(p => p.Equals(request.Name.ToLower()));
-            if (project == null)
+            var project = await _projectRepo.GetSingleByAsync(p => p.Name ==  request.Name.ToLower());
+            if (project != null)
                 throw new InvalidOperationException("Project Name already exist");
 
 
@@ -55,13 +55,12 @@ namespace TaskManager.Services.Implementations
             };
 
             await _projectRepo.AddAsync(newProj);
-            //user.Projects.Add(newProj);
             return new CreateTaskResponse
             {
                 Message = "Project Created",
                 Status = HttpStatusCode.Created,
                 Success = true,
-                Data = newProj,
+                Data = user,
 
             };
         }
@@ -72,7 +71,7 @@ namespace TaskManager.Services.Implementations
             if (user == null)
                 throw new InvalidOperationException("User does not exist");
 
-            var project = user.Projects.Where(u => u.Id.ToString() == projectId).FirstOrDefault();
+            var project = await _projectRepo.GetSingleByAsync(u => u.Id.ToString() == projectId);
             if (project == null)
                 throw new InvalidOperationException("Project does not exist");
 
@@ -89,12 +88,13 @@ namespace TaskManager.Services.Implementations
             if (user == null)
                 throw new InvalidOperationException("User does not exist");
 
-            var project = user.Projects.Where(u => u.Id.ToString() == request.ProjectId).FirstOrDefault();
+            var project = await _projectRepo.GetSingleByAsync(u => u.Id.ToString() == request.ProjectId);
             if (project == null)
                 throw new InvalidOperationException("Project does not exist");
 
             var newProj = new Project
             {
+                Id = project.Id,
                 Name = request.Name,
                 Description = request.Description
             };
@@ -102,7 +102,8 @@ namespace TaskManager.Services.Implementations
             await _projectRepo.UpdateAsync(newProj);
             return new SuccessResponse
             {
-                Success = true
+                Success = true,
+                Data = newProj
             };
         }
     }

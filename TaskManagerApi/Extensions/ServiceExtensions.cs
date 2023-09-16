@@ -130,13 +130,18 @@ namespace TaskManager.Api.Extensions
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("Authorization", policy =>
-                {
-                    policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
-                    policy.RequireAuthenticatedUser();
-                    policy.Requirements.Add(new AuthRequirement());
-                    policy.Build();
-                });
+                /* options.AddPolicy("Authorization", policy =>
+                 {
+                     policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+                     policy.RequireAuthenticatedUser();
+                     //policy.Requirements.Add(new AuthRequirement());
+                     policy.Build();
+                 });*/
+
+                options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                  .RequireAuthenticatedUser()
+                  .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                  .Build();
             });
         }
 

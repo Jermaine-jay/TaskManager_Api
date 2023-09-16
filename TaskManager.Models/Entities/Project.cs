@@ -13,8 +13,7 @@ namespace TaskManager.Models.Entities
 
         [MaxLength(800)]
         public string Description { get; set; }
-        
-        [ForeignKey("ApplicationUser")]
+
         public Guid? UserId { get; set; }
 
         public virtual ApplicationUser? User { get; set; }

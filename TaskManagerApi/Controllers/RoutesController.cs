@@ -21,7 +21,7 @@ namespace TaskManager.Api.Controllers
         }
 
 
-        [AllowAnonymous]
+
         [HttpGet("get-all-routes", Name = "get-all-routes")]
         [SwaggerOperation(Summary = "Gets all routes ")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Routes Retrieved")]

@@ -5,6 +5,7 @@ using Swashbuckle.AspNetCore.Annotations;
 using TaskManager.Api.Extensions;
 using TaskManager.Models.Dtos.Request;
 using TaskManager.Models.Dtos.Response;
+using TaskManager.Services.Implementations;
 using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Interfaces;
 
@@ -12,6 +13,7 @@ namespace TaskManager.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     public class ProjectController : ControllerBase
     {
 
@@ -24,7 +26,8 @@ namespace TaskManager.Api.Controllers
             _projectService = projectService;
         }
 
-        [AllowAnonymous]
+        
+
         [HttpPost("create-project", Name = "create-project")]
         [SwaggerOperation(Summary = "Create new project")]
         [SwaggerResponse(StatusCodes.Status201Created, Description = "project", Type = typeof(CreateTaskResponse))]
@@ -40,7 +43,6 @@ namespace TaskManager.Api.Controllers
 
 
 
-        [AllowAnonymous]
         [HttpDelete("delete-project", Name = "delete-project")]
         [SwaggerOperation(Summary = "Delete a project")]
         [SwaggerResponse(StatusCodes.Status201Created, Description = "Tak", Type = typeof(SuccessResponse))]
@@ -54,7 +56,7 @@ namespace TaskManager.Api.Controllers
         }
 
 
-        [AllowAnonymous]
+
         [HttpPut("update-project", Name = "update-project")]
         [SwaggerOperation(Summary = "update a project")]
         [SwaggerResponse(StatusCodes.Status201Created, Description = "project", Type = typeof(SuccessResponse))]

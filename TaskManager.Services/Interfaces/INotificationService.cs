@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TaskManager.Services.Infrastructure;
+﻿using TaskManager.Services.Infrastructure;
 using Task = TaskManager.Models.Entities.Task;
 
 namespace TaskManager.Services.Interfaces

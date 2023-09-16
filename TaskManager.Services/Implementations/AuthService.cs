@@ -134,7 +134,6 @@ namespace TaskManager.Services.Implementations
         public async Task<AuthenticationResponse> UserLogin(LoginRequest request)
         {
             ApplicationUser? user = await _userManager.FindByEmailAsync(request.Email.ToLower().Trim());
-
             if (user == null)
                 throw new InvalidOperationException("Invalid username or password");
 
@@ -148,13 +147,21 @@ namespace TaskManager.Services.Implementations
                 throw new InvalidOperationException($"User Suspended. Time Left {user.LockoutEnd - DateTimeOffset.UtcNow}");
 
             bool result = await _userManager.CheckPasswordAsync(user, request.Password);
-
             if (!result)
+            {
+                user.AccessFailedCount++;
                 throw new InvalidOperationException("Invalid username or password");
+            }
+
+            if(user.AccessFailedCount == 5)
+            {
+                DateTimeOffset lockoutEnd = DateTimeOffset.UtcNow.AddSeconds(300);
+                user.LockoutEnd = lockoutEnd;
+                throw new InvalidOperationException($"Account locked, Time Left {user.LockoutEnd - DateTimeOffset.UtcNow}");
+            }
 
             JwtToken userToken = await _jwtAuthenticator.GenerateJwtToken(user);
             string? userType = user.UserType.GetStringValue();
-
 
             string fullName = $"{user.LastName} {user.FirstName}";
             return new AuthenticationResponse

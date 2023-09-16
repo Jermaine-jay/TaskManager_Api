@@ -10,7 +10,6 @@ namespace TaskManager.Models.Dtos.Request
         [Required]
         public string Description { get; set; }
 
-        [Required]
         public string? DueDate { get; set; }
 
         public int? Priority { get; set; }

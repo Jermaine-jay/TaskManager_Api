@@ -9,6 +9,7 @@ namespace TaskManager.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RoleController : ControllerBase
     {
         private readonly IRoleService _roleservice;
@@ -21,7 +22,7 @@ namespace TaskManager.Api.Controllers
 
 
 
-        [AllowAnonymous]
+ 
         [HttpPost("Create-role", Name = "Create-role")]
         [SwaggerOperation(Summary = "Creates role")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Role", Type = typeof(RoleResponse))]
@@ -36,7 +37,7 @@ namespace TaskManager.Api.Controllers
 
 
 
-        [AllowAnonymous]
+ 
         [HttpPost("add-user-role", Name = "add-user-role")]
         [SwaggerOperation(Summary = "add user to role")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Role", Type = typeof(RoleResponse))]
@@ -51,7 +52,7 @@ namespace TaskManager.Api.Controllers
 
 
 
-        [AllowAnonymous]
+   
         [HttpPut("remove-user-role", Name = "remove-user-role")]
         [SwaggerOperation(Summary = "remove user from role")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Role", Type = typeof(RoleResponse))]
@@ -66,7 +67,7 @@ namespace TaskManager.Api.Controllers
 
 
 
-        [AllowAnonymous]
+     
         [HttpPut("editRole", Name = "editRole")]
         [SwaggerOperation(Summary = "edit role")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Role", Type = typeof(RoleResponse))]
@@ -81,7 +82,7 @@ namespace TaskManager.Api.Controllers
 
 
 
-        [AllowAnonymous]
+     
         [HttpDelete("deleteRole", Name = "deleteRole")]
         [SwaggerOperation(Summary = "Delete role")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Role", Type = typeof(RoleResponse))]
@@ -96,7 +97,7 @@ namespace TaskManager.Api.Controllers
 
 
 
-        [AllowAnonymous]
+  
         [HttpGet("GetRoles", Name = "GetRoles")]
         [SwaggerOperation(Summary = "All roles")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Role", Type = typeof(RoleResponse))]
@@ -111,7 +112,6 @@ namespace TaskManager.Api.Controllers
 
 
 
-        [AllowAnonymous]
         [HttpGet("GetUserRoles", Name = "GetUserRoles")]
         [SwaggerOperation(Summary = "Get user Rles")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Roles")]

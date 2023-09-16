@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using TaskManager.Data.Interfaces;
 using TaskManager.Models.Dtos;
 using TaskManager.Models.Dtos.Request;
@@ -6,12 +7,14 @@ using TaskManager.Models.Entities;
 using TaskManager.Models.Enums;
 using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Interfaces;
+using Task = TaskManager.Models.Entities.Task;
 
 namespace TaskManager.Services.Implementations
 {
     public class AdminService : IAdminService
     {
 
+        private readonly IRepository<Project> _projectRepo;
         private readonly IRepository<ApplicationUser> _userRepo;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUnitOfWork _unitOfWork;
@@ -21,6 +24,7 @@ namespace TaskManager.Services.Implementations
             _unitOfWork = unitOfWork;
             _userManager = userManager;
             _userRepo = _unitOfWork.GetRepository<ApplicationUser>();
+            _projectRepo = _unitOfWork.GetRepository<Project>();
         }
 
 
@@ -93,6 +97,70 @@ namespace TaskManager.Services.Implementations
             return new SuccessResponse
             {
                 Success = true
+            };
+        }
+
+
+        public async Task<SuccessResponse> UsersProjectsWithTasks()
+        {
+            var projects = await _projectRepo.GetAllAsync(include: u => u.Include(u => u.Tasks));
+            if (!projects.Any())
+                throw new InvalidOperationException("No project found");
+
+            var result = projects.Select(u => new Project
+            {
+                Name = u.Name,
+                Description = u.Description,
+                Tasks = u.Tasks.Select(u => new Task
+                {
+                    Title = u.Title,
+                    Description = u.Description,
+                    Priority = u.Priority,
+                    DueDate = DateTime.Parse(u.DueDate.ToString("dd MMMM yyyy HH:mm:ss")),
+                    Status = u.Status,
+                }).ToList()
+            });
+
+            return new SuccessResponse
+            {
+                Success = true,
+                Data = result
+            };
+        }
+
+
+        public async Task<SuccessResponse> UserProjectsWithTasks(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if(user == null)
+                throw new InvalidOperationException("User Not Found");
+
+            var projects = await _projectRepo.GetAllAsync(include: u => u.Include(u => u.Tasks));
+            if (!projects.Any())
+                throw new InvalidOperationException("No project found");
+
+            var result = projects.Where(u => u.UserId.ToString() == user.Id.ToString()).ToList();
+            if(!result.Any())
+                throw new InvalidOperationException("User Projects Not Found");
+
+            var res = result.Select(u => new Project
+            {
+                Name = u.Name,
+                Description = u.Description,
+                Tasks = u.Tasks.Select(u => new Task
+                {
+                    Title = u.Title,
+                    Description = u.Description,
+                    Priority = u.Priority,
+                    DueDate = DateTime.Parse(u.DueDate.ToString("dd MMMM yyyy HH:mm:ss")),
+                    Status = u.Status,
+                }).ToList()
+            });
+
+            return new SuccessResponse
+            {
+                Success = true,
+                Data = res
             };
         }
     }

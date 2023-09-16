@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using TaskManager.Data.Interfaces;
+using TaskManager.Models.Dtos.Request;
 using TaskManager.Models.Entities;
 using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Interfaces;
@@ -123,22 +124,5 @@ namespace TaskManager.Services.Implementations
     }
 
 
-    public class RoleClaimRequest
-    {
-        public string Role { get; set; }
-        public string ClaimType { get; set; }
-    }
-
-    public class RoleClaimResponse
-    {
-        public string Role { get; set; }
-        public string ClaimType { get; set; }
-    }
-
-    public class UpdateRoleClaimsDto
-    {
-        public string Role { get; set; }
-        public string ClaimType { get; set; }
-        public string NewClaim { get; set; }
-    }
+    
 }

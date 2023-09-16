@@ -33,8 +33,7 @@ namespace TaskManager.Data.Context
                .HasMany(project => project.Tasks)
                .WithOne(task => task.Project)
                .HasForeignKey(task => task.ProjectId)
-               .IsRequired(false)
-               .OnDelete(DeleteBehavior.SetNull);
+               .OnDelete(DeleteBehavior.Cascade);
 
 
             modelBuilder.Entity<UserTask>()

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
-using System.Threading.Tasks;
 using TaskManager.Data.Interfaces;
 using TaskManager.Models.Dtos.Request;
 using TaskManager.Models.Dtos.Response;
@@ -36,18 +35,19 @@ namespace TaskManager.Services.Implementations
         }
 
 
-        public async Task<CreateTaskResponse> CreateTask(string userId, CreateTaskRequest request)
+        public async Task<SuccessResponse> CreateTask(string userId, CreateTaskRequest request)
         {
+
             var user = await _userRepo.GetSingleByAsync(u => u.Id.ToString() == userId, include: u => u.Include(u => u.Projects));
             if (user == null)
                 throw new InvalidOperationException("User Not Found");
 
-            var project = await _projectRepo.GetSingleByAsync(p => p.Equals(request.ProjectId));
+            var project = await _projectRepo.GetSingleByAsync(p => p.Id.ToString() == request.ProjectId, include: u => u.Include(u => u.Tasks));
             if (project == null)
                 throw new InvalidOperationException("Project does not exist");
 
             if (project.UserId != user.Id)
-                throw new InvalidOperationException("Youn cannot add task to this project");
+                throw new InvalidOperationException("You cannot add task to this project");
 
             var existingTile = project.Tasks.Any(u => u.Title == request.Title);
             if (existingTile)
@@ -58,34 +58,32 @@ namespace TaskManager.Services.Implementations
             {
                 case (int)Priority.Low:
                     priority = Priority.Low;
-                    return null;
+                    break;
 
                 case (int)Priority.Medium:
                     priority = Priority.Medium;
-                    return null;
+                    break;
 
                 case (int)Priority.High:
                     priority = Priority.High;
-                    return null;
+                    break;
             }
 
             var newTask = new Task
             {
-                Id = Guid.NewGuid(),
                 Title = request.Title,
                 Description = request.Description,
                 DueDate = DateTime.Parse(request.DueDate),
                 Priority = priority,
+                Status = Status.Pending,
                 ProjectId = project.Id,
             };
 
             await _taskRepo.AddAsync(newTask);
-            return new CreateTaskResponse
+            return new SuccessResponse
             {
-                Message = "Task Created",
-                Status = HttpStatusCode.Created,
                 Success = true,
-                Data = newTask,
+                Data = newTask
             };
         }
 
@@ -134,11 +132,15 @@ namespace TaskManager.Services.Implementations
         }
 
 
-        public async Task<UpdateTaskResponse> UpdateStatus(UpdateStatusRequest request)
+        public async Task<UpdateTaskResponse> UpdateStatus(string userId, UpdateStatusRequest request)
         {
-            var task = await _taskRepo.GetSingleByAsync(c => c.Id.ToString() == request.taskId);
+            var project = await _projectRepo.GetSingleByAsync(user => user.UserId.ToString() == userId, include: u => u.Include(u => u.Tasks));
+            if (project == null)
+                throw new InvalidOperationException("Project does not exist");
+
+            var task = project.Tasks.Where(u => u.Id.ToString() == request.TaskId).FirstOrDefault();
             if (task == null)
-                throw new InvalidOperationException("Task does not exist");
+                throw new InvalidOperationException("User does not exist");
 
 
             switch (request.Status)
@@ -146,17 +148,16 @@ namespace TaskManager.Services.Implementations
                 case (int)Status.InProgress:
                     task.Status = Status.InProgress;
                     await _taskRepo.UpdateAsync(task);
-                    return null;
+                    break;
 
                 case (int)Status.Pending:
                     task.Status = Status.Pending;
                     await _taskRepo.UpdateAsync(task);
-                    return null;
+                    break;
 
                 case (int)Status.Completed:
                     task.Status = Status.Completed;
                     await _taskRepo.UpdateAsync(task);
-
                     break;
             }
 
@@ -171,29 +172,31 @@ namespace TaskManager.Services.Implementations
         }
 
 
-        public async Task<UpdateTaskResponse> UpdatePriority(UpdatePriorityRequest request)
+        public async Task<UpdateTaskResponse> UpdatePriority(string userId, UpdatePriorityRequest request)
         {
-            var task = await _taskRepo.GetSingleByAsync(c => c.Id.ToString() == request.taskId);
-            if (task == null)
-                throw new InvalidOperationException("Task does not exist");
+            var project = await _projectRepo.GetSingleByAsync(user => user.UserId.ToString() == userId, include: u => u.Include(u => u.Tasks));
+            if (project == null)
+                throw new InvalidOperationException("Project does not exist");
 
+            var task = project.Tasks.Where(u => u.Id.ToString() == request.TaskId).FirstOrDefault();
+            if (task == null)
+                throw new InvalidOperationException("User does not exist");
 
             switch (request.Priority)
             {
                 case (int)Priority.Low:
                     task.Priority = Priority.Low;
                     await _taskRepo.UpdateAsync(task);
-                    return null;
+                    break;
 
                 case (int)Priority.Medium:
                     task.Priority = Priority.Medium;
                     await _taskRepo.UpdateAsync(task);
-                    return null;
+                    break;
 
                 case (int)Priority.High:
                     task.Status = Status.Completed;
                     await _taskRepo.UpdateAsync(task);
-
                     break;
             }
 
@@ -207,19 +210,18 @@ namespace TaskManager.Services.Implementations
             };
         }
 
-
-        public async System.Threading.Tasks.Task AllTask()
+        public async Task<bool> AllTask()
         {
-            var tasks = await _taskRepo.GetAllAsync(include: u=> u.Include(u=> u.UserTasks));
-            if(tasks == null)
+            var tasks = await _taskRepo.GetAllAsync(include: u => u.Include(u => u.UserTasks));
+            if (tasks == null)
                 throw new InvalidOperationException("No task Found");
 
-            var results = tasks.Where(u=> u.DueDate == u.DueDate.AddHours(-48));
-            foreach(var task in results)
+            var results = tasks.Where(u => u.DueDate == u.DueDate.AddHours(-48));
+            foreach (var task in results)
             {
                 await _notificationService.CreateNotification(task, (int)NotificationType.DueDateReminder);
             }
+            return true;
         }
-
     }
 }

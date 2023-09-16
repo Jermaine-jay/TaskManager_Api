@@ -6,11 +6,11 @@ namespace TaskManager.Services.Interfaces
 {
     public interface ITaskService
     {
-        Task<CreateTaskResponse> CreateTask(string userId, CreateTaskRequest request);
+        Task<SuccessResponse> CreateTask(string userId, CreateTaskRequest request);
         Task<SuccessResponse> UpdateTask(string userId, UpdateTaskRequest request);
-        Task<UpdateTaskResponse> UpdatePriority(UpdatePriorityRequest request);
-        Task<UpdateTaskResponse> UpdateStatus(UpdateStatusRequest request);
+        Task<UpdateTaskResponse> UpdatePriority(string userId, UpdatePriorityRequest request);
+        Task<UpdateTaskResponse> UpdateStatus(string userId, UpdateStatusRequest request);
         Task<SuccessResponse> DeleteTask(string taskId, string userId);
-        System.Threading.Tasks.Task AllTask();
+        Task<bool> AllTask();
     }
 }

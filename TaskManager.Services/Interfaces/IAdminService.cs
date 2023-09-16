@@ -11,5 +11,8 @@ namespace TaskManager.Services.Interfaces
         Task<ApplicationUserDto> GetUser(string userId);
         Task<SuccessResponse> LockUser(LockUserRequest request);
         Task<SuccessResponse> DeleteUser(string userId);
+        Task<SuccessResponse> UserProjectsWithTasks(string userId);
+
+        Task<SuccessResponse> UsersProjectsWithTasks();
     }
 }

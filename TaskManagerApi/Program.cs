@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.OpenApi.Models;
 using TaskManager.Api.Extensions;
 using TaskManager.Data.Seeds;
@@ -61,14 +62,22 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRouting();
 app.ConfigureException(builder.Environment);
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.All
+});
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseRouting();
+app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
 app.MapControllers();
+app.UseMiddleware<ApplicationMiddleware>();
 
-await app.SeedRole();
+/*await app.SeedRole();
+await app.SeededUserAsync();*/
+//await app.ProjectSeeder();
 
 app.Run();

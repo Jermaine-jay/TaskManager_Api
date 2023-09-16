@@ -15,7 +15,7 @@ namespace TaskManager.Api.Extensions
 
         public async Task InvokeAsync(HttpContext context, ITaskService service)
         {
-            await service.AllTask();
+            //await service.AllTask();
            
             await _next(context);
         }
