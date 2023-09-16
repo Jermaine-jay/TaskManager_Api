@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using TaskManager.Models.Dtos.Request;
 using TaskManager.Services.Implementations;
@@ -9,6 +10,7 @@ namespace TaskManager.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RoleClaimController : ControllerBase
     {
         private readonly IRoleClaimService _userClaimsService;

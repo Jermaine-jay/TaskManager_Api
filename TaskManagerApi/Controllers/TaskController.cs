@@ -12,7 +12,7 @@ namespace TaskManager.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class TaskController : ControllerBase
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -26,7 +26,7 @@ namespace TaskManager.Api.Controllers
 
 
 
-        [AllowAnonymous]
+    
         [HttpPost("create-task", Name = "create-task")]
         [SwaggerOperation(Summary = "Create new task")]
         [SwaggerResponse(StatusCodes.Status201Created, Description = "Task", Type = typeof(CreateTaskResponse))]
@@ -43,7 +43,7 @@ namespace TaskManager.Api.Controllers
         }
 
 
-        [AllowAnonymous]
+   
         [HttpDelete("delete-task", Name = "delete-task")]
         [SwaggerOperation(Summary = "delete a task")]
         [SwaggerResponse(StatusCodes.Status201Created, Description = "Task", Type = typeof(SuccessResponse))]
@@ -57,7 +57,7 @@ namespace TaskManager.Api.Controllers
         }
 
 
-        [AllowAnonymous]
+      
         [HttpPut("update-task", Name = "update-task")]
         [SwaggerOperation(Summary = "update a task")]
         [SwaggerResponse(StatusCodes.Status201Created, Description = "Task", Type = typeof(SuccessResponse))]
@@ -71,7 +71,7 @@ namespace TaskManager.Api.Controllers
         }
 
 
-        [AllowAnonymous]
+    
         [HttpPut("update-priority", Name = "update-priority")]
         [SwaggerOperation(Summary = "update task priority")]
         [SwaggerResponse(StatusCodes.Status201Created, Description = "Tak", Type = typeof(SuccessResponse))]
@@ -86,7 +86,6 @@ namespace TaskManager.Api.Controllers
         }
 
 
-        [AllowAnonymous]
         [HttpPut("update-status", Name = "update-status")]
         [SwaggerOperation(Summary = "update task status")]
         [SwaggerResponse(StatusCodes.Status201Created, Description = "Tak", Type = typeof(SuccessResponse))]
