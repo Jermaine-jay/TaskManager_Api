@@ -9,7 +9,7 @@ namespace TaskManager.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Policy = "Authorization")]
     public class RoleController : ControllerBase
     {
         private readonly IRoleService _roleservice;

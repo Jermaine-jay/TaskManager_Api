@@ -32,15 +32,6 @@ namespace TaskManager.Data.Seeds
                     await context.Projects.AddRangeAsync(GetProject(jo));
                     await context.SaveChangesAsync();
                 }
-
-               /* if(!task)
-                {
-                    foreach(var item in GetTasks())
-                    {
-                        await context.Tasks.AddRangeAsync(GetTasks())
-                        await context.SaveChangesAsync();
-                    }
-                }*/
             }
         }
 

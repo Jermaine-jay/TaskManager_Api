@@ -27,7 +27,7 @@ namespace TaskManager.Data.Seeds
                 var admin = await roleManager.FindByNameAsync(UserType.Admin.GetStringValue());
                 var role = await roleManager.FindByNameAsync(UserType.SuperAdmin.GetStringValue());
 
-                if (claims)
+                if (!claims)
                 {
                     await context.RoleClaims.AddRangeAsync(UserClaim(user));
                     await context.RoleClaims.AddRangeAsync(AdminClaim(admin));
