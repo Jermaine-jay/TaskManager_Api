@@ -12,7 +12,7 @@ namespace TaskManager.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Policy = "Authorization")]
     public class TaskController : ControllerBase
     {
         private readonly IHttpContextAccessor _httpContextAccessor;

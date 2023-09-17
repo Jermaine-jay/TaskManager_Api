@@ -10,7 +10,7 @@ namespace TaskManager.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class RoleClaimController : ControllerBase
     {
         private readonly IRoleClaimService _userClaimsService;

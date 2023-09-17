@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using TaskManager.Data.Context;
 using TaskManager.Models.Entities;
+using TaskManager.Models.Enums;
 
 namespace TaskManager.Data.Seeds
 {
@@ -16,19 +17,22 @@ namespace TaskManager.Data.Seeds
 
             using (var scope = app.ApplicationServices.CreateScope())
             {
-                UserManager<ApplicationUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                ApplicationUser jo = await userManager.FindByEmailAsync("Jermaine.jay00@gmail.com");
+
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
 
                 context.Database.EnsureCreated();
-                var project = context.Projects.Any();
-                var task = context.Tasks.Any();
+                var claims = context.RoleClaims.Any();
 
+                var user = await roleManager.FindByNameAsync(UserType.User.GetStringValue());
+                var admin = await roleManager.FindByNameAsync(UserType.Admin.GetStringValue());
+                var role = await roleManager.FindByNameAsync(UserType.SuperAdmin.GetStringValue());
 
-                /*if (!project)
+                if (claims)
                 {
-                    await context.Projects.AddRangeAsync(GetProject(jo));
+                    await context.RoleClaims.AddRangeAsync(UserClaim(user));
+                    await context.RoleClaims.AddRangeAsync(AdminClaim(admin));
                     await context.SaveChangesAsync();
-                }*/
+                }
             }
         }
 
@@ -125,7 +129,51 @@ namespace TaskManager.Data.Seeds
                 },new ApplicationRoleClaim()
                 {
                     RoleId = role.Id,
-                    ClaimType = "all-users-projects",
+                    ClaimType = "create-role",
+                },new ApplicationRoleClaim()
+                {
+                    RoleId = role.Id,
+                    ClaimType = "add-user-role",
+                },new ApplicationRoleClaim()
+                {
+                    RoleId = role.Id,
+                    ClaimType = "remove-user-role",
+                },new ApplicationRoleClaim()
+                {
+                    RoleId = role.Id,
+                    ClaimType = "edit-role",
+                },new ApplicationRoleClaim()
+                {
+                    RoleId = role.Id,
+                    ClaimType = "delete-role",
+                },new ApplicationRoleClaim()
+                {
+                    RoleId = role.Id,
+                    ClaimType = "get-roles",
+                },new ApplicationRoleClaim()
+                {
+                    RoleId = role.Id,
+                    ClaimType = "get-user-roles",
+                },new ApplicationRoleClaim()
+                {
+                    RoleId = role.Id,
+                    ClaimType = "get-claims",
+                },new ApplicationRoleClaim()
+                {
+                    RoleId = role.Id,
+                    ClaimType = "add-claim",
+                },new ApplicationRoleClaim()
+                {
+                    RoleId = role.Id,
+                    ClaimType = "delete-claim",
+                },new ApplicationRoleClaim()
+                {
+                    RoleId = role.Id,
+                    ClaimType = "edit-claim",
+                },new ApplicationRoleClaim()
+                {
+                    RoleId = role.Id,
+                    ClaimType = "get-all-routes",
                 },
 
             };

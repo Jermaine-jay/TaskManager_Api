@@ -11,6 +11,7 @@ namespace TaskManager.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "Authorization")]
     public class RoutesController : ControllerBase
     {
         private readonly IEnumerable<EndpointDataSource> _endpointSources;

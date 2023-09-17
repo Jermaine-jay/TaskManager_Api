@@ -76,8 +76,9 @@ app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 app.MapControllers();
 app.UseMiddleware<ApplicationMiddleware>();
 
-/*await app.SeedRole();
-await app.SeededUserAsync();*/
-//await app.ProjectSeeder();
+await app.SeedRole();
+await app.SeededUserAsync();
+await app.ProjectSeeder();
+await app.ClaimSeeder();
 
 app.Run();

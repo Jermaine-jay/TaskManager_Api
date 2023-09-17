@@ -23,7 +23,7 @@ namespace TaskManager.Api.Controllers
 
 
  
-        [HttpPost("Create-role", Name = "Create-role")]
+        [HttpPost("create-role", Name = "create-role")]
         [SwaggerOperation(Summary = "Creates role")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Role", Type = typeof(RoleResponse))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "Role already exists", Type = typeof(ErrorResponse))]
@@ -68,7 +68,7 @@ namespace TaskManager.Api.Controllers
 
 
      
-        [HttpPut("editRole", Name = "editRole")]
+        [HttpPut("edit-role", Name = "edit-role")]
         [SwaggerOperation(Summary = "edit role")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Role", Type = typeof(RoleResponse))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "Role does not exists", Type = typeof(ErrorResponse))]
@@ -83,7 +83,7 @@ namespace TaskManager.Api.Controllers
 
 
      
-        [HttpDelete("deleteRole", Name = "deleteRole")]
+        [HttpDelete("delete-role", Name = "delete-role")]
         [SwaggerOperation(Summary = "Delete role")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Role", Type = typeof(RoleResponse))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "Role does not exists", Type = typeof(ErrorResponse))]
@@ -98,7 +98,7 @@ namespace TaskManager.Api.Controllers
 
 
   
-        [HttpGet("GetRoles", Name = "GetRoles")]
+        [HttpGet("get-roles", Name = "Get-roles")]
         [SwaggerOperation(Summary = "All roles")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Role", Type = typeof(RoleResponse))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = " ", Type = typeof(ErrorResponse))]
@@ -112,7 +112,7 @@ namespace TaskManager.Api.Controllers
 
 
 
-        [HttpGet("GetUserRoles", Name = "GetUserRoles")]
+        [HttpGet("get-user-roles", Name = "get-User-roles")]
         [SwaggerOperation(Summary = "Get user Rles")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Roles")]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = " ", Type = typeof(ErrorResponse))]
