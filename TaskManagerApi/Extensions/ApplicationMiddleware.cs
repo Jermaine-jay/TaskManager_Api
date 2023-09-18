@@ -2,22 +2,20 @@
 
 namespace TaskManager.Api.Extensions
 {
-    public class ApplicationMiddleware : IMiddleware
+    public class ApplicationMiddleware
     {
 
         private readonly RequestDelegate _next;
-        private readonly ITaskService _service;
 
-        public ApplicationMiddleware(RequestDelegate next, ITaskService service)
+        public ApplicationMiddleware(RequestDelegate next)
         {
             _next = next;
-            _service = service;
         }
 
-        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+        public async Task InvokeAsync(HttpContext context, RequestDelegate next, ITaskService service)
         {
      
-            await _service.AllTask();
+            await service.AllTask();
             await _next(context);
         }
     }

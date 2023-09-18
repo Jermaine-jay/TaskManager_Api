@@ -43,7 +43,6 @@ namespace TaskManager.Api.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork<ApplicationDbContext>>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IRoleClaimService, RoleClaimService>();
-            services.AddTransient<ApplicationMiddleware>();
         }
 
         public static void ConfigureIISIntegration(this IServiceCollection services) =>
