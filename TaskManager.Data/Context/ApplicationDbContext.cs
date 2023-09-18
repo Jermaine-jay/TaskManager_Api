@@ -49,17 +49,17 @@ namespace TaskManager.Data.Context
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ApplicationUser>()        
-                 .HasMany(n => n.Notifications)
-                 .WithOne(u => u.User)
-                 .HasForeignKey(n => n.UserId)
-                 .OnDelete(DeleteBehavior.Restrict);
+                .HasMany(n => n.Notifications)
+                .WithOne(u => u.User)
+                .HasForeignKey(n => n.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
 
-                modelBuilder.Entity<Project>()
-                    .HasMany(task => task.Tasks)
-                    .WithOne(project => project.Project)
-                    .HasForeignKey(t => t.ProjectId)
-                    .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Project>()
+                .HasMany(task => task.Tasks)
+                .WithOne(project => project.Project)
+                .HasForeignKey(t => t.ProjectId)
+                .OnDelete(DeleteBehavior.SetNull);
 
 
             modelBuilder.Entity<ApplicationRole>(b =>

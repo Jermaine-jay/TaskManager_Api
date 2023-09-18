@@ -60,9 +60,9 @@ namespace TaskManager.Services.Implementations
                 Active = true,
                 UserType = UserType.User,
                 Projects = new List<Project>(),
-                EmailConfirmed = true,
-                
+                EmailConfirmed = true,              
             };
+
 
             IdentityResult result = await _userManager.CreateAsync(user, request.Password);
             if (!result.Succeeded)

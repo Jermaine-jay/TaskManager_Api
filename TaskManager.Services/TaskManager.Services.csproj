@@ -29,8 +29,6 @@
 
   <ItemGroup>
     <Folder Include="Configurations\Cache\Security\" />
-    <Folder Include="Configurations\Otp\" />
-    <Folder Include="Configurations\Redis\" />
   </ItemGroup>
 
   <ItemGroup>
