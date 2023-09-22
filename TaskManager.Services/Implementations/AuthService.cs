@@ -59,8 +59,7 @@ namespace TaskManager.Services.Implementations
                 PhoneNumber = request.PhoneNumber,
                 Active = true,
                 UserType = UserType.User,
-                Projects = new List<Project>(),
-                EmailConfirmed = true,              
+                Projects = new List<Project>(),          
             };
 
 
@@ -240,10 +239,9 @@ namespace TaskManager.Services.Implementations
             externalAuthDto.Provider = "Google";
             var settings = new GoogleJsonWebSignature.ValidationSettings()
             {
-                Audience = new List<string>() { _configuration.GetSection("Authentication:Google:clientId").Value }
+                Audience = new List<string>() { _configuration.GetSection("Authentication:Google:ClientId").Value }
             };
             var payload = await GoogleJsonWebSignature.ValidateAsync(externalAuthDto.IdToken, settings);
-
 
             if (payload == null)
                 throw new InvalidOperationException("Invalid Payload");
@@ -255,10 +253,10 @@ namespace TaskManager.Services.Implementations
                 user = await _userManager.FindByEmailAsync(payload.Email);
                 if (user == null)
                 {
-                    user = new ApplicationUser
+                    var newuser = new ApplicationUser
                     {
                         Email = payload.Email,
-                        UserName = payload.Name,
+                        UserName = payload.Email,
                         FirstName = payload.GivenName,
                         LastName = payload.FamilyName,
                         Active = true,
@@ -266,11 +264,11 @@ namespace TaskManager.Services.Implementations
                         EmailConfirmed = true,
                     };
 
-                    await _userManager.CreateAsync(user);
+                    await _userManager.CreateAsync(newuser);
                     var role = UserType.User.GetStringValue();
 
-                    await _userManager.AddToRoleAsync(user,role);
-                    await _userManager.AddLoginAsync(user, info);
+                    await _userManager.AddToRoleAsync(newuser, role);
+                    await _userManager.AddLoginAsync(newuser, info);
 
                 }
                 else
