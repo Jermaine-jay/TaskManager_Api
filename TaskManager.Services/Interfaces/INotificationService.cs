@@ -8,5 +8,7 @@ namespace TaskManager.Services.Interfaces
         Task<object> ToggleNotification(string notiId);
         Task<object> CreateNotification(Task? task, int type);
         Task<SuccessResponse> GetNotifications(string userId);
+
+        Task<bool> CreateReminderNotification(CancellationToken stoppingToken);
     }
 }

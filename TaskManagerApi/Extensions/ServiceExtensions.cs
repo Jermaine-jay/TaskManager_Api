@@ -35,7 +35,6 @@ namespace TaskManager.Api.Extensions
             services.AddScoped<IAdminService, AdminService>();
             services.AddScoped<ITaskService, TaskService>();
             services.AddScoped<IProjectService, ProjectService>();
-            services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IServiceFactory, ServiceFactory>();
             services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<IOtpService, OtpService>();
@@ -43,6 +42,8 @@ namespace TaskManager.Api.Extensions
             services.AddScoped<IUnitOfWork, UnitOfWork<ApplicationDbContext>>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IRoleClaimService, RoleClaimService>();
+            services.AddSingleton<INotificationService, NotificationService>();
+            services.AddHostedService<ConsumeScopedServiceHostedService>();
         }
 
         public static void ConfigureIISIntegration(this IServiceCollection services) =>

@@ -12,10 +12,9 @@ namespace TaskManager.Api.Extensions
             _next = next;
         }
 
-        public async Task InvokeAsync(HttpContext context, RequestDelegate next, ITaskService service)
+        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
      
-            await service.AllTask();
             await _next(context);
         }
     }

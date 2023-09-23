@@ -74,7 +74,6 @@ app.UseAuthorization();
 app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
 app.MapControllers();
-app.UseMiddleware<ApplicationMiddleware>();
 
 await app.SeedRole();
 await app.SeededUserAsync();

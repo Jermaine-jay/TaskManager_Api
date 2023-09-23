@@ -11,6 +11,5 @@ namespace TaskManager.Services.Interfaces
         Task<UpdateTaskResponse> UpdatePriority(string userId, UpdatePriorityRequest request);
         Task<UpdateTaskResponse> UpdateStatus(string userId, UpdateStatusRequest request);
         Task<SuccessResponse> DeleteTask(string taskId, string userId);
-        Task<bool> AllTask();
     }
 }

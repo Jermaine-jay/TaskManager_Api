@@ -210,18 +210,6 @@ namespace TaskManager.Services.Implementations
             };
         }
 
-        public async Task<bool> AllTask()
-        {
-            var tasks = await _taskRepo.GetAllAsync(include: u => u.Include(u => u.UserTasks));
-            if (tasks == null)
-                throw new InvalidOperationException("No task Found");
-
-            var results = tasks.Where(u => u.DueDate == u.DueDate.AddHours(-48));
-            foreach (var task in results)
-            {
-                await _notificationService.CreateNotification(task, (int)NotificationType.DueDateReminder);
-            }
-            return true;
-        }
+       
     }
 }

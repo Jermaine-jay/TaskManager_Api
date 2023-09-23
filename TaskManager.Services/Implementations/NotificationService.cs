@@ -11,23 +11,17 @@ namespace TaskManager.Services.Implementations
 {
     public class NotificationService : INotificationService
     {
-        private readonly IServiceFactory _serviceFactory;
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IRepository<ApplicationUser> _userRepo;
         private readonly IRepository<Task> _taskRepo;
-        private readonly IRepository<Project> _projectRepo;
         private readonly IRepository<Notification> _noteRepo;
         private readonly IRepository<UserTask> _userTaskRepo;
         private readonly IUnitOfWork _unitOfWork;
 
 
-        public NotificationService(IServiceFactory serviceFactory, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
+        public NotificationService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _serviceFactory = serviceFactory;
-            _userManager = userManager;
             _taskRepo = _unitOfWork.GetRepository<Task>();
-            _projectRepo = _unitOfWork.GetRepository<Project>();
             _userRepo = _unitOfWork.GetRepository<ApplicationUser>();
             _noteRepo = _unitOfWork.GetRepository<Notification>();
             _userTaskRepo = _unitOfWork.GetRepository<UserTask>();
@@ -37,33 +31,31 @@ namespace TaskManager.Services.Implementations
         public async Task<object> CreateNotification(Task? task, int type)
         {
 
-            var userTask = await _userTaskRepo.GetByAsync(u => u.TaskId.Equals(task.Id));
-            if (userTask == null)
-                throw new InvalidOperationException("User Not Found");
-
-
             var existingtask = await _taskRepo.GetSingleByAsync(t => t.Id.ToString() == task.Id.ToString(), include: u => u.Include(e => e.Project), tracking: true);
             if (existingtask != null)
                 throw new InvalidOperationException("Task Not Found");
 
 
+            var userTask = await _userTaskRepo.GetByAsync(u => u.TaskId.Equals(task.Id));
+            if (userTask == null)
+                throw new InvalidOperationException("User Not Found");
+
             var noteMsg = await Message(type, task);
-            var newNote = new Notification
-            {
-                Type = NotificationType.DueDateReminder,
-                Message = noteMsg,
-                Timestamp = DateTime.Now,
-                Read = false,
-            };
 
             foreach (var user in userTask)
             {
-                var result = await _userRepo.GetSingleByAsync(u => u.Id.Equals(user.UserId), include: u => u.Include(e => e.Notifications));
-                result.Notifications.Add(newNote);
+                var newNote = new Notification
+                {
+                    Type = NotificationType.DueDateReminder,
+                    Message = noteMsg,
+                    Timestamp = DateTime.Now,
+                    Read = false,
+                    UserId = user.UserId
+                };
+                await _noteRepo.AddAsync(newNote);
             }
 
-            await _noteRepo.AddAsync(newNote);
-            return newNote;
+            return noteMsg;
         }
 
 
@@ -134,6 +126,20 @@ namespace TaskManager.Services.Implementations
 
                 })
             };
+        }
+
+        public async Task<bool> CreateReminderNotification(CancellationToken stoppingToken)
+        {
+            var tasks = await _taskRepo.GetAllAsync(include: u => u.Include(u => u.UserTasks));
+            if (tasks == null)
+                throw new InvalidOperationException("No task Found");
+
+            var results = tasks.Where(u => u.DueDate == u.DueDate.AddHours(-48));
+            foreach (var task in results)
+            {
+                await CreateNotification(task, (int)NotificationType.DueDateReminder);
+            }
+            return true;
         }
     }
 }

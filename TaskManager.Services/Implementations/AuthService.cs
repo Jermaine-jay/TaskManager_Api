@@ -1,8 +1,6 @@
 ﻿using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using StackExchange.Redis;
-using System.ComponentModel.DataAnnotations;
 using System.Net;
 using TaskManager.Models.Dtos.Request;
 using TaskManager.Models.Dtos.Response;
@@ -59,7 +57,7 @@ namespace TaskManager.Services.Implementations
                 PhoneNumber = request.PhoneNumber,
                 Active = true,
                 UserType = UserType.User,
-                Projects = new List<Project>(),          
+                Projects = new List<Project>(),
             };
 
 
@@ -152,7 +150,7 @@ namespace TaskManager.Services.Implementations
                 throw new InvalidOperationException("Invalid username or password");
             }
 
-            if(user.AccessFailedCount == 5)
+            if (user.AccessFailedCount == 5)
             {
                 DateTimeOffset lockoutEnd = DateTimeOffset.UtcNow.AddSeconds(300);
                 user.LockoutEnd = lockoutEnd;
