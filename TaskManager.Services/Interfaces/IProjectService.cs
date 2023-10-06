@@ -7,6 +7,7 @@ namespace TaskManager.Services.Interfaces
     public interface IProjectService
     {
         Task<SuccessResponse> DeleteProject(string userId, string projectId);
+        Task<SuccessResponse> DeleteProjects(string userId);
         Task<CreateTaskResponse> CreateProject(string userId, CreateProjectRequest request);
         Task<SuccessResponse> UpdateProject(string userId, UpdateProjectRequest request);
     }

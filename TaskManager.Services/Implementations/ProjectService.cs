@@ -16,8 +16,6 @@ namespace TaskManager.Services.Implementations
 {
     public class ProjectService : IProjectService
     {
-
-        private readonly IServiceFactory _serviceFactory;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IRepository<ApplicationUser> _userRepo;
         private readonly IRepository<Task> _taskRepo;
@@ -25,10 +23,9 @@ namespace TaskManager.Services.Implementations
         private readonly IUnitOfWork _unitOfWork;
 
 
-        public ProjectService(IServiceFactory serviceFactory, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
+        public ProjectService(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
         {
             _unitOfWork = unitOfWork;
-            _serviceFactory = serviceFactory;
             _userManager = userManager;
             _taskRepo = _unitOfWork.GetRepository<Task>();
             _projectRepo = _unitOfWork.GetRepository<Project>();
@@ -76,6 +73,23 @@ namespace TaskManager.Services.Implementations
                 throw new InvalidOperationException("Project does not exist");
 
             await _projectRepo.DeleteAsync(project);
+            return new SuccessResponse
+            {
+                Success = true
+            };
+        }
+
+        public async Task<SuccessResponse> DeleteProjects(string userId)
+        {
+            var user = await _userRepo.GetSingleByAsync(user => user.Id.ToString() == userId, include: u => u.Include(u => u.Projects));
+            if (user == null)
+                throw new InvalidOperationException("User does not exist");
+
+            var itemList = user.Projects.ToList()??
+                throw new InvalidOperationException("No project");
+
+            await System.Threading.Tasks.Task.WhenAll(itemList.Select( item => _projectRepo.DeleteAsync(item)));
+
             return new SuccessResponse
             {
                 Success = true

@@ -14,7 +14,6 @@ namespace TaskManager.Services.Implementations
 {
     public class TaskService : ITaskService
     {
-        private readonly IServiceFactory _serviceFactory;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IRepository<ApplicationUser> _userRepo;
         private readonly IRepository<Task> _taskRepo;
@@ -23,10 +22,9 @@ namespace TaskManager.Services.Implementations
         private readonly IUnitOfWork _unitOfWork;
 
 
-        public TaskService(IServiceFactory serviceFactory, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, INotificationService notificationService)
+        public TaskService(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork;
-            _serviceFactory = serviceFactory;
             _userManager = userManager;
             _taskRepo = _unitOfWork.GetRepository<Task>();
             _projectRepo = _unitOfWork.GetRepository<Project>();

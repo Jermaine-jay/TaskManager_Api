@@ -22,7 +22,7 @@ namespace TaskManager.Services.Implementations
         private readonly IUnitOfWork _unitOfWork;
 
 
-        public UserService(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, INotificationService notificationService)
+        public UserService(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
         {
             _unitOfWork = unitOfWork; 
             _userManager = userManager;
@@ -30,7 +30,7 @@ namespace TaskManager.Services.Implementations
             _projectRepo = _unitOfWork.GetRepository<Project>();
             _userRepo = _unitOfWork.GetRepository<ApplicationUser>();
             _userTaskRepo = _unitOfWork.GetRepository<UserTask>();
-            _notificationService = notificationService;
+           // _notificationService = notificationService;
         }
 
 

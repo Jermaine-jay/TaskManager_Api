@@ -27,6 +27,7 @@ namespace TaskManager.Api.Extensions
     {
         public static void RegisterServices(this IServiceCollection services)
         {
+            services.AddScoped<IUnitOfWork, UnitOfWork<ApplicationDbContext>>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IJwtAuthenticator, JwtAuthenticator>();
             services.AddScoped<IEmailService, EmailService>();
@@ -39,10 +40,9 @@ namespace TaskManager.Api.Extensions
             services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<IOtpService, OtpService>();
             services.AddScoped<IGenerateEmailPage, GenerateEmailPage>();
-            services.AddScoped<IUnitOfWork, UnitOfWork<ApplicationDbContext>>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IRoleClaimService, RoleClaimService>();
-            services.AddSingleton<INotificationService, NotificationService>();
+            services.AddScoped<INotificationService, NotificationService>();
             services.AddHostedService<ConsumeScopedServiceHostedService>();
         }
 

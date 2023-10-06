@@ -13,7 +13,7 @@ namespace TaskManager.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "Authorization")]
+    //[Authorize(Policy = "Authorization")]
     public class ProjectController : ControllerBase
     {
 
@@ -48,10 +48,10 @@ namespace TaskManager.Api.Controllers
         [SwaggerResponse(StatusCodes.Status201Created, Description = "Tak", Type = typeof(SuccessResponse))]
         [SwaggerResponse(StatusCodes.Status404NotFound, Description = "Project Not Found", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
-        public async Task<IActionResult> DeleteProject(string projectId)
+        public async Task<IActionResult> DeleteProject(string userId)
         {
-            string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
-            var response = await _projectService.DeleteProject(userId, projectId);
+            //string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
+            var response = await _projectService.DeleteProject(userId);
             return Ok(response);
         }
 
