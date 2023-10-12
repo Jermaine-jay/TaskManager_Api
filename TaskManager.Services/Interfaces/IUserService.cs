@@ -16,5 +16,6 @@ namespace TaskManager.Services.Interfaces
         Task<SuccessResponse> GetAllProject(string userId);
         Task<SuccessResponse> AddUserToTask(string userId, UserTaskRequest request);
         Task<SuccessResponse> AllProjectWithTask(string userId);
+        Task<SuccessResponse> PickTask(string userId, string taskId);
     }
 }

@@ -139,6 +139,20 @@ namespace TaskManager.Api.Controllers
         }
 
 
+        [HttpPost("pick-task", Name = "pick-task")]
+        [SwaggerOperation(Summary = "user picks a task")]
+        [SwaggerResponse(StatusCodes.Status201Created, Description = "user task", Type = typeof(SuccessResponse))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, Description = "User Not Found", Type = typeof(ErrorResponse))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, Description = "Task Not Found", Type = typeof(ErrorResponse))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
+        public async Task<IActionResult> PickTask(string taskId)
+        {
+            string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
+            var response = await _userService.PickTask(userId, taskId);
+            return Ok(response);
+        }
+
+
         [HttpGet("user-notifications", Name = "user-notifications")]
         [SwaggerOperation(Summary = "All user's notifications")]
         [SwaggerResponse(StatusCodes.Status201Created, Description = "Notifications", Type = typeof(SuccessResponse))]

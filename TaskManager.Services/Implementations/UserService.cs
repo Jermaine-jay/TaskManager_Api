@@ -22,7 +22,7 @@ namespace TaskManager.Services.Implementations
         private readonly IUnitOfWork _unitOfWork;
 
 
-        public UserService(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
+        public UserService(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, INotificationService notificationService)
         {
             _unitOfWork = unitOfWork; 
             _userManager = userManager;
@@ -30,7 +30,7 @@ namespace TaskManager.Services.Implementations
             _projectRepo = _unitOfWork.GetRepository<Project>();
             _userRepo = _unitOfWork.GetRepository<ApplicationUser>();
             _userTaskRepo = _unitOfWork.GetRepository<UserTask>();
-           // _notificationService = notificationService;
+           _notificationService = notificationService;
         }
 
 
@@ -221,6 +221,33 @@ namespace TaskManager.Services.Implementations
 
         }
 
-    }
 
+        public async Task<SuccessResponse> PickTask(string userId, string taskId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                throw new InvalidOperationException("User Not Found");
+
+            var task = await _taskRepo.GetSingleByAsync(u => u.Id.ToString() == taskId);
+            if (task == null)
+                throw new InvalidOperationException("Task does not exist");
+
+            var proj = await _projectRepo.GetAllAsync(include: u => u.Include(u => u.Tasks));
+            var project = proj.Where(u => u.Tasks.Any(u => u.Id == task.Id)).FirstOrDefault();
+        
+
+            var newUserTask = new UserTask
+            {
+                TaskId = task.Id,
+                User = user,
+            };
+
+            await _userTaskRepo.AddAsync(newUserTask);
+            return new SuccessResponse
+            {
+                Success = true
+            };
+
+        }
+    }
 }

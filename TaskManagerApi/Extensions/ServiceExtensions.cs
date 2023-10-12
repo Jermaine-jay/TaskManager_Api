@@ -141,6 +141,7 @@ namespace TaskManager.Api.Extensions
             });
         }
 
+
         public static void AddRedisCache(this IServiceCollection services, RedisConfig redisConfig)
         {
 
