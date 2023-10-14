@@ -30,7 +30,7 @@ namespace TaskManager.Api.Controllers
 
         [HttpPost("create-project", Name = "create-project")]
         [SwaggerOperation(Summary = "Create new project")]
-        [SwaggerResponse(StatusCodes.Status201Created, Description = "project", Type = typeof(CreateTaskResponse))]
+        [SwaggerResponse(StatusCodes.Status201Created, Description = "A New Project", Type = typeof(CreateTaskResponse))]
         [SwaggerResponse(StatusCodes.Status404NotFound, Description = "User Not Found", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "Project name already Exist", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
@@ -45,13 +45,13 @@ namespace TaskManager.Api.Controllers
 
         [HttpDelete("delete-project", Name = "delete-project")]
         [SwaggerOperation(Summary = "Delete a project")]
-        [SwaggerResponse(StatusCodes.Status201Created, Description = "Tak", Type = typeof(SuccessResponse))]
+        [SwaggerResponse(StatusCodes.Status201Created, Description = "true or false", Type = typeof(SuccessResponse))]
         [SwaggerResponse(StatusCodes.Status404NotFound, Description = "Project Not Found", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
-        public async Task<IActionResult> DeleteProject(string userId)
+        public async Task<IActionResult> DeleteProject(string projectId)
         {
-            //string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
-            var response = await _projectService.DeleteProject(userId);
+            string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
+            var response = await _projectService.DeleteProject(userId, projectId);
             return Ok(response);
         }
 

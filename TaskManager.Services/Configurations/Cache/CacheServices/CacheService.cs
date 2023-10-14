@@ -21,8 +21,7 @@ namespace TaskManager.Services.Configurations.Cache.CacheServices
             await _redis.StringSetAsync(key, stringifiedJson, absoluteExpireTime, When.Always).ConfigureAwait(true);
 
             if (cacheKeySets.HasValue)            
-                await _redis.SetAddAsync(cacheKeySets.Value.ToString(), key);
-            
+                await _redis.SetAddAsync(cacheKeySets.Value.ToString(), key);        
         }
 
 

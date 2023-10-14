@@ -22,7 +22,6 @@ using TaskManager.Services.Interfaces;
 
 namespace TaskManager.Api.Extensions
 {
-
     public static class ServiceExtensions
     {
         public static void RegisterServices(this IServiceCollection services)
