@@ -42,7 +42,7 @@ namespace TaskManager.Api.Extensions
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IRoleClaimService, RoleClaimService>();
             services.AddScoped<INotificationService, NotificationService>();
-            services.AddHostedService<ConsumeScopedServiceHostedService>();
+            services.AddSingleton<INotificationServiceFactory, NotificationServiceFactory>();
         }
 
         public static void ConfigureIISIntegration(this IServiceCollection services) =>

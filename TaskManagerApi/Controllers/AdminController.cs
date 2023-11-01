@@ -11,7 +11,7 @@ namespace TaskManager.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "Authorization")]
+    //[Authorize(Policy = "Authorization")]
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;
@@ -22,6 +22,7 @@ namespace TaskManager.Api.Controllers
         }
 
 
+        [AllowAnonymous]
         [HttpGet("all-users", Name = "all-users")]
         [SwaggerOperation(Summary = "Get All Registered Users")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Users", Type = typeof(ApplicationUserDto))]

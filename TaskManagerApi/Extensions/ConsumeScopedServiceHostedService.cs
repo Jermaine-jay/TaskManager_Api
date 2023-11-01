@@ -6,11 +6,13 @@ namespace TaskManager.Api.Extensions
     {
         private readonly ILogger<ConsumeScopedServiceHostedService> _logger;
 
-        public ConsumeScopedServiceHostedService(IServiceProvider services,
+        private readonly IServiceProvider _serviceProvider;
+
+        public ConsumeScopedServiceHostedService(IServiceProvider serviceProvider,
             ILogger<ConsumeScopedServiceHostedService> logger)
         {
-            Services = services;
             _logger = logger;
+            _serviceProvider = serviceProvider;
         }
 
         public IServiceProvider Services { get; }
@@ -34,8 +36,8 @@ namespace TaskManager.Api.Extensions
                     scope.ServiceProvider
                         .GetRequiredService<INotificationService>();
 
-                await scopedProcessingService.CreateReminderNotification(stoppingToken);
             }
+            //await _serviceProvider.GetService<INotificationServiceFactory>().Create().CreateReminderNotification(stoppingToken);
         }
 
         public override async Task StopAsync(CancellationToken stoppingToken)

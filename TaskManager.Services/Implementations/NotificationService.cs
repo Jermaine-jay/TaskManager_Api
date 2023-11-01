@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using TaskManager.Data.Interfaces;
 using TaskManager.Models.Entities;
 using TaskManager.Models.Enums;
@@ -16,11 +17,14 @@ namespace TaskManager.Services.Implementations
         private readonly IRepository<Notification> _noteRepo;
         private readonly IRepository<UserTask> _userTaskRepo;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IServiceProvider _serviceProvider;
 
 
-        public NotificationService(IUnitOfWork unitOfWork)
+        public NotificationService(IUnitOfWork unitOfWork, IServiceProvider serviceProvider)
         {
             _unitOfWork = unitOfWork;
+            _serviceProvider = serviceProvider;
+            //_unitOfWork = serviceProvider.GetService<IUnitOfWork>();
             _taskRepo = _unitOfWork.GetRepository<Task>();
             _userRepo = _unitOfWork.GetRepository<ApplicationUser>();
             _noteRepo = _unitOfWork.GetRepository<Notification>();

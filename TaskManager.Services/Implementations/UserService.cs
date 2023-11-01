@@ -15,14 +15,13 @@ namespace TaskManager.Services.Implementations
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IRepository<ApplicationUser> _userRepo;
-        private readonly INotificationService _notificationService;
         private readonly IRepository<Task> _taskRepo;
         private readonly IRepository<Project> _projectRepo;
         private readonly IRepository<UserTask> _userTaskRepo;
         private readonly IUnitOfWork _unitOfWork;
 
 
-        public UserService(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, INotificationService notificationService)
+        public UserService(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
         {
             _unitOfWork = unitOfWork; 
             _userManager = userManager;
@@ -30,7 +29,6 @@ namespace TaskManager.Services.Implementations
             _projectRepo = _unitOfWork.GetRepository<Project>();
             _userRepo = _unitOfWork.GetRepository<ApplicationUser>();
             _userTaskRepo = _unitOfWork.GetRepository<UserTask>();
-           _notificationService = notificationService;
         }
 
 
@@ -228,12 +226,12 @@ namespace TaskManager.Services.Implementations
             if (user == null)
                 throw new InvalidOperationException("User Not Found");
 
-            var task = await _taskRepo.GetSingleByAsync(u => u.Id.ToString() == taskId);
+            var task = await _taskRepo.GetSingleByAsync(u => u.Id.ToString() == taskId, include: u=> u.Include(u=> u.UserTasks));
             if (task == null)
                 throw new InvalidOperationException("Task does not exist");
-
-            var proj = await _projectRepo.GetAllAsync(include: u => u.Include(u => u.Tasks));
-            var project = proj.Where(u => u.Tasks.Any(u => u.Id == task.Id)).FirstOrDefault();
+           
+            var existinguser = task.UserTasks.Where(u=> u.UserId == user.Id ).FirstOrDefault()
+                ??throw new InvalidOperationException("User already has this task");
         
 
             var newUserTask = new UserTask

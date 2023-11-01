@@ -16,6 +16,9 @@ builder.Services.ConfigureCors();
 builder.Services.ConfigureIdentity(builder.Configuration);
 builder.Services.ConfigureIISIntegration();
 
+builder.Services.AddHostedService<ConsumeScopedServiceHostedService>();
+
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -64,10 +67,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 app.ConfigureException(builder.Environment);
-app.UseForwardedHeaders(new ForwardedHeadersOptions
+/*app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.All
-});
+});*/
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -76,8 +79,9 @@ app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 app.MapControllers();
 
 await app.SeedRole();
-//await app.SeededUserAsync();
-//await app.ProjectSeeder();
+await app.SeededUserAsync();
+await app.ProjectSeeder();
+//await app.TaskSeeder();
 //await app.ClaimSeeder();
 
 app.Run();
