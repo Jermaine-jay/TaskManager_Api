@@ -15,29 +15,25 @@ namespace TaskManager.Services.Implementations
 {
     public class TaskService : ITaskService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IRepository<ApplicationUser> _userRepo;
         private readonly IRepository<Task> _taskRepo;
         private readonly IRepository<Project> _projectRepo;
-        //private readonly INotificationService _notificationService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IServiceProvider _serviceProvider;
 
-        public TaskService(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IServiceProvider serviceProvider)
+
+        public TaskService(IUnitOfWork unitOfWork, IServiceProvider serviceProvider)
         {
             _unitOfWork = unitOfWork;
-            _userManager = userManager;
             _taskRepo = _unitOfWork.GetRepository<Task>();
             _projectRepo = _unitOfWork.GetRepository<Project>();
             _userRepo = _unitOfWork.GetRepository<ApplicationUser>();
-            //_notificationService = notificationService;
             _serviceProvider = serviceProvider;
         }
 
 
         public async Task<SuccessResponse> CreateTask(string userId, CreateTaskRequest request)
         {
-
             var user = await _userRepo.GetSingleByAsync(u => u.Id.ToString() == userId, include: u => u.Include(u => u.Projects));
             if (user == null)
                 throw new InvalidOperationException("User Not Found");
@@ -161,7 +157,7 @@ namespace TaskManager.Services.Implementations
                     break;
             }
 
-            await _serviceProvider.GetService<INotificationServiceFactory>().Create().CreateNotification(task, (int)NotificationType.StatusUpdate);
+            await _serviceProvider.GetService<INotificationService>().CreateNotification(task, (int)NotificationType.StatusUpdate);
             return new UpdateTaskResponse
             {
                 Message = "Status Updated",
@@ -200,7 +196,7 @@ namespace TaskManager.Services.Implementations
                     break;
             }
 
-            await _serviceProvider.GetService<INotificationServiceFactory>().Create().CreateNotification(task, (int)NotificationType.PriorityUpdate);
+            await _serviceProvider.GetService<INotificationService>().CreateNotification(task, (int)NotificationType.PriorityUpdate);
             return new UpdateTaskResponse
             {
                 Message = "Priority Updated",

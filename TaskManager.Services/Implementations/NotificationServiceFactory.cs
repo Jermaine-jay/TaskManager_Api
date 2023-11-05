@@ -11,9 +11,9 @@ namespace TaskManager.Services.Implementations
         {
             _serviceProvider = serviceProvider;
         }
-        public INotificationService Create()
+        public async Task<object> Create()
         {
-            return _serviceProvider.GetService<INotificationService>();
+            return _serviceProvider.GetService<INotificationService>().CreateReminderNotification();
         }
     }
 }

@@ -11,7 +11,7 @@ namespace TaskManager.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Policy = "Authorization")]
+    [Authorize(Policy = "Authorization")]
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;

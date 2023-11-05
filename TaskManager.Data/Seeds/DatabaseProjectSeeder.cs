@@ -56,7 +56,6 @@ namespace TaskManager.Data.Seeds
             }
         }
 
-
         public static async Task TaskSeeder(this IApplicationBuilder app)
         {
             ApplicationDbContext context = app.ApplicationServices.CreateScope().ServiceProvider
@@ -79,7 +78,6 @@ namespace TaskManager.Data.Seeds
                 }
             }
         }
-
 
         private static ICollection<Project> GetProject(ApplicationUser user)
         {

@@ -8,6 +8,7 @@ namespace TaskManager.Api.Extensions
 
         private readonly IServiceProvider _serviceProvider;
 
+
         public ConsumeScopedServiceHostedService(IServiceProvider serviceProvider,
             ILogger<ConsumeScopedServiceHostedService> logger)
         {
@@ -15,7 +16,7 @@ namespace TaskManager.Api.Extensions
             _serviceProvider = serviceProvider;
         }
 
-        public IServiceProvider Services { get; }
+
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -30,15 +31,13 @@ namespace TaskManager.Api.Extensions
             _logger.LogInformation(
                 "Consume Scoped Service Hosted Service is working.");
 
-            using (var scope = Services.CreateScope())
+            using (var scope = _serviceProvider.CreateScope())
             {
                 var scopedProcessingService =
-                    scope.ServiceProvider
-                        .GetRequiredService<INotificationService>();
-
+                    scope.ServiceProvider.GetRequiredService<INotificationServiceFactory>().Create();
             }
-            //await _serviceProvider.GetService<INotificationServiceFactory>().Create().CreateReminderNotification(stoppingToken);
         }
+
 
         public override async Task StopAsync(CancellationToken stoppingToken)
         {

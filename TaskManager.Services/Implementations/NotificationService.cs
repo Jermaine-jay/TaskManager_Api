@@ -17,14 +17,11 @@ namespace TaskManager.Services.Implementations
         private readonly IRepository<Notification> _noteRepo;
         private readonly IRepository<UserTask> _userTaskRepo;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IServiceProvider _serviceProvider;
 
 
-        public NotificationService(IUnitOfWork unitOfWork, IServiceProvider serviceProvider)
+        public NotificationService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _serviceProvider = serviceProvider;
-            //_unitOfWork = serviceProvider.GetService<IUnitOfWork>();
             _taskRepo = _unitOfWork.GetRepository<Task>();
             _userRepo = _unitOfWork.GetRepository<ApplicationUser>();
             _noteRepo = _unitOfWork.GetRepository<Notification>();
@@ -34,7 +31,6 @@ namespace TaskManager.Services.Implementations
 
         public async Task<object> CreateNotification(Task? task, int type)
         {
-
             var existingtask = await _taskRepo.GetSingleByAsync(t => t.Id.ToString() == task.Id.ToString(), include: u => u.Include(e => e.Project), tracking: true);
             if (existingtask != null)
                 throw new InvalidOperationException("Task Not Found");
@@ -132,18 +128,21 @@ namespace TaskManager.Services.Implementations
             };
         }
 
-        public async Task<bool> CreateReminderNotification(CancellationToken stoppingToken)
+        public async Task<bool> CreateReminderNotification()
         {
             var tasks = await _taskRepo.GetAllAsync(include: u => u.Include(u => u.UserTasks));
             if (tasks == null)
                 throw new InvalidOperationException("No task Found");
 
             var results = tasks.Where(u => u.DueDate == u.DueDate.AddHours(-48));
-            foreach (var task in results)
+            if (!results.Any())
             {
-                await CreateNotification(task, (int)NotificationType.DueDateReminder);
+                foreach (var task in results)
+                {
+                    await CreateNotification(task, (int)NotificationType.DueDateReminder);
+                }
             }
-            return true;
+            return false;
         }
     }
 }

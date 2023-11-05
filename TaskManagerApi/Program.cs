@@ -67,10 +67,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 app.ConfigureException(builder.Environment);
-/*app.UseForwardedHeaders(new ForwardedHeadersOptions
+app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.All
-});*/
+});
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -81,7 +81,7 @@ app.MapControllers();
 await app.SeedRole();
 await app.SeededUserAsync();
 await app.ProjectSeeder();
-//await app.TaskSeeder();
-//await app.ClaimSeeder();
+await app.TaskSeeder();
+await app.ClaimSeeder();
 
 app.Run();
