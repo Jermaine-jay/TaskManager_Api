@@ -9,6 +9,7 @@ using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Interfaces;
 using Task = TaskManager.Models.Entities.Task;
 
+
 namespace TaskManager.Services.Implementations
 {
     public class AdminService : IAdminService
@@ -36,6 +37,7 @@ namespace TaskManager.Services.Implementations
 
             return users.Select(user => new ApplicationUserDto
             {
+                Id = user.Id.ToString(),
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
@@ -57,6 +59,7 @@ namespace TaskManager.Services.Implementations
 
             return new ApplicationUserDto
             {
+                Id = userId.ToString(),
                FirstName = user.FirstName,
                LastName = user.LastName,
                Email = user.Email,
@@ -65,7 +68,7 @@ namespace TaskManager.Services.Implementations
                EmailConfirmed = user.EmailConfirmed? "Confirmed": "Not Confirmed",
                LockedOut = user.LockoutEnd?.ToString("dd MMMM yyyy HH:mm:ss"),
                CreatedAt = user.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss"),
-                UpdatedAt = user.UpdatedAt.ToString("dd MMMM yyyy HH:mm:ss"),              
+               UpdatedAt = user.UpdatedAt.ToString("dd MMMM yyyy HH:mm:ss"),              
             };
         }
 

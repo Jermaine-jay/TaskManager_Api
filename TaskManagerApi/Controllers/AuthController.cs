@@ -106,7 +106,7 @@ namespace TaskManager.Api.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "Invalid Token", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "Invalid operation", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        public async Task<IActionResult> ResetPassword([FromQuery] ResetPasswordRequest request)
         {
             var response = await _authService.ResetPassword(request);
             if (response.Success)

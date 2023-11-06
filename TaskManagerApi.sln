@@ -7,11 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskManager.Api", "TaskMana
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskManager.Models", "TaskManager.Models\TaskManager.Models.csproj", "{4D5D2A22-1DAC-4636-BE82-4404628079A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManager.Services", "TaskManager.Services\TaskManager.Services.csproj", "{AAB5BAB3-8309-4ADF-AFBC-644FE947BF73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskManager.Services", "TaskManager.Services\TaskManager.Services.csproj", "{AAB5BAB3-8309-4ADF-AFBC-644FE947BF73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManager.Data", "TaskManager.Data\TaskManager.Data.csproj", "{3BBF373D-3F64-4431-905A-76898E067E66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskManager.Data", "TaskManager.Data\TaskManager.Data.csproj", "{3BBF373D-3F64-4431-905A-76898E067E66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManager.Migrations", "TaskManager.Migrations\TaskManager.Migrations.csproj", "{0EFCE1ED-04FB-4376-974C-348A2BD19BF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaskManager.Migrations", "TaskManager.Migrations\TaskManager.Migrations.csproj", "{0EFCE1ED-04FB-4376-974C-348A2BD19BF9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManager.Test", "TaskManager.Test\TaskManager.Test.csproj", "{A64979EC-C776-412F-B8AB-5798D88ABBC2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{0EFCE1ED-04FB-4376-974C-348A2BD19BF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0EFCE1ED-04FB-4376-974C-348A2BD19BF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0EFCE1ED-04FB-4376-974C-348A2BD19BF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A64979EC-C776-412F-B8AB-5798D88ABBC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A64979EC-C776-412F-B8AB-5798D88ABBC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A64979EC-C776-412F-B8AB-5798D88ABBC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A64979EC-C776-412F-B8AB-5798D88ABBC2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

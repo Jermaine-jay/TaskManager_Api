@@ -65,9 +65,9 @@ namespace TaskManager.Services.Implementations
                 <body>
                   <div class=""container"">
                      <h1>Email Verification</h1>
-                        <p>Hi {name},Thanks for getting started with our Jermaine Auction!</p>
-                        <p>We need a little more information to complete your registration, including a confirmation of your email address.</p>
-	                    <p>Click below to confirm your email address:.</p>
+                        <p>Hi {name},Thanks for getting started with our Task Manager!</p>
+                        <p>click below to confirmation of your email address.</p>
+                        <p>{token}</p>
                         <div>
                             <a href='{token}'>Verify</a>
                         </div>
