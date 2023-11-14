@@ -301,7 +301,7 @@ namespace TaskManager.Migrations.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("TaskManager.Models.Entities.Project", b =>
@@ -333,7 +333,7 @@ namespace TaskManager.Migrations.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Projects");
+                    b.ToTable("Projects", (string)null);
                 });
 
             modelBuilder.Entity("TaskManager.Models.Entities.Task", b =>
@@ -373,7 +373,7 @@ namespace TaskManager.Migrations.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Tasks");
+                    b.ToTable("Tasks", (string)null);
                 });
 
             modelBuilder.Entity("TaskManager.Models.Entities.UserTask", b =>
@@ -388,7 +388,7 @@ namespace TaskManager.Migrations.Migrations
 
                     b.HasIndex("TaskId");
 
-                    b.ToTable("UserTasks");
+                    b.ToTable("UserTasks", (string)null);
                 });
 
             modelBuilder.Entity("TaskManager.Models.Entities.ApplicationRoleClaim", b =>

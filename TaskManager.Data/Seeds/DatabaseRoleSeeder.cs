@@ -5,6 +5,7 @@ using TaskManager.Models.Entities;
 using TaskManager.Models.Enums;
 using Task = System.Threading.Tasks.Task;
 
+
 namespace TaskManager.Data.Seeds
 {
     public static class DatabaseRoleSeeder

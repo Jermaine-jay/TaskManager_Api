@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using TaskManager.Models.Dtos.Request;
-using TaskManager.Services.Implementations;
 using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Interfaces;
 
@@ -10,7 +9,8 @@ namespace TaskManager.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "Authorization")]
+    //[Authorize(Policy = "Authorization")]
+    [AllowAnonymous]
     public class RoleClaimController : ControllerBase
     {
         private readonly IRoleClaimService _userClaimsService;
@@ -19,7 +19,6 @@ namespace TaskManager.Api.Controllers
         {
             _userClaimsService = userClaimsService;
         }
-
 
 
         [HttpGet("get-claims", Name = "get-claims")]

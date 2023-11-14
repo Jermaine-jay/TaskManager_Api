@@ -1,19 +1,18 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using TaskManager.Api.Extensions;
 using TaskManager.Models.Dtos.Request;
 using TaskManager.Models.Dtos.Response;
-using TaskManager.Services.Implementations;
 using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Interfaces;
+
 
 namespace TaskManager.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Policy = "Authorization")]
+    [Authorize(Policy = "Authorization")]
     public class ProjectController : ControllerBase
     {
 
@@ -26,7 +25,7 @@ namespace TaskManager.Api.Controllers
             _projectService = projectService;
         }
 
-        
+
 
         [HttpPost("create-project", Name = "create-project")]
         [SwaggerOperation(Summary = "Create new project")]

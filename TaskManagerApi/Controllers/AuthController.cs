@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using TaskManager.Models.Dtos;
 using TaskManager.Models.Dtos.Request;
 using TaskManager.Models.Dtos.Response;
 using TaskManager.Services.Infrastructure;
@@ -9,24 +10,22 @@ using TaskManager.Services.Interfaces;
 
 namespace TaskManager.Api.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IHttpContextAccessor _contextAccessor;
         private readonly IAuthService _authService;
 
-        public AuthController(IHttpContextAccessor contextAccessor, IAuthService authService)
+        public AuthController(IAuthService authService)
         {
-            _contextAccessor = contextAccessor;
             _authService = authService;
         }
 
 
-        [AllowAnonymous]
         [HttpPost("create-user", Name = "create-User")]
         [SwaggerOperation(Summary = "Creates user")]
-        [SwaggerResponse(StatusCodes.Status200OK, Description = "UserId of created user")]
+        [SwaggerResponse(StatusCodes.Status200OK, Description = "UserId of created user", Type = typeof(ApplicationUserDto))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "User with provided email already exists", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "Failed to create user", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
@@ -38,23 +37,20 @@ namespace TaskManager.Api.Controllers
 
 
 
-        [AllowAnonymous]
-        [HttpPost("confirm-email", Name = "confirm-email")]
+        [HttpGet("confirm-email", Name = "confirm-email")]
         [SwaggerOperation(Summary = "Confirms a user's email")]
         [SwaggerResponse(StatusCodes.Status202Accepted, Description = "User", Type = typeof(SuccessResponse))]
         [SwaggerResponse(StatusCodes.Status404NotFound, Description = "User Not Found", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "Invalid Operation", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "Invalid Token", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
-        public async Task<IActionResult> ConfirmEmail(string validToken)
+        public async Task<IActionResult> ConfirmEmail([FromQuery]string Token)
         {
-            var response = await _authService.ConfirmEmail(validToken);
+            var response = await _authService.ConfirmEmail(Token);
             return Ok(response);
         }
 
 
-
-        [AllowAnonymous]
         [HttpPost("login", Name = "login")]
         [SwaggerOperation(Summary = "Authenticates user")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "returns user Id", Type = typeof(AuthenticationResponse))]
@@ -67,8 +63,6 @@ namespace TaskManager.Api.Controllers
         }
 
 
-
-        [AllowAnonymous]
         [HttpPost("signin-google", Name = "signin-google")]
         [SwaggerOperation(Summary = "Authenticates user with Google")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "returns user Id", Type = typeof(AuthenticationResponse))]
@@ -81,8 +75,6 @@ namespace TaskManager.Api.Controllers
         }
 
 
-
-        [AllowAnonymous]
         [HttpPost("forgot-password", Name = "forgot-password")]
         [SwaggerOperation(Summary = "forgot-password")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "returns a token", Type = typeof(ChangePasswordResponse))]
@@ -97,8 +89,6 @@ namespace TaskManager.Api.Controllers
         }
 
 
-
-        [AllowAnonymous]
         [HttpPut("reset-password", Name = "reset-password")]
         [SwaggerOperation(Summary = "reset-password")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "returns a token", Type = typeof(SuccessResponse))]

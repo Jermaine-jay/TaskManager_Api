@@ -174,6 +174,10 @@ namespace TaskManager.Data.Seeds
                 {
                     RoleId = role.Id,
                     ClaimType = "get-all-routes",
+                },new ApplicationRoleClaim()
+                {
+                    RoleId = role.Id,
+                    ClaimType = "delete-user-project",
                 },
 
             };

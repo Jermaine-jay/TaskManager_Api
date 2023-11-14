@@ -10,5 +10,18 @@ namespace TaskManager.Services.Infrastructure
         public RedisConfig redisConfig { get; set; } = null!;
         public ZeroBounceConfig ZeroBounceConfig { get; set; } = null!;
         public EmailSenderOptions EmailSenderOptions { get; set; } = null!;
+        public Authentication Authentication { get; set; } = null!;
+    }
+
+
+    public class Authentication
+    {
+        public Google Google { get; set; }
+    }
+
+    public class Google
+    {
+        public string ClientId { get; set; }
+        public string ClientSecret { get; set; }
     }
 }

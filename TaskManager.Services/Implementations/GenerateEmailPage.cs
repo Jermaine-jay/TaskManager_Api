@@ -67,7 +67,6 @@ namespace TaskManager.Services.Implementations
                      <h1>Email Verification</h1>
                         <p>Hi {name},Thanks for getting started with our Task Manager!</p>
                         <p>click below to confirmation of your email address.</p>
-                        <p>{token}</p>
                         <div>
                             <a href='{token}'>Verify</a>
                         </div>

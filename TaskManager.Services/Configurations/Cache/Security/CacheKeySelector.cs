@@ -12,6 +12,12 @@ namespace TaskManager.Services.Configurations.Cache.Security
         }
 
 
+        public static string AccountLockoutCacheKey(string userId)
+        {
+            return SHA256Hasher.Hash($"{CacheKeyPrefix.AccountLockout}_{userId}");
+        }
+
+
         public static string GenerateToken()
         {
             Random generator = new Random();

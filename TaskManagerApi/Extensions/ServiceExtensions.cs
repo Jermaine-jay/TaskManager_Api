@@ -13,6 +13,7 @@ using TaskManager.Data.Interfaces;
 using TaskManager.Models.Entities;
 using TaskManager.Services.Configurations.Cache.CacheServices;
 using TaskManager.Services.Configurations.Cache.Otp;
+using TaskManager.Services.Configurations.Cache.Security;
 using TaskManager.Services.Configurations.Email;
 using TaskManager.Services.Configurations.Jwt;
 using TaskManager.Services.Implementations;
@@ -42,6 +43,7 @@ namespace TaskManager.Api.Extensions
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IRoleClaimService, RoleClaimService>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<ILockoutAttempt, LockoutAttempt>();
             services.AddSingleton<INotificationServiceFactory, NotificationServiceFactory>();
         }
 
@@ -190,6 +192,9 @@ namespace TaskManager.Api.Extensions
 
             EmailSenderOptions emailSenderOptions = setting.EmailSenderOptions;
             services.AddSingleton(emailSenderOptions);
+
+            Authentication authentication = setting.Authentication;
+            services.AddSingleton(authentication);
 
             services.ConfigureJWT(jwtConfig);
             services.AddRedisCache(redisConfig);

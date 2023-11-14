@@ -15,10 +15,11 @@ namespace TaskManager.Api.Controllers
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;
-
-        public AdminController(IAdminService adminService)
+        private readonly IProjectService _projectService;
+        public AdminController(IAdminService adminService, IProjectService projectService)
         {
             _adminService = adminService;
+            _projectService = projectService;
         }
 
 
@@ -96,6 +97,18 @@ namespace TaskManager.Api.Controllers
         public async Task<IActionResult> UsersProjectsWithTasks()
         {
             var response = await _adminService.UsersProjectsWithTasks();
+            return Ok(response);
+        }
+
+
+        [HttpDelete("delete-user-project", Name = "delete-user-project")]
+        [SwaggerOperation(Summary = "Delete a user project")]
+        [SwaggerResponse(StatusCodes.Status201Created, Description = "true or false", Type = typeof(SuccessResponse))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, Description = "Project Not Found", Type = typeof(ErrorResponse))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
+        public async Task<IActionResult> DeleteProject([FromQuery] string userId, string projectId)
+        {
+            var response = await _projectService.DeleteProject(userId, projectId);
             return Ok(response);
         }
 

@@ -2,11 +2,14 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using System.Net;
+using TaskManager.Models.Dtos;
 using TaskManager.Models.Dtos.Request;
 using TaskManager.Models.Dtos.Response;
 using TaskManager.Models.Entities;
 using TaskManager.Models.Enums;
+using TaskManager.Services.Configurations.Cache.CacheServices;
 using TaskManager.Services.Configurations.Cache.Otp;
+using TaskManager.Services.Configurations.Cache.Security;
 using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Interfaces;
 using TaskManager.Services.Utilities;
@@ -19,15 +22,17 @@ namespace TaskManager.Services.Implementations
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IJwtAuthenticator _jwtAuthenticator;
-        private readonly IConfiguration _configuration;
+        //private readonly IConfiguration _configuration;
+        private readonly Authentication _authentication;
 
-        public AuthService(IJwtAuthenticator jwtAuthenticator, IServiceFactory serviceFactory, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, IConfiguration configuration)
+        public AuthService(IJwtAuthenticator jwtAuthenticator, IServiceFactory serviceFactory, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, Authentication authentication)
         {
             _roleManager = roleManager;
             _serviceFactory = serviceFactory;
             _userManager = userManager;
             _jwtAuthenticator = jwtAuthenticator;
-            _configuration = configuration;
+            //_configuration = configuration;
+            _authentication = authentication;
         }
 
 
@@ -52,7 +57,7 @@ namespace TaskManager.Services.Implementations
             {
                 Email = request.Email,
                 UserName = request.Email,
-                FirstName = request.Firstname,
+                FirstName = request.FirstName,
                 LastName = request.LastName,
                 PhoneNumber = request.PhoneNumber,
                 Active = true,
@@ -83,6 +88,15 @@ namespace TaskManager.Services.Implementations
                 await _roleManager.CreateAsync(newRole);
             }
 
+            var newUser = new ApplicationUserDto
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                Email = user.Email,
+                UserType = user.UserType
+            };
+
             await _userManager.AddToRoleAsync(user, role);
             var response = new ServiceResponse<SuccessResponse>
             {
@@ -91,7 +105,7 @@ namespace TaskManager.Services.Implementations
                 Data = new SuccessResponse
                 {
                     Success = true,
-                    Data = user
+                    Data = newUser
                 }
 
             };
@@ -130,9 +144,11 @@ namespace TaskManager.Services.Implementations
 
         public async Task<AuthenticationResponse> UserLogin(LoginRequest request)
         {
+            var maxAttempt = 5;
             ApplicationUser? user = await _userManager.FindByEmailAsync(request.Email.ToLower().Trim());
             if (user == null)
                 throw new InvalidOperationException("Invalid username or password");
+
 
             if (!user.Active)
                 throw new InvalidOperationException("Account is not active");
@@ -143,19 +159,25 @@ namespace TaskManager.Services.Implementations
             if (user.LockoutEnd != null)
                 throw new InvalidOperationException($"User Suspended. Time Left {user.LockoutEnd - DateTimeOffset.UtcNow}");
 
-            bool result = await _userManager.CheckPasswordAsync(user, request.Password);
-            if (!result)
-            {
-                user.AccessFailedCount++;
-                throw new InvalidOperationException("Invalid username or password");
-            }
-
-            if (user.AccessFailedCount == 5)
+            var key = await _serviceFactory.GetService<ILockoutAttempt>().LoginAttemptAsync(user.Id.ToString());
+            var check = await _serviceFactory.GetService<ILockoutAttempt>().CheckLoginAttemptAsync(user.Id.ToString());
+            if (check.Attempts == maxAttempt)
             {
                 DateTimeOffset lockoutEnd = DateTimeOffset.UtcNow.AddSeconds(300);
                 user.LockoutEnd = lockoutEnd;
+                await _userManager.UpdateAsync(user);
+                await _serviceFactory.GetService<ILockoutAttempt>().ResetLoginAttemptAsync(user.Id.ToString());
                 throw new InvalidOperationException($"Account locked, Time Left {user.LockoutEnd - DateTimeOffset.UtcNow}");
             }
+
+            bool result = await _userManager.CheckPasswordAsync(user, request.Password);
+            if (!result)
+            {
+                check.Attempts += 5;
+                await _serviceFactory.GetService<ICacheService>().WriteToCache(key, check, null, TimeSpan.FromDays(365));
+                throw new InvalidOperationException("Invalid username or password");
+            }
+
 
             JwtToken userToken = await _jwtAuthenticator.GenerateJwtToken(user);
             string? userType = user.UserType.GetStringValue();
@@ -237,7 +259,7 @@ namespace TaskManager.Services.Implementations
             externalAuthDto.Provider = "Google";
             var settings = new GoogleJsonWebSignature.ValidationSettings()
             {
-                Audience = new List<string>() { _configuration.GetSection("Authentication:Google:ClientId").Value }
+                Audience = new List<string>() { _authentication.Google.ClientId }
             };
             var payload = await GoogleJsonWebSignature.ValidateAsync(externalAuthDto.IdToken, settings);
 

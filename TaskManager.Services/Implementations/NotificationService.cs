@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
 using TaskManager.Data.Interfaces;
 using TaskManager.Models.Entities;
 using TaskManager.Models.Enums;
@@ -12,7 +10,6 @@ namespace TaskManager.Services.Implementations
 {
     public class NotificationService : INotificationService
     {
-        private readonly IRepository<ApplicationUser> _userRepo;
         private readonly IRepository<Task> _taskRepo;
         private readonly IRepository<Notification> _noteRepo;
         private readonly IRepository<UserTask> _userTaskRepo;
@@ -23,7 +20,6 @@ namespace TaskManager.Services.Implementations
         {
             _unitOfWork = unitOfWork;
             _taskRepo = _unitOfWork.GetRepository<Task>();
-            _userRepo = _unitOfWork.GetRepository<ApplicationUser>();
             _noteRepo = _unitOfWork.GetRepository<Notification>();
             _userTaskRepo = _unitOfWork.GetRepository<UserTask>();
         }
@@ -108,7 +104,7 @@ namespace TaskManager.Services.Implementations
         {
             var notif = await _noteRepo.GetAllAsync(include: u => u.Include(u => u.User));
             if (notif != null)
-               throw new InvalidOperationException("No notification found");
+                throw new InvalidOperationException("No notification found");
 
             var result = notif.Where(u => u.UserId.ToString() == userId);
             if (result == null)
