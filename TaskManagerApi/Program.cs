@@ -6,6 +6,10 @@ using TaskManager.Data.Seeds;
 var builder = WebApplication.CreateBuilder(args);
 
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+//var host = Environment.GetEnvironmentVariable("MSSQL_SA_PASSWORD");
+//var name = Environment.GetEnvironmentVariable("DB_NAME");
+//var password = Environment.GetEnvironmentVariable("DB_SA_PASSWORD");
+//var connectionString = $"Data Source={host};Initial Catalog={name};User ID=sa;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
 builder.Services.RegisterDbContext(connectionString);
 
 builder.Services.RegisterServices();
@@ -80,8 +84,8 @@ app.MapControllers();
 
 await app.SeedRole();
 await app.SeededUserAsync();
+await app.ClaimSeeder();
 await app.ProjectSeeder();
 await app.TaskSeeder();
-await app.ClaimSeeder();
 
 app.Run();

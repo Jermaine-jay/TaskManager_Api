@@ -4,6 +4,8 @@ using Swashbuckle.AspNetCore.Annotations;
 using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Interfaces;
 using TaskManager.Services.Implementations;
+using TaskManager.Models.Dtos.Response;
+using TaskManager.Models.Dtos.Request;
 
 namespace TaskManager.Api.Controllers
 {

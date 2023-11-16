@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -162,14 +163,16 @@ namespace TaskManager.Api.Extensions
 
             services.AddSingleton<IConnectionMultiplexer>((x) =>
             {
-                var connectionMultiplexer = ConnectionMultiplexer.Connect(new ConfigurationOptions
+                /*var connectionMultiplexer = ConnectionMultiplexer.Connect(new ConfigurationOptions
                 {
                     Password = configurationOptions.Password,
                     EndPoints = { configurationOptions.EndPoints[0] },
                     AbortOnConnectFail = false,
                     AllowAdmin = false,
                     ClientName = redisConfig.InstanceId
-                });
+                });*/
+
+                var connectionMultiplexer = ConnectionMultiplexer.Connect("redis");
                 return connectionMultiplexer;
             });
             services.AddTransient<ICacheService, CacheService>();

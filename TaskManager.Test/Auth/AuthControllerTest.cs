@@ -1,31 +1,20 @@
 ﻿using AutoFixture;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TaskManager.Api.Controllers;
-using TaskManager.Data.Interfaces;
-using TaskManager.Models.Dtos;
 using TaskManager.Models.Dtos.Request;
 using TaskManager.Models.Dtos.Response;
-using TaskManager.Models.Entities;
-using TaskManager.Services.Implementations;
 using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Interfaces;
+
 
 namespace TaskManager.Test.Auth
 {
     [TestClass]
     public class AuthControllerTest
     {
-  
+
         private Mock<IAuthService> _mockAuthService;
-        private Mock<IProjectService> _mockProjectService;
-        private Mock<IUnitOfWork> _unitOfWork;
         private Fixture _fixture;
         private readonly AuthController _authController;
 
@@ -34,10 +23,8 @@ namespace TaskManager.Test.Auth
         {
             _fixture = new Fixture();
             _mockAuthService = new Mock<IAuthService>();
-            _mockProjectService = new Mock<IProjectService>();
-            _unitOfWork = new Mock<IUnitOfWork>();
             _authController = new AuthController(_mockAuthService.Object);
-           
+
         }
 
 
@@ -85,7 +72,6 @@ namespace TaskManager.Test.Auth
             Assert.IsNotNull(obj.Value);
             Assert.AreEqual(response, obj.Value);
             Assert.AreEqual(200, obj.StatusCode);
-            Assert.AreSame(result, response);
         }
 
 

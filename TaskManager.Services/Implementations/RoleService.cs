@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using TaskManager.Data.Interfaces;
+using TaskManager.Models.Dtos.Request;
+using TaskManager.Models.Dtos.Response;
 using TaskManager.Models.Entities;
 using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Interfaces;
@@ -156,33 +158,5 @@ namespace TaskManager.Services.Implementations
             return roleResponseQueryable;
         }
 
-    }
-    public class AddUserToRoleRequest
-    {
-        public string? Email { get; set; }
-        public string? Role { get; set; }
-    }
-
-    public class RoleDto
-    {
-        [Required(ErrorMessage = "Role Name cannot be empty"), MinLength(2), MaxLength(30)]
-        public string Name { get; set; } = null!;
-    }
-
-
-    public class AddUserToRoleResponse
-    {
-
-        public string Message { get; set; }
-        public string UserName { get; set; }
-        public string? Role { get; set; }
-    }
-
-    public class RoleResponse
-    {
-        public string Name { get; set; }
-        public IEnumerable<ApplicationRoleClaim> Claims { get; set; }
-        public bool Active { get; set; }
-
-    }
+    } 
 }

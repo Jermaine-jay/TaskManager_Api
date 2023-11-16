@@ -5,6 +5,7 @@ using TaskManager.Data.Context;
 using TaskManager.Models.Entities;
 using TaskManager.Models.Enums;
 
+
 namespace TaskManager.Data.Seeds
 {
     public static class DatabaseSeedRoleClaims
@@ -29,14 +30,16 @@ namespace TaskManager.Data.Seeds
 
                 if (!claims)
                 {
-                    await context.RoleClaims.AddRangeAsync(UserClaim(user));
-                    await context.RoleClaims.AddRangeAsync(AdminClaim(admin));
+                    await context.RoleClaims.AddRangeAsync(await UserClaim(user));
+                    await context.RoleClaims.AddRangeAsync(await AdminClaim(admin));
                     await context.SaveChangesAsync();
                 }
             }
         }
 
-        private static ICollection<ApplicationRoleClaim> UserClaim(ApplicationRole role)
+
+
+        private static async Task< ICollection<ApplicationRoleClaim>> UserClaim(ApplicationRole role)
         {
             return new List<ApplicationRoleClaim>()
             {
@@ -102,7 +105,8 @@ namespace TaskManager.Data.Seeds
         }
 
 
-        private static ICollection<ApplicationRoleClaim> AdminClaim(ApplicationRole role)
+
+        private static async Task<ICollection<ApplicationRoleClaim>> AdminClaim(ApplicationRole role)
         {
             return new List<ApplicationRoleClaim>()
             {

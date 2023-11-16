@@ -1,0 +1,28 @@
+version: '3.4'
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    
+  SqlServerDb:
+    container_name: SqlServerContainer
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+        - 8002:1433
+    environment:
+        - ACCEPT_EULA=Y
+        
+    
+  taskmanager.api:
+    image: ${DOCKER_REGISTRY-}taskmanagerapi
+    build:
+      context: .
+      dockerfile: TaskManagerApi/Dockerfile
+    ports:
+      - 8001:80 
+    depends_on:
+      - SqlServerDb
+    environment:  
+       - ConnectionStrings__DefaultConnection=Data Source=SqlServerDb;Initial Catalog=TaskManagerDb;Password=#Alexissanchez31; Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;

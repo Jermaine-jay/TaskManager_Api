@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using System.Runtime.CompilerServices;
 using TaskManager.Data.Context;
 using TaskManager.Models.Entities;
 using TaskManager.Models.Enums;
@@ -22,14 +23,14 @@ namespace TaskManager.Data.Seeds
 
                 if (!roleExist)
                 {
-                    context.Roles.AddRange(SeededRoles());
-                    context.SaveChanges();
+                    context.Roles.AddRange(await SeededRoles());
+                    await context.SaveChangesAsync();
                 }
             }
         }
 
 
-        private static IEnumerable<ApplicationRole> SeededRoles()
+        private static async Task<IEnumerable<ApplicationRole>> SeededRoles()
         {
             return new List<ApplicationRole>()
             {
