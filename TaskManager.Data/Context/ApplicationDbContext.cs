@@ -12,23 +12,7 @@ namespace TaskManager.Data.Context
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
            : base(options)
         {
-            try
-            {
-                var databasecreater = Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
-                if (databasecreater != null)
-                {
-                    if (!databasecreater.CanConnect()){
-                        databasecreater.Create();
-                    }
-                    if (!databasecreater.HasTables())
-                    {
-                        databasecreater.CreateTables();
-                    }
-                }
-            }catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+
         }
 
 

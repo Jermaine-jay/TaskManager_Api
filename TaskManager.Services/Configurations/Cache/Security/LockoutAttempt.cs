@@ -8,7 +8,6 @@ namespace TaskManager.Services.Configurations.Cache.Security
     {
         private readonly ICacheService _cacheService;
 
-
         public LockoutAttempt(ICacheService cacheService)
         {
             _cacheService = cacheService;
@@ -43,8 +42,6 @@ namespace TaskManager.Services.Configurations.Cache.Security
             var attempt = 0;
             string cacheKey = CacheKeySelector.AccountLockoutCacheKey(userId);
             await _cacheService.ClearFromCache(cacheKey);
-
-            //await _cacheService.WriteToCache(cacheKey, attempt, null, TimeSpan.FromDays(365));
         }
     }
 }

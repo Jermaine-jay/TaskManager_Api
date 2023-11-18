@@ -23,7 +23,6 @@ namespace TaskManager.Api.Controllers
         }
 
 
-        [AllowAnonymous]
         [HttpGet("all-users", Name = "all-users")]
         [SwaggerOperation(Summary = "Get All Registered Users")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Users", Type = typeof(ApplicationUserDto))]
@@ -76,7 +75,7 @@ namespace TaskManager.Api.Controllers
         }
 
 
-        [HttpGet("all-user-projects", Name = "all-user-projects")]
+        [HttpGet("get-user-projects", Name = "get-user-projects")]
         [SwaggerOperation(Summary = "get user projects and tasks")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "user projects and tasks", Type = typeof(SuccessResponse))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "No projects found", Type = typeof(ErrorResponse))]
@@ -87,16 +86,16 @@ namespace TaskManager.Api.Controllers
             return Ok(response);
         }
 
-
+        [AllowAnonymous]
         [HttpGet("all-users-projects", Name = "all-users-projects")]
         [SwaggerOperation(Summary = "all users projects")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "users projects with tasks", Type = typeof(SuccessResponse))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "No project found", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "No user found", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
-        public async Task<IActionResult> UsersProjectsWithTasks()
+        public async Task<IActionResult> AllUsersProjectsWithTasks()
         {
-            var response = await _adminService.UsersProjectsWithTasks();
+            var response = await _adminService.AllUsersProjectsWithTasks();
             return Ok(response);
         }
 

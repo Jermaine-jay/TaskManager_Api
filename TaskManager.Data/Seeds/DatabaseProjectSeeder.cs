@@ -22,6 +22,7 @@ namespace TaskManager.Data.Seeds
             {
                 UserManager<ApplicationUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
                 ApplicationUser jo = await userManager.FindByEmailAsync("Jermaine.jay00@gmail.com");
+                ApplicationUser jo2 = await userManager.FindByEmailAsync("jsonosita@outlook.com");
 
                 context.Database.EnsureCreated();
 
@@ -32,6 +33,7 @@ namespace TaskManager.Data.Seeds
                 if (!project)
                 {
                     await context.Projects.AddRangeAsync(GetProject(jo));
+                    await context.Projects.AddRangeAsync(GetProject(jo2));
                     await context.SaveChangesAsync();
                 }
             }
@@ -40,6 +42,7 @@ namespace TaskManager.Data.Seeds
             {
                 UserManager<ApplicationUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
                 ApplicationUser jo = await userManager.FindByEmailAsync("Jermaine.jay00@gmail.com");
+                ApplicationUser jo2 = await userManager.FindByEmailAsync("jsonosita@outlook.com");
 
                 context.Database.EnsureCreated();
 
@@ -50,34 +53,16 @@ namespace TaskManager.Data.Seeds
                 {
 
                     await context.Tasks.AddRangeAsync(GetTasks1(jo.Projects.FirstOrDefault()));
+                    await context.Tasks.AddRangeAsync(GetTasks1(jo.Projects.SingleOrDefault(x=> x.Name == "Test2")));
                     await context.Tasks.AddRangeAsync(GetTasks2(jo.Projects.LastOrDefault()));
+                    await context.Tasks.AddRangeAsync(GetTasks1(jo2.Projects.FirstOrDefault()));
+                    await context.Tasks.AddRangeAsync(GetTasks1(jo2.Projects.SingleOrDefault(x=> x.Name == "Test2")));
+                    await context.Tasks.AddRangeAsync(GetTasks2(jo2.Projects.LastOrDefault()));
                     await context.SaveChangesAsync();
                 }
             }
         }
 
-        public static async Task TaskSeeder(this IApplicationBuilder app)
-        {
-            ApplicationDbContext context = app.ApplicationServices.CreateScope().ServiceProvider
-                .GetRequiredService<ApplicationDbContext>();
-
-
-            using (var scope = app.ApplicationServices.CreateScope())
-            {
-                UserManager<ApplicationUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                ApplicationUser jo = await userManager.FindByEmailAsync("Jermaine.jay00@gmail.com");
-
-                context.Database.EnsureCreated();
-                var task = context.Tasks.Any();
-
-                if (!task)
-                {
-                    await context.Tasks.AddRangeAsync(GetTasks1(jo.Projects.FirstOrDefault()));
-                    await context.Tasks.AddRangeAsync(GetTasks2(jo.Projects.LastOrDefault()));
-                    await context.SaveChangesAsync();
-                }
-            }
-        }
 
         private static ICollection<Project> GetProject(ApplicationUser user)
         {

@@ -104,34 +104,6 @@ namespace TaskManager.Services.Implementations
         }
 
 
-        public async Task<SuccessResponse> UsersProjectsWithTasks()
-        {
-            var projects = await _projectRepo.GetAllAsync(include: u => u.Include(u => u.Tasks));
-            if (!projects.Any())
-                throw new InvalidOperationException("No project found");
-
-            var result = projects.Select(u => new Project
-            {
-                Name = u.Name,
-                Description = u.Description,
-                Tasks = u.Tasks.Select(u => new Task
-                {
-                    Title = u.Title,
-                    Description = u.Description,
-                    Priority = u.Priority,
-                    DueDate = DateTime.Parse(u.DueDate.ToString("dd MMMM yyyy HH:mm:ss")),
-                    Status = u.Status,
-                }).ToList()
-            });
-
-            return new SuccessResponse
-            {
-                Success = true,
-                Data = result
-            };
-        }
-
-
         public async Task<SuccessResponse> UserProjectsWithTasks(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -165,6 +137,30 @@ namespace TaskManager.Services.Implementations
                 Success = true,
                 Data = res
             };
+        }
+
+
+        public async Task<IEnumerable<Project>> AllUsersProjectsWithTasks()
+        {
+            var projects = await _projectRepo.GetAllAsync(include: u => u.Include(u => u.Tasks));
+            if (!projects.Any())
+                throw new InvalidOperationException("No project found");
+
+            var result = projects.OrderByDescending(x=>x.User.FirstName).Select(u => new Project
+            {
+                Name = u.Name,
+                Description = u.Description,
+                Tasks = u.Tasks.Select(u => new Task
+                {
+                    Title = u.Title,
+                    Description = u.Description,
+                    Priority = u.Priority,
+                    DueDate = DateTime.Parse(u.DueDate.ToString("dd MMMM yyyy HH:mm:ss")),
+                    Status = u.Status,
+                }).ToList()
+            });
+
+            return result;
         }
     }
 }

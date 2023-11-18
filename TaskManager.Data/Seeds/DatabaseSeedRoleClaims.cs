@@ -129,7 +129,7 @@ namespace TaskManager.Data.Seeds
                 },new ApplicationRoleClaim()
                 {
                     RoleId = role.Id,
-                    ClaimType = "all-user-projects",
+                    ClaimType = "get-user-projects",
                 },new ApplicationRoleClaim()
                 {
                     RoleId = role.Id,
@@ -182,6 +182,10 @@ namespace TaskManager.Data.Seeds
                 {
                     RoleId = role.Id,
                     ClaimType = "delete-user-project",
+                },new ApplicationRoleClaim()
+                {
+                    RoleId = role.Id,
+                    ClaimType = "all-users-projects",
                 },
 
             };

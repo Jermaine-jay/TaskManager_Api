@@ -25,10 +25,10 @@ namespace TaskManager.Data.Seeds
                     }
                 }
 
-                ApplicationUser user1 = await userManager.FindByNameAsync("Jota10");
-                ApplicationUser user2 = await userManager.FindByNameAsync("Jermaine10");
-                ApplicationUser user3 = await userManager.FindByNameAsync("Salah10");
-                ApplicationUser user4 = await userManager.FindByNameAsync("Konate10");
+                ApplicationUser user1 = await userManager.FindByEmailAsync("jermaine.jay00@gmail.com");
+                ApplicationUser user2 = await userManager.FindByEmailAsync("jsonosita@outlook.com");
+                ApplicationUser user3 = await userManager.FindByEmailAsync("jsonosii097@gmail.com");
+                ApplicationUser user4 = await userManager.FindByEmailAsync("IbouKonate@gmail.com");
 
                 var User = UserType.User.GetStringValue();
                 var Admin = UserType.Admin.GetStringValue();

@@ -1,5 +1,6 @@
 ﻿using TaskManager.Models.Dtos;
 using TaskManager.Models.Dtos.Request;
+using TaskManager.Models.Entities;
 using TaskManager.Services.Implementations;
 using TaskManager.Services.Infrastructure;
 
@@ -13,6 +14,6 @@ namespace TaskManager.Services.Interfaces
         Task<SuccessResponse> DeleteUser(string userId);
         Task<SuccessResponse> UserProjectsWithTasks(string userId);
 
-        Task<SuccessResponse> UsersProjectsWithTasks();
+        Task<IEnumerable<Project>> AllUsersProjectsWithTasks();
     }
 }
