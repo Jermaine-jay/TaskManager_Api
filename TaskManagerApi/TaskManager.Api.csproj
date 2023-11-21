@@ -30,7 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\docker-compose.dcproj" />
     <ProjectReference Include="..\TaskManager.Data\TaskManager.Data.csproj" />
     <ProjectReference Include="..\TaskManager.Migrations\TaskManager.Migrations.csproj" />
     <ProjectReference Include="..\TaskManager.Models\TaskManager.Models.csproj" />
