@@ -11,13 +11,13 @@ namespace TaskManager.Models.Entities
 
         [MaxLength(500)]
         public string Message { get; set; }
-
+        public bool Read { get; set; }
         [Required]
         public DateTime Timestamp { get; set; }
 
         [ForeignKey("ApplicationUser")]
-        public Guid? ApplicationUserId { get; set; }
+        public Guid? UserId { get; set; }
 
-        public virtual ApplicationUser? ApplicationUser { get; set; }
+        public virtual ApplicationUser? User { get; set; }
     }
 }

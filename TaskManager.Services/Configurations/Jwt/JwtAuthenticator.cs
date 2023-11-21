@@ -6,7 +6,7 @@ using TaskManager.Models.Entities;
 using TaskManager.Services.Interfaces;
 using TaskManager.Models.Enums;
 using Microsoft.IdentityModel.Tokens;
-
+using TaskManager.Models.Dtos.Response;
 
 namespace TaskManager.Services.Configurations.Jwt
 {
@@ -27,7 +27,7 @@ namespace TaskManager.Services.Configurations.Jwt
             var claims = new List<Claim>
             {
                 new Claim("Id", user.Id.ToString()),
-                new Claim(ClaimTypes.Role, userRole),
+                new Claim(ClaimTypes.Role, userRole),             
                 new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName),

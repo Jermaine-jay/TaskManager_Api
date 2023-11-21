@@ -3,7 +3,8 @@
     public enum NotificationType
     {
         DueDateReminder,
-        StatusUpdate
+        StatusUpdate,
+        PriorityUpdate
     }
 
     public static class NotificationTypeExtension
@@ -14,6 +15,7 @@
             {
                 NotificationType.DueDateReminder => "DueDateReminder",
                 NotificationType.StatusUpdate => "StatusUpdate",
+                NotificationType.PriorityUpdate => "PriorityUpdate",
                 _ => null
             };
         }

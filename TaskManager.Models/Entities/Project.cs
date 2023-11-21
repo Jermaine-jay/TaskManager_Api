@@ -8,17 +8,15 @@ namespace TaskManager.Models.Entities
     {
 
         [Required]
-        [MaxLength(100, ErrorMessage = "Name must be less than 100 letters")]
-        public string Title { get; set; }
+        [MaxLength(150)]
+        public string Name { get; set; }
 
-        [MaxLength(500, ErrorMessage = "Text must be less than 500 words")]
-        public string? Description { get; set; }
+        [MaxLength(800)]
+        public string Description { get; set; }
 
+        public Guid? UserId { get; set; }
 
-        [ForeignKey("ApplicationUser")]
-        public Guid? ApplicationUserId { get; set; }
-
-        public virtual ApplicationUser? ApplicationUser { get; set; }
+        public virtual ApplicationUser? User { get; set; }
 
         public virtual ICollection<Task>? Tasks { get; set; }
     }

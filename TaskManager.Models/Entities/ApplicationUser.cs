@@ -11,7 +11,9 @@ namespace TaskManager.Models.Entities
         public UserType UserType { get; set; }
         public bool Active { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; }
         public virtual ICollection<Notification>? Notifications { get; set; }
         public virtual ICollection<Project>? Projects { get; set; }
+        public virtual ICollection<UserTask>? UserTasks { get; set; }
     }
 }

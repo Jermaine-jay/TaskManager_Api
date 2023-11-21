@@ -1,0 +1,28 @@
+version: '3.4'
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+  
+  mssql:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    container_name: sql_server2022
+    ports:
+      - "1432:1433"
+
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=#Alexissanchez31
+     
+    restart: always
+
+  taskmanager.api:
+    image: ${DOCKER_REGISTRY-}taskmanagerapi
+    build:
+      context: .
+      dockerfile: TaskManagerApi/Dockerfile
+    depends_on:
+    - "mssql"
+    - "redis"

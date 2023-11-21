@@ -1,8 +1,8 @@
 ﻿namespace TaskManager.Models.Enums
 {
-    public enum Status
+    public enum Status : int
     {
-        Pending,
+        Pending =1,
         InProgress,
         Completed
     }
