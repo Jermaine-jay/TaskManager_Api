@@ -21,9 +21,10 @@ services:
 
   taskmanager.api:
     image: ${DOCKER_REGISTRY-}taskmanagerapi
+    container_name: TaskMangerApi
     build:
       context: .
-      dockerfile: TaskManagerApi/Dockerfile
+      dockerfile: TaskManager.Api/Dockerfile
     depends_on:
         - "mssql"
         - "redis"

@@ -99,6 +99,14 @@ namespace TaskManager.Data.Seeds
                 {
                     RoleId = role.Id,
                     ClaimType = "update-status",
+                },new ApplicationRoleClaim()
+                {
+                    RoleId = role.Id,
+                    ClaimType = "user-notifications",
+                },new ApplicationRoleClaim()
+                {
+                    RoleId = role.Id,
+                    ClaimType = "pick-task",
                 },
 
             };
@@ -186,7 +194,12 @@ namespace TaskManager.Data.Seeds
                 {
                     RoleId = role.Id,
                     ClaimType = "all-users-projects",
-                },
+                }
+                ,new ApplicationRoleClaim()
+                {
+                    RoleId = role.Id,
+                    ClaimType = "user-notifications",
+                }
 
             };
         }
