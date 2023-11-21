@@ -24,7 +24,7 @@ services:
     container_name: TaskMangerApi
     build:
       context: .
-      dockerfile: TaskManager.Api/Dockerfile
+      dockerfile: TaskManagerApi/Dockerfile
     depends_on:
         - "mssql"
         - "redis"
