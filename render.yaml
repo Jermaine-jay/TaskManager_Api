@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: spring-mssql-redis-dockerfile
+    name: aspnet-mssql-redis-dockerfile
     runtime: docker
     region: frankfurt
     plan: free
@@ -16,89 +16,36 @@ services:
           type: redis
           name: redis-cache
           property: port
-      - key: SPRING_DATASOURCE_CONNECTION_STRING
-        fromDatabase:
-          name: mssql-db
-          property: connectionString
-      - key: SPRING_DATASOURCE_USERNAME
-        fromDatabase:
-          name: mssql-db
-          property: user
-      - key: SPRING_DATASOURCE_PASSWORD
-        fromDatabase:
-          name: mssql-db
-          property: password
-      - key: SPRING_DATASOURCE_HOST
-        fromDatabase:
-          name: mssql-db
-          property: host
-      - key: SPRING_DATASOURCE_PORT
-        fromDatabase:
-          name: mssql-db
-          property: port
-      - key: SPRING_DATASOURCE_SCHEMA
-        fromDatabase:
-          name: mssql-db
-          property: database
-      - key: SPRING_DATASOURCE_URL
-        value: jdbc:sqlserver://${SPRING_DATASOURCE_HOST}:${SPRING_DATASOURCE_PORT};databaseName=${SPRING_DATASOURCE_SCHEMA}
+      - key: MSSQL_SERVER
+        value: sql_server2022
+      - key: MSSQL_DATABASE
+        value: TaskManagerDb
+      - key: MSSQL_USER
+        value: SA
+      - key: MSSQL_PASSWORD
+        value: "#Alexissanchez31"
+      - key: MSSQL_CONNECTION_STRING
+        value: Server=${MSSQL_SERVER};Database=${MSSQL_DATABASE};User Id=${MSSQL_USER};Password=${MSSQL_PASSWORD};Encrypt=false;TrustServerCertificate=True;MultipleActiveResultSets=true;MultiSubnetFailover=True
 
-  - type: web
-    name: spring-mssql-redis-image
-    runtime: image
-    image:
-      url: ghcr.io/kanezi/render-boot-mssql-redis-example:latest
-    region: frankfurt
-    plan: free
-    healthCheckPath: /
-    envVars:
-      - key: REDIS_HOST
-        fromService:
-          type: redis
-          name: redis-cache
-          property: host
-      - key: REDIS_PORT
-        fromService:
-          type: redis
-          name: redis-cache
-          property: port
-      - key: SPRING_DATASOURCE_CONNECTION_STRING
-        fromDatabase:
-          name: mssql-db
-          property: connectionString
-      - key: SPRING_DATASOURCE_USERNAME
-        fromDatabase:
-          name: mssql-db
-          property: user
-      - key: SPRING_DATASOURCE_PASSWORD
-        fromDatabase:
-          name: mssql-db
-          property: password
-      - key: SPRING_DATASOURCE_HOST
-        fromDatabase:
-          name: mssql-db
-          property: host
-      - key: SPRING_DATASOURCE_PORT
-        fromDatabase:
-          name: mssql-db
-          property: port
-      - key: SPRING_DATASOURCE_SCHEMA
-        fromDatabase:
-          name: mssql-db
-          property: database
-      - key: SPRING_DATASOURCE_URL
-        value: jdbc:sqlserver://${SPRING_DATASOURCE_HOST}:${SPRING_DATASOURCE_PORT};databaseName=${SPRING_DATASOURCE_SCHEMA}
-
-  # A Redis instance
+  # Redis instance
   - type: redis
     name: redis-cache
     region: frankfurt
-    ipAllowList: # required
+    ipAllowList:
       - source: 0.0.0.0/0
         description: everywhere
-    plan: free # optional (defaults to starter instance type)
+    plan: free
 
-databases:
-  - name: mssql-db
+  # MSSQL Database
+  - type: mssql
+    name: mssql-database
     region: frankfurt
     plan: free
+    envVars:
+      - key: SA_PASSWORD
+        value: "#Alexissanchez31"
+      - key: ACCEPT_EULA
+        value: Y
+    databases:
+      - name: TaskManagerDb
+        collation: SQL_Latin1_General_CP1_CI_AS
