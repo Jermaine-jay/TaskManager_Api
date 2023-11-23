@@ -19,5 +19,5 @@ jobs:
       contents: read
       packages: write
     secrets: inherit
-    uses: ./.github/workflows/docker-test-image-template.yml
+    uses: ./.github/workflows/docker-image-temp.yml
     needs: asp_package
