@@ -13,7 +13,7 @@ services:
       - key: SQLSERVER_SERVER
         fromDatabase:
           name: sqlserver
-          property: sql_server2022
+          property: server
       - key: SQLSERVER_USERNAME
         fromDatabase:
           name: sqlserver
