@@ -47,10 +47,6 @@ services:
         fromDatabase:
           name: sqlserver
           property: connectionString
-      - key: SQLSERVER_SERVER
-        fromDatabase:
-          name: sqlserver
-          property: server
       - key: SQLSERVER_USERNAME
         fromDatabase:
           name: sqlserver
