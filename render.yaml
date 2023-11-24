@@ -1,39 +1,85 @@
 services:
-  - name: aspnet-app
-    runtime: aspnet-core
-    build: .
-    ports:
-      - port: 80
-    environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      SQLSERVER_HOST: sqlserver
-      SQLSERVER_PORT: 1433
-      SQLSERVER_DATABASE: TaskManagerDb
-      SQLSERVER_USERNAME: SA
-      SQLSERVER_PASSWORD: #Alexissanchez31
-    dependencies:
-      - redis
-      - sqlserver
+  - type: web
+    name: ss2c-dockerfile
+    runtime: docker
+    region: frankfurt
+    plan: free
+    healthCheckPath: /management/health
+    envVars:
+      - key: SQLSERVER_CONNECTION_STRING
+        fromDatabase:
+          name: sqlserver
+          property: connectionString
+      - key: SQLSERVER_SERVER
+        fromDatabase:
+          name: sqlserver
+          property: sql_server2022
+      - key: SQLSERVER_USERNAME
+        fromDatabase:
+          name: sqlserver
+          property: SA
+      - key: _PASSWORD
+        fromDatabase:
+          name: sqlserver
+          property: password
+      - key: SQLSERVER_HOST
+        fromDatabase:
+          name: sqlserver
+          property: host
+      - key: SQLSERVER_PORT
+        fromDatabase:
+          name: sqlserver
+          property: port
+      - key: SQLSERVER_SCHEMA
+        fromDatabase:
+          name: sqlserver
+          property: database
+      - key: SQLSERVER_URL
+        value: jdbc:Server=${SQLSERVER_SERVER};Database=${MSSQL_DATABASE};User Id=${SQLSERVER_USERNAME};Password=${SQLSERVER_PASSWORD};Encrypt=false;TrustServerCertificate=True;MultipleActiveResultSets=true;MultiSubnetFailover=True
 
-  - name: redis
-    runtime: redis
-    image: redis:latest
-    instance_count: 1
-    ports:
-      - port: 6379
-      - port: 16379 (Redis Sentinel)
+  - type: web
+    name: ss2c-image
+    runtime: image
+    image:
+      url: docker.io/jermaine31/taskmanager_api:latest
 
+    region: frankfurt
+    plan: free
+    healthCheckPath: /management/health
+    envVars:
+       - key: SQLSERVER_CONNECTION_STRING
+        fromDatabase:
+          name: sqlserver
+          property: connectionString
+      - key: SQLSERVER_SERVER
+        fromDatabase:
+          name: sqlserver
+          property: sql_server2022
+      - key: SQLSERVER_USERNAME
+        fromDatabase:
+          name: sqlserver
+          property: SA
+      - key: _PASSWORD
+        fromDatabase:
+          name: sqlserver
+          property: password
+      - key: SQLSERVER_HOST
+        fromDatabase:
+          name: sqlserver
+          property: host
+      - key: SQLSERVER_PORT
+        fromDatabase:
+          name: sqlserver
+          property: port
+      - key: SQLSERVER_SCHEMA
+        fromDatabase:
+          name: sqlserver
+          property: database
+      - key: SQLSERVER_URL
+        value: jdbc:Server=${SQLSERVER_SERVER};Database=${MSSQL_DATABASE};User Id=${SQLSERVER_USERNAME};Password=${SQLSERVER_PASSWORD};Encrypt=false;TrustServerCertificate=True;MultipleActiveResultSets=true;MultiSubnetFailover=True
+
+
+databases:
   - name: sqlserver
-    runtime: mssql
-    image: mcr.microsoft.com/mssql/server:latest
-    instance_count: 1
-    ports:
-      - port: 1433
-    environment:
-      ACCEPT_EULA: Y
-      MSSQL_SA_PASSWORD: #Alexissanchez31
-    volumes:
-      - name: sqlserver-data
-        mount_path: /var/opt/mssql/data
+    region: frankfurt
+    plan: free
