@@ -47,7 +47,7 @@ services:
     plan: free
     healthCheckPath: /management/health
     envVars:
-       - key: SQLSERVER_CONNECTION_STRING
+      - key: SQLSERVER_CONNECTION_STRING
         fromDatabase:
           name: sqlserver
           property: connectionString
