@@ -1,13 +1,10 @@
 ﻿using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 using Newtonsoft.Json;
 using TaskManager.Models.Entities;
 using TaskManager.Services.Configurations.Cache.Otp;
-using TaskManager.Services.Configurations.Email;
 using TaskManager.Services.Interfaces;
 
 
@@ -15,28 +12,22 @@ namespace TaskManager.Services.Implementations
 {
     public class EmailService : IEmailService
     {
-        private readonly ZeroBounceConfig _zeroBounceConfig;
-        private readonly EmailSenderOptions _emailSenderOptions;
         private readonly IServiceFactory _serviceFactory;
         private readonly IConfiguration _configuration;
-        private readonly LinkGenerator _link;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public EmailService(IConfiguration configuration, ZeroBounceConfig zeroBounceconfig,LinkGenerator linkGenerator, 
-            EmailSenderOptions emailSenderOptions, IServiceFactory serviceFactory,IHttpContextAccessor httpContextAccessor)
+        public EmailService(IConfiguration configuration,
+            IServiceFactory serviceFactory, IHttpContextAccessor httpContextAccessor)
         {
-            _zeroBounceConfig = zeroBounceconfig;
-            _emailSenderOptions = emailSenderOptions;
             _serviceFactory = serviceFactory;
             _configuration = configuration;
-            _link = linkGenerator;
             _httpContextAccessor = httpContextAccessor;
         }
 
 
         public async Task<object> SendEmailAsync(string email, string subject, string message)
         {
-            if (string.IsNullOrEmpty(_emailSenderOptions.Password))
+            if (string.IsNullOrEmpty(_configuration["EmailSenderOptions:Password"]))
                 throw new InvalidOperationException($"Invalid Email configuration Details");
 
             await Execute(email, subject, message);
@@ -47,7 +38,7 @@ namespace TaskManager.Services.Implementations
         public async Task<bool> Execute(string email, string subject, string htmlMessage)
         {
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("TaskManager", _emailSenderOptions.Username));
+            message.From.Add(new MailboxAddress("TaskManager", _configuration["EmailSenderOptions:Username"]));
             message.To.Add(new MailboxAddress(email, email));
             message.Subject = subject;
 
@@ -58,8 +49,8 @@ namespace TaskManager.Services.Implementations
             using (var client = new SmtpClient())
             {
 
-                client.Connect(_emailSenderOptions.SmtpServer, _emailSenderOptions.Port, true);
-                client.Authenticate(_emailSenderOptions.Email, _emailSenderOptions.Password);
+                client.Connect(_configuration["EmailSenderOptions:SmtpServer"], int.Parse(_configuration["EmailSenderOptions:Port"]), true);
+                client.Authenticate(_configuration["EmailSenderOptions:Email"], _configuration["EmailSenderOptions:Password"]);
                 client.Send(message);
                 client.Disconnect(true);
             }
@@ -71,8 +62,8 @@ namespace TaskManager.Services.Implementations
         {
             using (var httpClient = new HttpClient())
             {
-                var parameters = $"api_key={_zeroBounceConfig.ApiKey}&email={emailAddress}";
-                var response = await httpClient.GetAsync($"{_zeroBounceConfig.Url}?{parameters}");
+                var parameters = $"api_key={_configuration["ZeroBounceConfig:ApiKey"]}&email={emailAddress}";
+                var response = await httpClient.GetAsync($"{_configuration["ZeroBounceConfig:Url"]}?{parameters}");
                 response.EnsureSuccessStatusCode();
 
                 var responseContent = await response.Content.ReadAsStringAsync();
@@ -88,7 +79,7 @@ namespace TaskManager.Services.Implementations
 
         public async Task<bool> RegistrationMail(ApplicationUser user)
         {
-            var page = _serviceFactory.GetService<IGenerateEmailPage>().EmailVerificationPage;         
+            var page = _serviceFactory.GetService<IGenerateEmailPage>().EmailVerificationPage;
             var validToken = await _serviceFactory.GetService<IOtpService>().GenerateUniqueOtpAsync(user.Id.ToString(), OtpOperation.EmailConfirmation);
 
             string appUrl = $"{_configuration["AppUrl:Url"]}api/Auth/confirm-email?Token={validToken}";

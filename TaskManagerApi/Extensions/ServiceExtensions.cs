@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using StackExchange.Redis;
 using System.Security.Authentication;
@@ -69,7 +70,7 @@ namespace TaskManager.Api.Extensions
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseLazyLoadingProxies();
-                options.UseSqlServer(configuration, s =>
+                options.UseNpgsql(configuration, s =>
                 {
                     s.MigrationsAssembly("TaskManager.Migrations");
                     s.EnableRetryOnFailure(3);
@@ -103,10 +104,9 @@ namespace TaskManager.Api.Extensions
         }
 
 
-        public static void ConfigureJWT(this IServiceCollection services, JwtConfig jwtConfig)
+        public static void ConfigureJWT(this IServiceCollection services, IConfiguration jwtConfig)
         {
-            var jwtSettings = jwtConfig;
-            var secretKey = jwtSettings.Secret;
+            var secretKey = jwtConfig["JwtConfig:Secret"];
 
             services.AddAuthentication(opt =>
             {
@@ -125,8 +125,8 @@ namespace TaskManager.Api.Extensions
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtSettings.Issuer,
-                    ValidAudience = jwtSettings.Audience,
+                    ValidIssuer = jwtConfig["JwtConfig:Issuer"],
+                    ValidAudience = jwtConfig["JwtConfig:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey))
                 };
             });
@@ -135,72 +135,45 @@ namespace TaskManager.Api.Extensions
             {
                 options.AddPolicy("Authorization", policy =>
                 {
-                    policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
-                    policy.RequireAuthenticatedUser();
                     policy.Requirements.Add(new AuthRequirement());
-                    policy.Build();
                 });
             });
+
         }
 
-
-        public static void AddRedisCache(this IServiceCollection services, RedisConfig redisConfig)
+        public static void AddRedisCache(this IServiceCollection services, IConfiguration redisConfig)
         {
 
             ConfigurationOptions configurationOptions = new ConfigurationOptions();
             configurationOptions.SslProtocols = SslProtocols.Tls12;
             configurationOptions.SyncTimeout = 30000;
             configurationOptions.Ssl = true;
-            configurationOptions.Password = redisConfig.Password;
+            configurationOptions.Password = redisConfig["RedisConfig:Password"];
             configurationOptions.AbortOnConnectFail = false;
-            configurationOptions.EndPoints.Add(redisConfig.Host, redisConfig.Port);
+            configurationOptions.EndPoints.Add(redisConfig["RedisConfig:Password"], 12808);
+            configurationOptions.User = redisConfig["RedisConfig:user"];
 
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = configurationOptions.ToString();
-                options.InstanceName = redisConfig.InstanceId;
+                options.InstanceName = redisConfig["RedisConfig:InstanceId"];
             });
 
             services.AddSingleton<IConnectionMultiplexer>((x) =>
             {
-                /*var connectionMultiplexer = ConnectionMultiplexer.Connect(new ConfigurationOptions
+                var connectionMultiplexer = ConnectionMultiplexer.Connect(new ConfigurationOptions
                 {
-                    Password = configurationOptions.Password,
-                    EndPoints = { configurationOptions.EndPoints[0] },
+                    Password = redisConfig["RedisConfig:Password"],
+                    EndPoints = { { redisConfig["RedisConfig:Host"], 12808 } },
                     AbortOnConnectFail = false,
                     AllowAdmin = false,
-                    ClientName = redisConfig.InstanceId
-                });*/
-
-                var connectionMultiplexer = ConnectionMultiplexer.Connect("redis");
+                    User = redisConfig["RedisConfig:User"],
+                    Ssl = true,
+                    SslProtocols = System.Security.Authentication.SslProtocols.Tls12
+                });
                 return connectionMultiplexer;
             });
             services.AddTransient<ICacheService, CacheService>();
-        }
-
-
-        public static void ConfigurationBinder(this IServiceCollection services, IConfiguration configuration)
-        {
-            Settings setting = configuration.Get<Settings>()!;
-            services.AddSingleton(setting);
-
-            JwtConfig jwtConfig = setting.JwtConfig;
-            services.AddSingleton(jwtConfig);
-
-            RedisConfig redisConfig = setting.redisConfig;
-            services.AddSingleton(redisConfig);
-
-            ZeroBounceConfig zeroBounceConfig = setting.ZeroBounceConfig;
-            services.AddSingleton(zeroBounceConfig);
-
-            EmailSenderOptions emailSenderOptions = setting.EmailSenderOptions;
-            services.AddSingleton(emailSenderOptions);
-
-            Authentication authentication = setting.Authentication;
-            services.AddSingleton(authentication);
-
-            services.ConfigureJWT(jwtConfig);
-            services.AddRedisCache(redisConfig);
         }
     }
 }

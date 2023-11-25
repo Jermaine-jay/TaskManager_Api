@@ -6,9 +6,9 @@ namespace TaskManager.Models.Dtos.Request
     {
 
         [Required, DataType(DataType.Password)]
-        public string CurrentPassword { get; set; }
+        public string? CurrentPassword { get; set; }
 
         [Required, DataType(DataType.Password)]
-        public string NewPassword { get; set; }
+        public string? NewPassword { get; set; }
     }
 }

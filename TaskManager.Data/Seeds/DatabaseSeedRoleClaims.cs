@@ -113,7 +113,6 @@ namespace TaskManager.Data.Seeds
         }
 
 
-
         private static async Task<ICollection<ApplicationRoleClaim>> AdminClaim(ApplicationRole role)
         {
             return new List<ApplicationRoleClaim>()

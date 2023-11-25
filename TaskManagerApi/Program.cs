@@ -9,12 +9,16 @@ string? connectionString = builder.Configuration.GetConnectionString("DefaultCon
 builder.Services.RegisterDbContext(connectionString);
 
 builder.Services.RegisterServices();
-builder.Services.ConfigurationBinder(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.ConfigureCors();
 builder.Services.ConfigureIdentity(builder.Configuration);
 builder.Services.ConfigureIISIntegration();
+
+builder.Services.ConfigureJWT(builder.Configuration);
+builder.Services.AddRedisCache(builder.Configuration);
+
+
 
 builder.Services.AddHostedService<ConsumeScopedServiceHostedService>();
 
@@ -58,12 +62,9 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-
 
 app.UseSwagger();
 app.UseSwaggerUI();
-
 
 app.UseRouting();
 app.ConfigureException(builder.Environment);

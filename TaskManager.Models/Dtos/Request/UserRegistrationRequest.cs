@@ -5,10 +5,10 @@ namespace TaskManager.Models.Dtos.Request
         public class UserRegistrationRequest
         {
             [Required]
-            public string FirstName { get; set; }
+            public string? FirstName { get; set; }
 
             [Required]
-            public string LastName { get; set; }
+            public string? LastName { get; set; }
 
             [Required, DataType(DataType.Password)]
             public string? Password { get; set; }
