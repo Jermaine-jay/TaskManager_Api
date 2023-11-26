@@ -12,7 +12,7 @@ using TaskManager.Data.Context;
 namespace TaskManager.Migrations.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231125150149_InitialMigration")]
+    [Migration("20231125220702_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />

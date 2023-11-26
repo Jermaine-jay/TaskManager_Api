@@ -7,7 +7,6 @@ namespace TaskManager.Models.Entities
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public override string? PhoneNumber { get; set; }
         public UserType UserType { get; set; }
         public bool Active { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

@@ -22,17 +22,17 @@ namespace TaskManager.Services.Implementations
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IJwtAuthenticator _jwtAuthenticator;
-        //private readonly IConfiguration _configuration;
-        private readonly Authentication _authentication;
+        private readonly IConfiguration _configuration;
 
-        public AuthService(IJwtAuthenticator jwtAuthenticator, IServiceFactory serviceFactory, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, Authentication authentication)
+
+        public AuthService(IJwtAuthenticator jwtAuthenticator, IServiceFactory serviceFactory, UserManager<ApplicationUser> userManager, 
+            RoleManager<ApplicationRole> roleManager, IConfiguration configuration)
         {
             _roleManager = roleManager;
             _serviceFactory = serviceFactory;
             _userManager = userManager;
             _jwtAuthenticator = jwtAuthenticator;
-            //_configuration = configuration;
-            _authentication = authentication;
+            _configuration = configuration;
         }
 
 
@@ -259,7 +259,7 @@ namespace TaskManager.Services.Implementations
             externalAuthDto.Provider = "Google";
             var settings = new GoogleJsonWebSignature.ValidationSettings()
             {
-                Audience = new List<string>() { _authentication.Google.ClientId }
+                Audience = new List<string>() {_configuration["Authentication:Google:ClientId"]}
             };
             var payload = await GoogleJsonWebSignature.ValidateAsync(externalAuthDto.IdToken, settings);
 
