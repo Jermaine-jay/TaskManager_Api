@@ -1,28 +1,36 @@
 version: '3.4'
 
+
 services:
+
   redis:
     image: redis:latest
     ports:
       - "6379:6379"
-  
-  mssql:
-    image: "mcr.microsoft.com/mssql/server:2022-latest"
-    container_name: sql_server2022
-    ports:
-      - "1432:1433"
 
+  app_database:
+    image: postgres:latest
+    container_name: app_db
     environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=#Alexissanchez31
-     
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=#Alexissanchez31
+      - POSTGRES_DB=TaskManagerDb
+    ports:
+      - 5432:5433
+
     restart: always
+
 
   taskmanager.api:
     image: ${DOCKER_REGISTRY-}taskmanagerapi
     build:
       context: .
       dockerfile: TaskManagerApi/Dockerfile
+ 
     depends_on:
-    - "mssql"
-    - "redis"
+        - "app_database"
+    environment: 
+         - ConnectionStrings:DefaultConnection="Server=app_database;Database=TaskManagerDb;Username=postgres;Password=#Alexissanchez31;Port=5432;"
+         - ASPNETCORE_URLS=http://+80;
+
+

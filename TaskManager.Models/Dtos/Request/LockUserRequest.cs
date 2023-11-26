@@ -8,7 +8,7 @@ namespace TaskManager.Models.Dtos.Request
 {
     public class LockUserRequest
     {
-        public string UserId { get; set; }
+        public string? UserId { get; set; }
         public int Duration { get; set; }
     }
 }

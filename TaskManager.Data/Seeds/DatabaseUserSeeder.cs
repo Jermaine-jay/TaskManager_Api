@@ -56,8 +56,6 @@ namespace TaskManager.Data.Seeds
             }
         }
 
-
-
         private static ICollection<ApplicationUser> GetUsers()
         {
             return new List<ApplicationUser>()

@@ -117,7 +117,7 @@ namespace TaskManager.Services.Implementations
                 Title = request.Title,
                 DueDate = DateTime.Parse(request.DueDate),
                 Description = request.Description,
-                UpdatedAt = DateTime.Now
+                UpdatedAt = DateTime.UtcNow
             };
 
             await _taskRepo.UpdateAsync(newTask);
@@ -143,16 +143,19 @@ namespace TaskManager.Services.Implementations
             {
                 case (int)Status.InProgress:
                     task.Status = Status.InProgress;
+                    task.UpdatedAt = DateTime.UtcNow;
                     await _taskRepo.UpdateAsync(task);
                     break;
 
                 case (int)Status.Pending:
                     task.Status = Status.Pending;
+                    task.UpdatedAt = DateTime.UtcNow;
                     await _taskRepo.UpdateAsync(task);
                     break;
 
                 case (int)Status.Completed:
                     task.Status = Status.Completed;
+                    task.UpdatedAt = DateTime.UtcNow;
                     await _taskRepo.UpdateAsync(task);
                     break;
             }
@@ -182,16 +185,19 @@ namespace TaskManager.Services.Implementations
             {
                 case (int)Priority.Low:
                     task.Priority = Priority.Low;
+                    task.UpdatedAt = DateTime.UtcNow;
                     await _taskRepo.UpdateAsync(task);
                     break;
 
                 case (int)Priority.Medium:
                     task.Priority = Priority.Medium;
+                    task.UpdatedAt = DateTime.UtcNow;
                     await _taskRepo.UpdateAsync(task);
                     break;
 
                 case (int)Priority.High:
                     task.Status = Status.Completed;
+                    task.UpdatedAt = DateTime.UtcNow;
                     await _taskRepo.UpdateAsync(task);
                     break;
             }
