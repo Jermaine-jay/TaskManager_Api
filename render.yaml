@@ -1,0 +1,77 @@
+services:
+  - type: web
+    name: ss2c-dockerfile
+    runtime: docker
+    region: frankfurt
+    plan: free
+    healthCheckPath: /management/health
+    envVars:
+      - key: SQLSERVER_CONNECTION_STRING
+        fromDatabase:
+          name: sqlserver
+          property: connectionString
+      - key: SQLSERVER_USERNAME
+        fromDatabase:
+          name: sqlserver
+          property: user
+      - key: _PASSWORD
+        fromDatabase:
+          name: sqlserver
+          property: password
+      - key: SQLSERVER_HOST
+        fromDatabase:
+          name: sqlserver
+          property: host
+      - key: SQLSERVER_PORT
+        fromDatabase:
+          name: sqlserver
+          property: port
+      - key: SQLSERVER_SCHEMA
+        fromDatabase:
+          name: sqlserver
+          property: database
+      - key: SQLSERVER_URL
+        value: jdbc:Server=${SQLSERVER_SERVER};Database=${MSSQL_DATABASE};User Id=${SQLSERVER_USERNAME};Password=${SQLSERVER_PASSWORD};Encrypt=false;TrustServerCertificate=True;MultipleActiveResultSets=true;MultiSubnetFailover=True
+
+  - type: web
+    name: ss2c-image
+    runtime: image
+    image:
+      url: docker.io/jermaine31/taskmanager_api:latest
+
+    region: frankfurt
+    plan: free
+    healthCheckPath: /management/health
+    envVars:
+      - key: SQLSERVER_CONNECTION_STRING
+        fromDatabase:
+          name: sqlserver
+          property: connectionString
+      - key: SQLSERVER_USERNAME
+        fromDatabase:
+          name: sqlserver
+          property: user
+      - key: _PASSWORD
+        fromDatabase:
+          name: sqlserver
+          property: password
+      - key: SQLSERVER_HOST
+        fromDatabase:
+          name: sqlserver
+          property: host
+      - key: SQLSERVER_PORT
+        fromDatabase:
+          name: sqlserver
+          property: port
+      - key: SQLSERVER_SCHEMA
+        fromDatabase:
+          name: sqlserver
+          property: database
+      - key: SQLSERVER_URL
+        value: jdbc:Server=${SQLSERVER_SERVER};Database=${MSSQL_DATABASE};User Id=${SQLSERVER_USERNAME};Password=${SQLSERVER_PASSWORD};Encrypt=false;TrustServerCertificate=True;MultipleActiveResultSets=true;MultiSubnetFailover=True
+
+
+databases:
+  - name: sqlserver
+    region: frankfurt
+    plan: free
