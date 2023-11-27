@@ -9,12 +9,16 @@ string? connectionString = builder.Configuration.GetConnectionString("DefaultCon
 builder.Services.RegisterDbContext(connectionString);
 
 builder.Services.RegisterServices();
-builder.Services.ConfigurationBinder(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.ConfigureCors();
 builder.Services.ConfigureIdentity(builder.Configuration);
 builder.Services.ConfigureIISIntegration();
+
+builder.Services.ConfigureJWT(builder.Configuration);
+builder.Services.AddRedisCache(builder.Configuration);
+
+
 
 builder.Services.AddHostedService<ConsumeScopedServiceHostedService>();
 
@@ -62,7 +66,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-//new commit
+
 app.UseRouting();
 app.ConfigureException(builder.Environment);
 app.UseForwardedHeaders(new ForwardedHeadersOptions
