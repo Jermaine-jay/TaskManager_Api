@@ -30,3 +30,13 @@ jobs:
           file: ./TaskManagerApi/Dockerfile 
           push: true
           tags: jermaine31/taskmanager_api:latest
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: Deploy to production
+        uses: render-com/deploy-to-render@v0.3.2
+        with:
+          service-id: ${{ srv-clhmc9mg1b2c73afqqn0 }} # Can be found as part of the Deploy Hook
+          api-key: ${{ rnd_opHPVmdaY46FRfLnWlcghqzSpV8B }}
