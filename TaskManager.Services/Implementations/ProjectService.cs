@@ -49,6 +49,7 @@ namespace TaskManager.Services.Implementations
                 Name = request.Name.ToLower(),
                 Description = request.Description,
                 UserId = user.Id,
+                CreatedAt = DateTime.UtcNow,    
             };
 
             await _projectRepo.AddAsync(newProj);
@@ -110,7 +111,8 @@ namespace TaskManager.Services.Implementations
             {
                 Id = project.Id,
                 Name = request.Name,
-                Description = request.Description
+                Description = request.Description,
+                UpdatedAt = DateTime.UtcNow
             };
 
             await _projectRepo.UpdateAsync(newProj);

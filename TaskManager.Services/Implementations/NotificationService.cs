@@ -44,7 +44,7 @@ namespace TaskManager.Services.Implementations
                 {
                     Type = NotificationType.DueDateReminder,
                     Message = noteMsg,
-                    Timestamp = DateTime.Now,
+                    Timestamp = DateTime.UtcNow,
                     Read = false,
                     UserId = user.UserId
                 };

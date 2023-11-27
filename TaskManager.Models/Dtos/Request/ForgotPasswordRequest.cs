@@ -10,6 +10,6 @@ namespace TaskManager.Models.Dtos.Request
     public class ForgotPasswordRequest
     {
         [Required, DataType(DataType.EmailAddress)]
-        public string Email { get; set; }
+        public string? Email { get; set; }
     }
 }

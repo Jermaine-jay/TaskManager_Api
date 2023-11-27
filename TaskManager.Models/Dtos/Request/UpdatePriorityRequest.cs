@@ -2,13 +2,13 @@
 {
     public class UpdateStatusRequest
     {
-        public string TaskId { get; set; }
+        public string? TaskId { get; set; }
         public int? Status { get; set; }
     }
 
     public class UpdatePriorityRequest
     {
-        public string  TaskId { get; set; }
+        public string?  TaskId { get; set; }
         public int? Priority { get; set; }
     }
 }

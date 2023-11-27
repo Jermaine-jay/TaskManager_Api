@@ -3,7 +3,7 @@
   <PropertyGroup Label="Globals">
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
-    <ProjectGuid>87953ad5-f1fc-4589-81ce-8ff5dd26a3f7</ProjectGuid>
+    <ProjectGuid>82add41d-b1ed-47e9-83cf-e6cff75e1669</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
     <DockerServiceName>taskmanager.api</DockerServiceName>

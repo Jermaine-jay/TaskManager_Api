@@ -8,7 +8,7 @@ namespace TaskManager.Models.Dtos.Request
 {
     public class UserTaskRequest
     {
-        public string UserId { get; set; }
-        public string TaskId { get; set; }
+        public string? UserId { get; set; }
+        public string? TaskId { get; set; }
     }
 }

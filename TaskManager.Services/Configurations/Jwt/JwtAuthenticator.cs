@@ -7,20 +7,24 @@ using TaskManager.Services.Interfaces;
 using TaskManager.Models.Enums;
 using Microsoft.IdentityModel.Tokens;
 using TaskManager.Models.Dtos.Response;
+using Microsoft.Extensions.Configuration;
 
 namespace TaskManager.Services.Configurations.Jwt
 {
     public class JwtAuthenticator : IJwtAuthenticator
     {
-        private readonly JwtConfig _jwtConfig;
-        public JwtAuthenticator(JwtConfig jwtConfig)
-        { 
-            _jwtConfig = jwtConfig;
+        private readonly IConfiguration _config;
+
+        public JwtAuthenticator(IConfiguration config)
+        {
+            _config = config;
         }
+
         public async Task<JwtToken> GenerateJwtToken(ApplicationUser user)
         {
             JwtSecurityTokenHandler jwtTokenHandler = new();
-            var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret);
+            var key = Encoding.ASCII.GetBytes(_config["JwtConfig:Secret"]);
+
             string userRole = user.UserType.GetStringValue();
             IdentityOptions _options = new();
 
@@ -39,10 +43,10 @@ namespace TaskManager.Services.Configurations.Jwt
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(_jwtConfig.Expires),
+                Expires = DateTime.UtcNow.AddMinutes(300),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                Issuer = _jwtConfig.Issuer,
-                Audience = _jwtConfig.Audience
+                Issuer = _config["JwtConfig:Issuer"],
+                Audience = _config["JwtConfig:Audience"]
             };
 
             var token = jwtTokenHandler.CreateToken(tokenDescriptor);

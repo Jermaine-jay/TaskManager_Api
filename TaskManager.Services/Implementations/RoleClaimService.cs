@@ -121,8 +121,5 @@ namespace TaskManager.Services.Implementations
             };
         }
 
-    }
-
-
-    
+    } 
 }
