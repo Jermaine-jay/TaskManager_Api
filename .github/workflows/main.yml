@@ -38,5 +38,5 @@ jobs:
       - name: Deploy to production
         uses: johnbeynon/render-deploy-action@v0.0.8
         with:
-          service-id: srv-clhmc9mg1b2c73afqqn0 # Can be found as part of the Deploy Hook
-          api-key: rnd_opHPVmdaY46FRfLnWlcghqzSpV8B
+           service-id: ${{ secrets.RENDER_SERVICE_ID }}
+           api-key: ${{ secrets.RENDER_API_KEY }}
