@@ -1,10 +1,9 @@
 name: My Deploy
 
-on:
+on: 
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    branches: 
+      - master
 
 jobs:
   build:
