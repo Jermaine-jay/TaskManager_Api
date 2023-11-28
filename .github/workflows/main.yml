@@ -32,7 +32,7 @@ jobs:
           tags: jermaine31/taskmanager_api:latest
 
       - name: Run Database Migrations
-        run: dotnet ef database update --project TaskManageraPI
+        run: dotnet tool run dotnet-ef database update --project TaskManageraPI
         
   deploy:
     name: Deploy
