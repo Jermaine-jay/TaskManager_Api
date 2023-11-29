@@ -5,6 +5,7 @@ namespace TaskManager.Services.Configurations.Cache.CacheServices
 {
     public class CacheService : ICacheService
     {
+        private readonly IConnectionMultiplexer _connectionMultiplexer;
         private readonly IDatabase _redis;
         private readonly IServer _server;
 
@@ -18,10 +19,10 @@ namespace TaskManager.Services.Configurations.Cache.CacheServices
         public async Task WriteToCache<T>(string key, T payload, CacheKeySets? cacheKeySets, TimeSpan? absoluteExpireTime)
         {
             string stringifiedJson = JsonConvert.SerializeObject(payload);
-            await _redis.StringSetAsync(key, stringifiedJson, absoluteExpireTime, When.Always).ConfigureAwait(true);
+            await _redis.StringSetAsync(key, stringifiedJson, absoluteExpireTime, When.Always).ConfigureAwait(false);
 
             if (cacheKeySets.HasValue)            
-                await _redis.SetAddAsync(cacheKeySets.Value.ToString(), key);        
+                await _redis.SetAddAsync(cacheKeySets.Value.ToString(), key).ConfigureAwait(false);        
         }
 
 

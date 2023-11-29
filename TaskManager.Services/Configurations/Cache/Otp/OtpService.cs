@@ -57,12 +57,12 @@ namespace TaskManager.Services.Configurations.Cache.Otp
         public async Task<string> GenerateUniqueOtpAsync(string userId, OtpOperation operation)
         {
             string cacheKeyandvalue = CacheKeySelector.GenerateUniqueOtpCacheKey(userId, operation);
-            OtpCodeDto? otpCode = await _cacheService.ReadFromCache<OtpCodeDto>(cacheKeyandvalue);
+            var otpCode = await _cacheService.ReadFromCache<OtpCode>(cacheKeyandvalue);
 
-            if (otpCode != null)          
+            if (otpCode != null)
                 otpCode.Otp = cacheKeyandvalue;
-          
-            otpCode = new(cacheKeyandvalue);           
+
+            otpCode = new OtpCode(cacheKeyandvalue) { };
             await _cacheService.WriteToCache(cacheKeyandvalue, otpCode, null, OtpValidity);
             return otpCode.Otp;
         }
@@ -71,7 +71,7 @@ namespace TaskManager.Services.Configurations.Cache.Otp
         public async Task<bool> VerifyUniqueOtpAsync(string userId, string otp, OtpOperation operation)
         {
             string cacheKey = CacheKeySelector.GenerateUniqueOtpCacheKey(userId, operation);
-            OtpCodeDto? otpCode = await _cacheService.ReadFromCache<OtpCodeDto>(cacheKey);
+            OtpCode? otpCode = await _cacheService.ReadFromCache<OtpCode>(cacheKey);
 
             if (otpCode == null)
                 return false;

@@ -12,4 +12,14 @@
             Attempts = 0;
         }
     }
+
+    public record OtpCode
+    {
+        public string Otp { get; set; }
+
+        public OtpCode(string otp)
+        {
+            Otp = otp;
+        }
+    }
 }

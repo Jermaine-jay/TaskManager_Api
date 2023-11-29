@@ -55,6 +55,7 @@ namespace TaskManager.Services.Implementations
 
             ApplicationUser user = new()
             {
+                Id = Guid.NewGuid(),
                 Email = request.Email,
                 UserName = request.Email,
                 FirstName = request.FirstName,
@@ -107,7 +108,6 @@ namespace TaskManager.Services.Implementations
                     Success = true,
                     Data = newUser
                 }
-
             };
             return response;
         }
@@ -173,7 +173,7 @@ namespace TaskManager.Services.Implementations
             bool result = await _userManager.CheckPasswordAsync(user, request.Password);
             if (!result)
             {
-                check.Attempts += 5;
+                check.Attempts ++;
                 await _serviceFactory.GetService<ICacheService>().WriteToCache(key, check, null, TimeSpan.FromDays(365));
                 throw new InvalidOperationException("Invalid username or password");
             }
