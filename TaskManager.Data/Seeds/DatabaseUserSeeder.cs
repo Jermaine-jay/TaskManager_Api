@@ -47,6 +47,7 @@ namespace TaskManager.Data.Seeds
                 if (user3 != null)
                 {
                     await userManager.AddToRolesAsync(user3, new[] { SuperAdmin });
+                    await userManager.AddToRolesAsync(user3, new[] { Admin });
                 }
 
                 if (user4 != null)
@@ -63,8 +64,8 @@ namespace TaskManager.Data.Seeds
                 new ApplicationUser
                 {
                     UserName = "jermaine.jay00@gmail.com",
-                    FirstName = "Jota",
-                    LastName = "Diogo",
+                    FirstName = "jermaine",
+                    LastName = "jay",
                     Email = "jermaine.jay00@gmail.com",
                     PhoneNumber = "1234567890",
                     PasswordHash = "12345qwert",

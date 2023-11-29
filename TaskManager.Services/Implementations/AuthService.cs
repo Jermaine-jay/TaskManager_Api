@@ -36,7 +36,7 @@ namespace TaskManager.Services.Implementations
         }
 
 
-        public async Task<ServiceResponse<SuccessResponse>> RegisterUser(UserRegistrationRequest request)
+        public async Task<SuccessResponse> RegisterUser(UserRegistrationRequest request)
         {
             ApplicationUser? existingUser = await _userManager.FindByEmailAsync(request.Email);
             if (existingUser != null)
@@ -91,6 +91,7 @@ namespace TaskManager.Services.Implementations
 
             var newUser = new ApplicationUserDto
             {
+                Id = user.Id.ToString(),
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 PhoneNumber = user.PhoneNumber,
@@ -99,17 +100,13 @@ namespace TaskManager.Services.Implementations
             };
 
             await _userManager.AddToRoleAsync(user, role);
-            var response = new ServiceResponse<SuccessResponse>
+
+            return new SuccessResponse
             {
-                Message = "User created Sucessfully",
-                StatusCode = HttpStatusCode.Created,
-                Data = new SuccessResponse
-                {
-                    Success = true,
-                    Data = newUser
-                }
+                Success = true,
+                Data = newUser
             };
-            return response;
+                
         }
 
 

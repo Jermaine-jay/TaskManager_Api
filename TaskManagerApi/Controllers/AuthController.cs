@@ -25,7 +25,7 @@ namespace TaskManager.Api.Controllers
 
         [HttpPost("create-user", Name = "create-User")]
         [SwaggerOperation(Summary = "Creates user")]
-        [SwaggerResponse(StatusCodes.Status200OK, Description = "UserId of created user", Type = typeof(ApplicationUserDto))]
+        [SwaggerResponse(StatusCodes.Status201Created, Description = "UserId of created user", Type = typeof(SuccessResponse))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "User with provided email already exists", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "Failed to create user", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
