@@ -5,6 +5,7 @@ using TaskManager.Data.Seeds;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.RegisterDbContext(connectionString);
 
