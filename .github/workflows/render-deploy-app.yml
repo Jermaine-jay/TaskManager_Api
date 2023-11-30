@@ -27,7 +27,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./TaskManager_Api/Dockerfile 
+          file: ./TaskManagerApi/Dockerfile 
           push: true
           tags: jermaine31/taskmanager_api:latest
 
