@@ -6,7 +6,7 @@ namespace TaskManager.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task<ServiceResponse<SuccessResponse>> RegisterUser(UserRegistrationRequest request);
+        Task<SuccessResponse> RegisterUser(UserRegistrationRequest request);
         Task<SuccessResponse> ConfirmEmail(string validToken);
         Task<AuthenticationResponse> UserLogin(LoginRequest request);
         Task<SuccessResponse> ResetPassword(ResetPasswordRequest request);
