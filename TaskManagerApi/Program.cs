@@ -80,9 +80,9 @@ app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
 app.MapControllers();
 
-/*await app.SeedRole();
+await app.SeedRole();
 await app.SeededUserAsync();
-await app.ClaimSeeder();
+/*await app.ClaimSeeder();
 await app.ProjectSeeder();*/
 
 app.Run();
