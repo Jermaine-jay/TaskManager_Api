@@ -32,7 +32,7 @@ namespace TaskManager.Test.Auth
         public async System.Threading.Tasks.Task AuthController_CreateUser_ShouldReturnOk()
         {
             var user = _fixture.Create<UserRegistrationRequest>();
-            var request = _fixture.Create<ServiceResponse<SuccessResponse>>();
+            var request = _fixture.Create<SuccessResponse>();
             _mockAuthService.Setup(repo => repo.RegisterUser(user)).ReturnsAsync(request);
 
             var result = await _authController.CreateUser(user);

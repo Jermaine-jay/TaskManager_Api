@@ -1,7 +1,6 @@
 ﻿using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using System.Net;
 using TaskManager.Models.Dtos;
 using TaskManager.Models.Dtos.Request;
 using TaskManager.Models.Dtos.Response;
@@ -14,6 +13,7 @@ using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Interfaces;
 using TaskManager.Services.Utilities;
 
+
 namespace TaskManager.Services.Implementations
 {
     public class AuthService : IAuthService
@@ -25,7 +25,7 @@ namespace TaskManager.Services.Implementations
         private readonly IConfiguration _configuration;
 
 
-        public AuthService(IJwtAuthenticator jwtAuthenticator, IServiceFactory serviceFactory, UserManager<ApplicationUser> userManager, 
+        public AuthService(IJwtAuthenticator jwtAuthenticator, IServiceFactory serviceFactory, UserManager<ApplicationUser> userManager,
             RoleManager<ApplicationRole> roleManager, IConfiguration configuration)
         {
             _roleManager = roleManager;
@@ -106,7 +106,7 @@ namespace TaskManager.Services.Implementations
                 Success = true,
                 Data = newUser
             };
-                
+
         }
 
 
@@ -170,7 +170,7 @@ namespace TaskManager.Services.Implementations
             bool result = await _userManager.CheckPasswordAsync(user, request.Password);
             if (!result)
             {
-                check.Attempts ++;
+                check.Attempts++;
                 await _serviceFactory.GetService<ICacheService>().WriteToCache(key, check, null, TimeSpan.FromDays(365));
                 throw new InvalidOperationException("Invalid username or password");
             }
@@ -216,7 +216,6 @@ namespace TaskManager.Services.Implementations
                 Token = result,
                 Success = true
             };
-
         }
 
 
@@ -256,7 +255,7 @@ namespace TaskManager.Services.Implementations
             externalAuthDto.Provider = "Google";
             var settings = new GoogleJsonWebSignature.ValidationSettings()
             {
-                Audience = new List<string>() {_configuration["Authentication:Google:ClientId"]}
+                Audience = new List<string>() { _configuration["Authentication:Google:ClientId"] }
             };
             var payload = await GoogleJsonWebSignature.ValidateAsync(externalAuthDto.IdToken, settings);
 
