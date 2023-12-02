@@ -50,7 +50,6 @@ namespace TaskManager.Services.Implementations
                 };
                 await _noteRepo.AddAsync(newNote);
             }
-
             return noteMsg;
         }
 
@@ -100,6 +99,7 @@ namespace TaskManager.Services.Implementations
             };
         }
 
+
         public async Task<SuccessResponse> GetNotifications(string userId)
         {
             var notif = await _noteRepo.GetAllAsync(include: u => u.Include(u => u.User));
@@ -123,6 +123,7 @@ namespace TaskManager.Services.Implementations
                 })
             };
         }
+
 
         public async Task<bool> CreateReminderNotification()
         {
