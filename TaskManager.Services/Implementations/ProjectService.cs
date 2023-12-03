@@ -35,7 +35,7 @@ namespace TaskManager.Services.Implementations
 
         public async Task<CreateTaskResponse> CreateProject(string userId, CreateProjectRequest request)
         {
-            var user = await _userRepo.GetSingleByAsync(u => u.Id.ToString() == userId, include: u => u.Include(u => u.Projects));
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 throw new InvalidOperationException("User Not Found");
 
@@ -73,6 +73,9 @@ namespace TaskManager.Services.Implementations
             if (project == null)
                 throw new InvalidOperationException("Project does not exist");
 
+            if(user.Projects.Any(x=> x.Id != project.Id))
+                throw new InvalidOperationException("You are not allowed to perform this action");
+
             await _projectRepo.DeleteAsync(project);
             return new SuccessResponse
             {
@@ -106,6 +109,9 @@ namespace TaskManager.Services.Implementations
             var project = await _projectRepo.GetSingleByAsync(u => u.Id.ToString() == request.ProjectId);
             if (project == null)
                 throw new InvalidOperationException("Project does not exist");
+
+            if (user.Projects.Any(x => x.Id != project.Id))
+                throw new InvalidOperationException("You are not allowed to perform this action");
 
             var newProj = new Project
             {

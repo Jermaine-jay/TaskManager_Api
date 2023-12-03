@@ -18,21 +18,29 @@ namespace TaskManager.Services.Implementations
 {
     public class AuthService : IAuthService
     {
-        private readonly IServiceFactory _serviceFactory;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IJwtAuthenticator _jwtAuthenticator;
         private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
+        private readonly IOtpService _otpService;
+        private readonly ICacheService _cacheService;
+        private readonly ILockoutAttempt _lockoutAttempt;
 
 
-        public AuthService(IJwtAuthenticator jwtAuthenticator, IServiceFactory serviceFactory, UserManager<ApplicationUser> userManager,
-            RoleManager<ApplicationRole> roleManager, IConfiguration configuration)
+        public AuthService(IJwtAuthenticator jwtAuthenticator,
+            UserManager<ApplicationUser> userManager,RoleManager<ApplicationRole> roleManager, 
+            IConfiguration configuration, IEmailService emailService, IOtpService otpService, 
+            ICacheService cacheService, ILockoutAttempt lockoutAttempt)
         {
             _roleManager = roleManager;
-            _serviceFactory = serviceFactory;
             _userManager = userManager;
             _jwtAuthenticator = jwtAuthenticator;
             _configuration = configuration;
+            _emailService = emailService;
+            _otpService = otpService;
+            _cacheService = cacheService;
+            _lockoutAttempt = lockoutAttempt;
         }
 
 
@@ -43,12 +51,7 @@ namespace TaskManager.Services.Implementations
                 throw new InvalidOperationException($"User already exists with Email {request.Email}");
 
 
-            var emailExist = await _userManager.FindByNameAsync(request.Email);
-            if (emailExist != null)
-                throw new InvalidOperationException($"User already exists");
-
-
-            var verifyEmail = await _serviceFactory.GetService<IEmailService>().VerifyEmailAddress(request.Email);
+            var verifyEmail = await _emailService.VerifyEmailAddress(request.Email);
             if (!verifyEmail)
                 throw new InvalidOperationException($"Email {request.Email} is invalid");
 
@@ -75,7 +78,7 @@ namespace TaskManager.Services.Implementations
             }
 
 
-            var registerMail = await _serviceFactory.GetService<IEmailService>().RegistrationMail(user);
+            var registerMail = await _emailService.RegistrationMail(user);
             if (!registerMail)
                 throw new InvalidOperationException($"Could not send verification mail");
 
@@ -123,7 +126,7 @@ namespace TaskManager.Services.Implementations
                 throw new InvalidOperationException($"Invalid Operation");
 
 
-            var verifyToken = await _serviceFactory.GetService<IOtpService>().VerifyUniqueOtpAsync(user.Id.ToString(), validToken, OtpOperation.EmailConfirmation);
+            var verifyToken = await _otpService.VerifyUniqueOtpAsync(user.Id.ToString(), validToken, OtpOperation.EmailConfirmation);
             if (!verifyToken)
             {
                 throw new InvalidOperationException($"Invalid Token");
@@ -156,14 +159,14 @@ namespace TaskManager.Services.Implementations
             if (user.LockoutEnd != null)
                 throw new InvalidOperationException($"User Suspended. Time Left {user.LockoutEnd - DateTimeOffset.UtcNow}");
 
-            var key = await _serviceFactory.GetService<ILockoutAttempt>().LoginAttemptAsync(user.Id.ToString());
-            var check = await _serviceFactory.GetService<ILockoutAttempt>().CheckLoginAttemptAsync(user.Id.ToString());
+            var key = await _lockoutAttempt.LoginAttemptAsync(user.Id.ToString());
+            var check = await _lockoutAttempt.CheckLoginAttemptAsync(user.Id.ToString());
             if (check.Attempts == maxAttempt)
             {
                 DateTimeOffset lockoutEnd = DateTimeOffset.UtcNow.AddSeconds(300);
                 user.LockoutEnd = lockoutEnd;
                 await _userManager.UpdateAsync(user);
-                await _serviceFactory.GetService<ILockoutAttempt>().ResetLoginAttemptAsync(user.Id.ToString());
+                await _lockoutAttempt.ResetLoginAttemptAsync(user.Id.ToString());
                 throw new InvalidOperationException($"Account locked, Time Left {user.LockoutEnd - DateTimeOffset.UtcNow}");
             }
 
@@ -171,7 +174,7 @@ namespace TaskManager.Services.Implementations
             if (!result)
             {
                 check.Attempts++;
-                await _serviceFactory.GetService<ICacheService>().WriteToCache(key, check, null, TimeSpan.FromDays(365));
+                await _cacheService.WriteToCache(key, check, null, TimeSpan.FromDays(365));
                 throw new InvalidOperationException("Invalid username or password");
             }
 
@@ -195,13 +198,14 @@ namespace TaskManager.Services.Implementations
         public async Task<ChangePasswordResponse> ForgotPassword(ForgotPasswordRequest request)
         {
 
-            var verify = await _serviceFactory.GetService<IEmailService>().VerifyEmailAddress(request.Email);
+            var verify = await _emailService.VerifyEmailAddress(request.Email);
             if (verify == false)
                 throw new InvalidOperationException($"Invalid Email Address");
 
 
             var user = await _userManager.FindByEmailAsync(request.Email);
             var isConfrimed = await _userManager.IsEmailConfirmedAsync(user);
+
             if (user == null || !isConfrimed)
                 throw new InvalidOperationException($"User does not exist");
 
@@ -209,7 +213,7 @@ namespace TaskManager.Services.Implementations
                 throw new InvalidOperationException($"User Suspended. Time Left {user.LockoutEnd - DateTimeOffset.UtcNow}");
 
 
-            var result = await _serviceFactory.GetService<IEmailService>().ResetPasswordMail(user);
+            var result = await _emailService.ResetPasswordMail(user);
             return new ChangePasswordResponse
             {
                 Message = "Token sent",
@@ -232,7 +236,7 @@ namespace TaskManager.Services.Implementations
                 throw new InvalidOperationException($"Invalid Operation");
 
 
-            bool isOtpValid = await _serviceFactory.GetService<IOtpService>().VerifyUniqueOtpAsync(user.Id.ToString(), request.Token, OtpOperation.PasswordReset);
+            bool isOtpValid = await _otpService.VerifyUniqueOtpAsync(user.Id.ToString(), request.Token, OtpOperation.PasswordReset);
             if (!isOtpValid)
                 throw new InvalidOperationException($"Invalid Token");
 
