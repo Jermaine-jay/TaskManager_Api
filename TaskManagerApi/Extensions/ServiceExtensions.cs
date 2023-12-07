@@ -133,10 +133,11 @@ namespace TaskManager.Api.Extensions
             {
                 options.AddPolicy("Authorization", policy =>
                 {
+                    policy.AddAuthenticationSchemes(new[] { JwtBearerDefaults.AuthenticationScheme });
                     policy.Requirements.Add(new AuthRequirement());
+                    policy.Build();
                 });
             });
-
         }
 
 

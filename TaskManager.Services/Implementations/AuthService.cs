@@ -112,7 +112,6 @@ namespace TaskManager.Services.Implementations
 
         }
 
-
         public async Task<SuccessResponse> ConfirmEmail(string validToken)
         {
             var (existingUser, operation) = await DecodeToken.DecodeVerificationToken(validToken);
@@ -140,7 +139,6 @@ namespace TaskManager.Services.Implementations
                 Data = user
             };
         }
-
 
         public async Task<AuthenticationResponse> UserLogin(LoginRequest request)
         {
@@ -194,7 +192,6 @@ namespace TaskManager.Services.Implementations
 
         }
 
-
         public async Task<ChangePasswordResponse> ForgotPassword(ForgotPasswordRequest request)
         {
 
@@ -221,7 +218,6 @@ namespace TaskManager.Services.Implementations
                 Success = true
             };
         }
-
 
         public async Task<SuccessResponse> ResetPassword(ResetPasswordRequest request)
         {
@@ -252,7 +248,6 @@ namespace TaskManager.Services.Implementations
                 Data = result,
             };
         }
-
 
         public async Task<object> GoogleAuth(ExternalAuthRequest externalAuthDto)
         {
