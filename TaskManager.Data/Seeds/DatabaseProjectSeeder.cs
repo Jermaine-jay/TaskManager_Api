@@ -21,7 +21,7 @@ namespace TaskManager.Data.Seeds
             {
                 UserManager<ApplicationUser> userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
                 ApplicationUser jo = await userManager.FindByEmailAsync("Jermaine.jay00@gmail.com");
-                ApplicationUser jo2 = await userManager.FindByEmailAsync("jsonosita@outlook.com");
+                ApplicationUser jo2 = await userManager.FindByEmailAsync("mosalah11@outlook.com");
 
                 context.Database.EnsureCreated();
 
