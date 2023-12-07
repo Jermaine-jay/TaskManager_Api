@@ -1,8 +1,6 @@
 ﻿using TaskManager.Models.Dtos.Request;
 using TaskManager.Models.Dtos.Response;
 using TaskManager.Services.Infrastructure;
-using TaskManager.Services.Implementations;
-using TaskManager.Models.Dtos;
 
 namespace TaskManager.Services.Interfaces
 {

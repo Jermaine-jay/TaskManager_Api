@@ -26,7 +26,7 @@ namespace TaskManager.Data.Seeds
                 }
 
                 ApplicationUser user1 = await userManager.FindByEmailAsync("jermaine.jay00@gmail.com");
-                ApplicationUser user2 = await userManager.FindByEmailAsync("jsonosita@outlook.com");
+                ApplicationUser user2 = await userManager.FindByEmailAsync("mosalah11@outlook.com");
                 ApplicationUser user3 = await userManager.FindByEmailAsync("jsonosii097@gmail.com");
                 ApplicationUser user4 = await userManager.FindByEmailAsync("IbouKonate@gmail.com");
 
@@ -79,8 +79,8 @@ namespace TaskManager.Data.Seeds
                 {
                     FirstName = "Mo",
                     LastName = "Salah",
-                    Email = "jsonosita@outlook.com",
-                    UserName = "jsonosita@outlook.com",
+                    Email = "mosalah11@outlook.com",
+                    UserName = "mosalah11@outlook.com",
                     PhoneNumber = "1334447880",
                     PasswordHash = "12345qwert",
                     Active = true,
@@ -94,8 +94,8 @@ namespace TaskManager.Data.Seeds
 
                     FirstName = "Roberto",
                     LastName = "Firmino",
-                    Email = "jsonosii097@gmail.com",
-                    UserName = "jsonosii097@gmail.com",
+                    Email = "RobertoFirmino@gmail.com",
+                    UserName = "RobertoFirmino@gmail.com",
                     PhoneNumber = "1234447890",
                     PasswordHash = "12345qwert",
                     Active = true,
