@@ -71,8 +71,8 @@ If you'd like to contribute to the Car Auction App, please follow these steps:
 * Create a pull request, describing your changes and the problem they solve.
 
 ## application URL
-https://task-manager-944y.onrender.com
-https://task-manager-944y.onrender.com/swagger/index.html
+* https://task-manager-944y.onrender.com
+* https://task-manager-944y.onrender.com/swagger/index.html
 
 ## Default Users
 ___
