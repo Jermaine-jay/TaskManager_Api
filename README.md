@@ -1,6 +1,6 @@
 # Task Manager Api Application
 ____
-#### The Application is a web application built with ASP.NET API, Entity Framework Core, Redis, PostgreSQL, and Docker. This helps individuals as well as groups to manage task on projects to increase productivity.
+#### The Application is a web application built with ASP.NET API, Entity Framework Core, Redis, PostgreSQL, and Docker. This helps individuals as well as groups to manage tasks on projects to increase productivity.
 
 
 ## Technologies
@@ -27,7 +27,7 @@ ____
 
 * User Update: Only confirmed users will be able to log in, create projects and tasks, pick tasks, and change details.
 
-* Project Management: Only the creator of a project can make assign user/users to a task and make changes to the project.
+* Project Management: Only the creator of a project can assign user/users to a task and make changes to the project.
 
 * Tasks: The task has a duration and a notification will be sent to a user assigned to a task 48 hours before the deadline. A notification is sent to a user when the task status is changed.
 
@@ -81,5 +81,5 @@ ___
 | Email                    | Password   | Role       |
 | -----------------------  | ---------- | ---------- |
 | jermaine.jay00@gmail.com | 12345qwert | User       |
-| jsonosita@outlook.com    | 12345qwert | SuperAdmin |
+| mosalah11@outlook.com    | 12345qwert | Admin      |
 | IbouKonate@gmail.com     | 12345qwert | User       |  
