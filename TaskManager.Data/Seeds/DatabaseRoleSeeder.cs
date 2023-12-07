@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using System.Runtime.CompilerServices;
 using TaskManager.Data.Context;
 using TaskManager.Models.Entities;
 using TaskManager.Models.Enums;

@@ -29,7 +29,7 @@ namespace TaskManager.Api.Controllers
 
         [HttpGet("my-account", Name = "my-account")]
         [SwaggerOperation(Summary = "get loggedin user account ")]
-        [SwaggerResponse(StatusCodes.Status201Created, Description = "user", Type = typeof(SuccessResponse))]
+        [SwaggerResponse(StatusCodes.Status200OK, Description = "user", Type = typeof(ProfileResponse))]
         [SwaggerResponse(StatusCodes.Status404NotFound, Description = "User Not Found", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
         public async Task<IActionResult> GetUser()

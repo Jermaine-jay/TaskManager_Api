@@ -8,7 +8,7 @@ namespace TaskManager.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<ApplicationUserDto> GetUser(string userId);
+        Task<ProfileResponse> GetUser(string userId);
         Task<SuccessResponse> DeleteUser(string userId);
         Task<SuccessResponse> UpdateUser(string userId, UpdateUserRequest request);
         Task<SuccessResponse> ChangePassword(string userId, ChangePasswordRequest request);
