@@ -26,12 +26,18 @@ namespace TaskManager.Data.Seeds
 
                 var user = await roleManager.FindByNameAsync(UserType.User.GetStringValue());
                 var admin = await roleManager.FindByNameAsync(UserType.Admin.GetStringValue());
-                var role = await roleManager.FindByNameAsync(UserType.SuperAdmin.GetStringValue());
+                var superadmin = await roleManager.FindByNameAsync(UserType.SuperAdmin.GetStringValue());
 
                 if (!claims)
                 {
                     await context.RoleClaims.AddRangeAsync(await UserClaim(user));
                     await context.RoleClaims.AddRangeAsync(await AdminClaim(admin));
+                    await context.SaveChangesAsync();
+                }
+
+                if (superadmin != null)
+                {
+                    await context.RoleClaims.AddRangeAsync(await AdminClaim(superadmin));
                     await context.SaveChangesAsync();
                 }
             }

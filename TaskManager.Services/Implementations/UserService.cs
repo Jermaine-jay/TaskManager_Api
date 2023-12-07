@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TaskManager.Data.Interfaces;
 using TaskManager.Models.Dtos;
 using TaskManager.Models.Dtos.Request;
+using TaskManager.Models.Dtos.Response;
 using TaskManager.Models.Entities;
 using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Interfaces;
@@ -60,13 +61,13 @@ namespace TaskManager.Services.Implementations
             };
         }
 
-        public async Task<ApplicationUserDto> GetUser(string userId)
+        public async Task<ProfileResponse> GetUser(string userId)
         {
             var user = await _userRepo.GetSingleByAsync(user => user.Id.ToString() == userId);
             if (user == null)
                 throw new InvalidOperationException("User Not Found");
 
-            return new ApplicationUserDto
+            var result = new ProfileResponse
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
@@ -74,10 +75,9 @@ namespace TaskManager.Services.Implementations
                 PhoneNumber = user.PhoneNumber,
                 Active = user.Active ? "Active" : "Not Active",
                 EmailConfirmed = user.EmailConfirmed ? "Confirmed" : "Not Confirmed",
-                LockedOut = user.LockoutEnd?.ToString("dd MMMM yyyy HH:mm:ss"),
-                CreatedAt = user.CreatedAt.ToString("dd MMMM yyyy HH:mm:ss"),
-                UpdatedAt = user.UpdatedAt.ToString("dd MMMM yyyy HH:mm:ss"),
             };
+
+            return result;
         }
 
         public async Task<SuccessResponse> UpdateUser(string userId, UpdateUserRequest request)
