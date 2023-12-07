@@ -1,11 +1,11 @@
 # Task Manager Api Application
 ____
-#### The Application is a web application built with ASP.NET API, Entity Framework Core,Redis and PostgreSQL. This Helps individuals as well as groups to manage task on projects in order to increase productivity.
+#### The Application is a web application built with ASP.NET API, Entity Framework Core, Redis, PostgreSQL, and Docker. This helps individuals as well as groups to manage task on projects to increase productivity.
 
 
 ## Technologies
 ____
-* ASP.NET Core Web Api: The web framework used to build the application's architecture and handle user requests.
+* ASP.NET Core Web API: The web framework used to build the application's architecture and handle user requests.
 
 * Redis: A database technology used for caching.
 
@@ -17,21 +17,23 @@ ____
   > - *Npgsql Entity Framework core PostgreSQL V 7.0.4*
   > - *Npgsql Entity Framework core PostgreSQL Design V 1.1.0*
 
+* Docker: A Software used to build, test, and deploy applications using containers
+
 
 ## Application Features
 ____
 * User Authentication and Authorization: Secure user registration and login system, ensuring only authorized users can create and manage projects as well as tasks,
-  Ensure only admins can make changes to the system. Note, you can not login without email confirmation.
+  Ensure only admins can make changes to the system. Note, that you can not login without email confirmation.
 
-* User Update: Only confirmed users will be able to log in, create projects and tasks, pick tasks and change details.
+* User Update: Only confirmed users will be able to log in, create projects and tasks, pick tasks, and change details.
 
-* Project Management: Only the creator of a project can make assign user/users to a task and make changes to the projects.
+* Project Management: Only the creator of a project can make assign user/users to a task and make changes to the project.
 
-* Tasks : Task has a duration and a notification will be sent to a user assigned to a task 48hrs to the deadline. A notification is sent to a user when the task status is changed.
+* Tasks: The task has a duration and a notification will be sent to a user assigned to a task 48 hours before the deadline. A notification is sent to a user when the task status is changed.
 
 * User Profiles: Only authenticated users can use the application's features.
 
-* Admin: Admins can delete task as well as projects.
+* Admin: Admins can delete tasks as well as projects.
 
 ## How it works
 _____
