@@ -56,10 +56,10 @@ namespace TaskManager.Services.Implementations
             var user = await _userRepo.GetSingleByAsync(user => user.Id.ToString() == userId);
             if (user == null)
                 throw new InvalidOperationException("User Not Found");
-
+           
             return new ApplicationUserDto
             {
-                Id = userId.ToString(),
+               Id = userId.ToString(),
                FirstName = user.FirstName,
                LastName = user.LastName,
                Email = user.Email,
