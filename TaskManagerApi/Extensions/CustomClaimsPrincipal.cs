@@ -6,7 +6,7 @@ namespace TaskManager.Api.Extensions
     {
         public static string GetUserEmail(this ClaimsPrincipal user)
         {
-            return user.FindFirst(ClaimTypes.Email)?.Value;
+            return user.FindFirstValue(ClaimTypes.Email);
         }
 
         public static string? GetUserId(this ClaimsPrincipal user)
