@@ -9,7 +9,7 @@ namespace TaskManager.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Policy = "Authorization")]
+    [Authorize(Policy = "Authorization")]
     [AllowAnonymous]
     public class RoleClaimController : ControllerBase
     {

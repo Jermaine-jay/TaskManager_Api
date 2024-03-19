@@ -46,7 +46,7 @@ namespace TaskManager.Api.Attribute
             }
 
             var endpoint = _httpContextAccessor.HttpContext.GetEndpoint();
-            var routeName = endpoint?.Metadata.GetMetadata<EndpointNameMetadata>().EndpointName;
+            var routeName = endpoint?.Metadata?.GetMetadata<EndpointNameMetadata>()?.EndpointName;
 
 
             var user = await _userRepository.GetSingleByAsync(u => u.UserName == userId || u.Id.ToString() == userId);

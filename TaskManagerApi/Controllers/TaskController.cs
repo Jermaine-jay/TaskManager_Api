@@ -25,7 +25,6 @@ namespace TaskManager.Api.Controllers
         }
 
 
-
     
         [HttpPost("create-task", Name = "create-task")]
         [SwaggerOperation(Summary = "Create new task")]
