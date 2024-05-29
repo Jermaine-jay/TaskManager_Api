@@ -36,7 +36,7 @@ namespace TaskManager.Api.Controllers
 
 
 
-        [HttpDelete("remove-user", Name = "remove-User")]
+        [HttpDelete("remove-user", Name = "remove-user")]
         [SwaggerOperation(Summary = "Delete a user")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "successful", Type = typeof(SuccessResponse))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "failed", Type = typeof(ErrorResponse))]
