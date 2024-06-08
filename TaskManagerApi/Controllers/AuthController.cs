@@ -44,9 +44,9 @@ namespace TaskManager.Api.Controllers
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "Invalid Operation", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "Invalid Token", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
-        public async Task<IActionResult> ConfirmEmail([FromQuery]string Token)
+        public async Task<IActionResult> ConfirmEmail(string token)
         {
-            var response = await _authService.ConfirmEmail(Token);
+            var response = await _authService.ConfirmEmail(token);
             return Ok(response);
         }
 
