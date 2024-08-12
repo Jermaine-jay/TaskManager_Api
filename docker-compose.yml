@@ -12,9 +12,9 @@ services:
     image: postgres:latest
     container_name: app_db
     environment:
-      - POSTGRES_USER=applicationdb_ene4_user
-      - POSTGRES_PASSWORD=ZIc9NSmAWAAMBft8YuScd3d2bnY6daoD
-      - POSTGRES_DB=applicationdb_ene4
+      - POSTGRES_USER=ecomm_database_oai5_user
+      - POSTGRES_PASSWORD=KEWnfNqFNWVNsJC8S1P5nBDitPXvdDns
+      - POSTGRES_DB=ecomm_database_oai5
     ports:
       - 5432:5433
 
@@ -30,7 +30,7 @@ services:
     depends_on:
         - "app_database"
     environment: 
-         - ConnectionStrings:DefaultConnection="Host=dpg-cnsspkfjbltc73d5cic0-a.oregon-postgres.render.com;Database=applicationdb_ene4;Username=applicationdb_ene4_user;Password=ZIc9NSmAWAAMBft8YuScd3d2bnY6daoD;Port=5432;"
+         - ConnectionStrings:DefaultConnection="Host=dpg-cqt7bs2j1k6c73bv4uv0-a.oregon-postgres.render.com;Database=ecomm_database_oai5;Username=ecomm_database_oai5_user;Password=KEWnfNqFNWVNsJC8S1P5nBDitPXvdDns;Port=5432;"
          - ASPNETCORE_URLS=http://+80;
 
 
