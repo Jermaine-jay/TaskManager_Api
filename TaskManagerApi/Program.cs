@@ -65,7 +65,11 @@ var app = builder.Build();
 
 
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "TaskManager v1");
+    c.InjectStylesheet("/css/swagger-dark-theme.css");
+});
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
