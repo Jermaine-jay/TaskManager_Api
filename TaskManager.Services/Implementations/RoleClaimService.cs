@@ -37,7 +37,6 @@ namespace TaskManager.Services.Implementations
                 throw new InvalidOperationException("Identical claim value already exist for this role");
 
 
-
             var newClaim = new ApplicationRoleClaim()
             {
                 RoleId = getRole.Id,
