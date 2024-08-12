@@ -30,7 +30,7 @@ services:
     depends_on:
         - "app_database"
     environment: 
-         - ConnectionStrings:DefaultConnection="Host=dpg-cqt7bs2j1k6c73bv4uv0-a.oregon-postgres.render.com;Database=ecomm_database_oai5;Username=ecomm_database_oai5_user;Password=KEWnfNqFNWVNsJC8S1P5nBDitPXvdDns;Port=5432;"
+         - ConnectionStrings:DefaultConnection="Host=dpg-cqt7bs2j1k6c73bv4uv0-a;Database=ecomm_database_oai5;Username=ecomm_database_oai5_user;Password=KEWnfNqFNWVNsJC8S1P5nBDitPXvdDns;Port=5432;"
          - ASPNETCORE_URLS=http://+80;
 
 
