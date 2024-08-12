@@ -67,6 +67,9 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.UseRouting();
 app.ConfigureException(builder.Environment);
 app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -79,7 +82,6 @@ app.UseAuthorization();
 app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
 app.MapControllers();
-app.UseStaticFiles();
 
 
 await app.SeedRole();
