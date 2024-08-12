@@ -1,10 +1,13 @@
 name: Deploy
 
 on:
+  workflow_run:
+    workflows: [ "Build and Deploy" ]
+    types:
+      - completed
   workflow_dispatch:
+  
 jobs:
-  build: 
-    uses: ./.github/workflows/render-build-app.yml
     
   deploy:
     name: Deploy

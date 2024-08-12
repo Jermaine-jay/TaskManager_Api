@@ -82,7 +82,7 @@ namespace TaskManager.Services.Implementations
             var page = _serviceFactory.GetService<IGenerateEmailPage>().EmailVerificationPage;
             var validToken = await _serviceFactory.GetService<IOtpService>().GenerateUniqueOtpAsync(user.Id.ToString(), OtpOperation.EmailConfirmation);
 
-            string appUrl = $"{_configuration["AppUrl:Url"]}api/Auth/confirm-email?Token={validToken}";
+            string appUrl = $"{_configuration["AppUrl:Url"]}/api/Auth/confirm-email?token={validToken}";
             await SendEmailAsync(user.Email, "Confirm your email", page(user.FirstName, appUrl));
             return true;
         }
