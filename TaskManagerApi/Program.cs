@@ -82,7 +82,7 @@ app.MapControllers();
 
 await app.SeedRole();
 await app.ClaimSeeder();
-await app.SeededUserAsync();
-await app.ProjectSeeder();
+//await app.SeededUserAsync();
+//await app.ProjectSeeder();
 
 app.Run();
