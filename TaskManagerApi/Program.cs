@@ -79,10 +79,12 @@ app.UseAuthorization();
 app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
 app.MapControllers();
+app.UseStaticFiles();
+
 
 await app.SeedRole();
 await app.ClaimSeeder();
-//await app.SeededUserAsync();
-//await app.ProjectSeeder();
+await app.SeededUserAsync();
+await app.ProjectSeeder();
 
 app.Run();
