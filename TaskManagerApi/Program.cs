@@ -63,13 +63,15 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
-
-app.UseSwagger();
-app.UseSwaggerUI(c =>
+if(app.Environment.IsDevelopment() || app.Environment.IsProduction() || app.Environment.IsStaging())
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "TaskManager v1");
-    c.InjectStylesheet("/css/swagger-dark-theme.css");
-});
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "TaskManager v1");
+        c.InjectStylesheet("/css/swagger-dark-theme.css");
+    });
+}
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
