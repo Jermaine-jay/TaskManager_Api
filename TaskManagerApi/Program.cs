@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using TaskManager.Api.Extensions;
 using TaskManager.Data.Seeds;
@@ -63,8 +64,9 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
-if(app.Environment.IsDevelopment() || app.Environment.IsProduction() || app.Environment.IsStaging())
+if(app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
@@ -72,6 +74,17 @@ if(app.Environment.IsDevelopment() || app.Environment.IsProduction() || app.Envi
         c.InjectStylesheet("/css/swagger-dark-theme.css");
     });
 }
+else
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "TaskManager v1");
+        c.InjectStylesheet("/css/swagger-dark-theme.css");
+    });
+
+}
+
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
