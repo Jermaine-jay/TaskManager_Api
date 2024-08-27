@@ -73,6 +73,7 @@ if(app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "TaskManager v1");
         c.InjectStylesheet("/css/swagger-dark-theme.css");
     });
+    app.UseStaticFiles();
 }
 else
 {
@@ -82,12 +83,12 @@ else
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "TaskManager v1");
         c.InjectStylesheet("/css/swagger-dark-theme.css");
     });
+    app.UseStaticFiles();
 
 }
 
 
 //app.UseDefaultFiles();
-//app.UseStaticFiles();
 
 app.UseRouting();
 app.ConfigureException(builder.Environment);
@@ -103,9 +104,9 @@ app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 app.MapControllers();
 
 
-/*await app.SeedRole();
+await app.SeedRole();
 await app.ClaimSeeder();
 await app.SeededUserAsync();
 await app.ProjectSeeder();
-*/
+
 app.Run();
