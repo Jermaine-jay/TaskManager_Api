@@ -71,7 +71,7 @@ if(app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "TaskManager v1");
-        c.InjectStylesheet("/css/swagger-dark-theme.css");
+        c.InjectStylesheet("/css/Swagger-dark-theme.css");
     });
     app.UseStaticFiles();
 }
@@ -81,7 +81,7 @@ else
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "TaskManager v1");
-        c.InjectStylesheet("/css/swagger-dark-theme.css");
+        c.InjectStylesheet("/css/Swagger-dark-theme.css");
     });
     app.UseStaticFiles();
 
