@@ -28,16 +28,16 @@ namespace TaskManager.Services.Implementations
 
         public async Task<ServiceResponse<RoleClaimResponse>> AddClaim(RoleClaimRequest request)
         {
-            var getRole = await _roleRepo.GetSingleByAsync(r => r.Name.ToLower() == request.Role.ToLower());
+            ApplicationRole getRole = await _roleRepo.GetSingleByAsync(r => r.Name.ToLower() == request.Role.ToLower());
             if (getRole == null)
                 throw new InvalidOperationException("Role does not exist");
 
-            var checkExisting = await _roleClaimRepo.GetSingleByAsync(x => x.ClaimType == request.ClaimType && x.RoleId == getRole.Id);
+            ApplicationRoleClaim checkExisting = await _roleClaimRepo.GetSingleByAsync(x => x.ClaimType == request.ClaimType && x.RoleId == getRole.Id);
             if (checkExisting != null)
                 throw new InvalidOperationException("Identical claim value already exist for this role");
 
 
-            var newClaim = new ApplicationRoleClaim()
+            ApplicationRoleClaim newClaim = new()
             {
                 RoleId = getRole.Id,
                 ClaimType = request.ClaimType,
@@ -57,16 +57,14 @@ namespace TaskManager.Services.Implementations
             };
         }
 
-
         public async Task<SuccessResponse> GetUserClaims(string? role)
         {
-
             ApplicationRole getRole = await _roleRepo.GetSingleByAsync(x => x.Name.ToLower() == role);
             if (getRole == null)
                 throw new InvalidOperationException("Role Does Not exist");
 
             IEnumerable<ApplicationRoleClaim> claims = await _roleClaimRepo.GetAllAsync();
-            var result = claims.Where(x => x.RoleId == getRole.Id).Select(u => new RoleClaimResponse
+            IEnumerable<RoleClaimResponse> result = claims.Where(x => x.RoleId == getRole.Id).Select(u => new RoleClaimResponse
             {
                 Role = getRole.Name,
                 ClaimType = u.ClaimType
@@ -79,14 +77,13 @@ namespace TaskManager.Services.Implementations
             };
         }
 
-
         public async Task<ServiceResponse> RemoveUserClaims(string claimType, string role)
         {
-            var getRole = await _roleRepo.GetSingleByAsync(x => x.Name.ToLower() == role.ToLower());
+            ApplicationRole getRole = await _roleRepo.GetSingleByAsync(x => x.Name.ToLower() == role.ToLower());
             if (getRole == null)
                 throw new InvalidOperationException("Role Does Not exist");
 
-            var claim = await _roleClaimRepo.GetSingleByAsync(x => x.ClaimType == claimType && x.RoleId == getRole.Id);
+            ApplicationRoleClaim claim = await _roleClaimRepo.GetSingleByAsync(x => x.ClaimType == claimType && x.RoleId == getRole.Id);
             if (claim == null)
                 throw new InvalidOperationException("Claim value does not exist for this role");
 
@@ -99,7 +96,6 @@ namespace TaskManager.Services.Implementations
 
         }
 
-
         public async Task<RoleClaimResponse> UpdateRoleClaims(UpdateRoleClaimsDto request)
         {
             ApplicationRole getRole = await _roleRepo.GetSingleByAsync(x => x.Name.ToLower() == request.Role);
@@ -108,7 +104,7 @@ namespace TaskManager.Services.Implementations
 
 
             IEnumerable<ApplicationRoleClaim> claims = await _roleClaimRepo.GetAllAsync();
-            var result = claims.Where(x => x.ClaimType == request.ClaimType && x.RoleId == getRole.Id).FirstOrDefault();
+            ApplicationRoleClaim result = claims.Where(x => x.ClaimType == request.ClaimType && x.RoleId == getRole.Id).FirstOrDefault();
 
             result.ClaimType = request.NewClaim;
             await _roleClaimRepo.UpdateAsync(result);

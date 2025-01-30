@@ -31,7 +31,6 @@ namespace TaskManager.Services.Implementations
             _serviceProvider = serviceProvider;
         }
 
-
         public async Task<SuccessResponse> CreateTask(string userId, CreateTaskRequest request)
         {
             var user = await _userRepo.GetSingleByAsync(u => u.Id.ToString() == userId, include: u => u.Include(u => u.Projects));
@@ -83,7 +82,6 @@ namespace TaskManager.Services.Implementations
             };
         }
 
-
         public async Task<SuccessResponse> DeleteTask(string userId, string taskId)
         {
             var project = await _projectRepo.GetSingleByAsync(user => user.UserId.ToString() == userId, include: u => u.Include(u => u.Tasks));
@@ -100,7 +98,6 @@ namespace TaskManager.Services.Implementations
                 Success = true
             };
         }
-
 
         public async Task<SuccessResponse> UpdateTask(string userId, UpdateTaskRequest request)
         {
@@ -126,7 +123,6 @@ namespace TaskManager.Services.Implementations
                 Success = true
             };
         }
-
 
         public async Task<UpdateTaskResponse> UpdateStatus(string userId, UpdateStatusRequest request)
         {
@@ -169,7 +165,6 @@ namespace TaskManager.Services.Implementations
                 Data = task,
             };
         }
-
 
         public async Task<UpdateTaskResponse> UpdatePriority(string userId, UpdatePriorityRequest request)
         {

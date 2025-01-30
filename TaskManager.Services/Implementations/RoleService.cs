@@ -19,7 +19,6 @@ namespace TaskManager.Services.Implementations
         private readonly IRepository<ApplicationRoleClaim> _roleClaimRepo;
         private readonly IUnitOfWork _unitOfWork;
 
-
         public RoleService(IServiceFactory serviceFactory)
         {
             _serviceFactory = serviceFactory;
@@ -30,14 +29,13 @@ namespace TaskManager.Services.Implementations
             _roleClaimRepo = _unitOfWork.GetRepository<ApplicationRoleClaim>();
         }
 
-
         public async Task<AddUserToRoleResponse> AddUserToRole(AddUserToRoleRequest request)
         {
             ApplicationUser user = await _userManager.FindByNameAsync(request.Email.Trim().ToLower());
             if (user == null)
                 throw new InvalidOperationException("Project does not exist");
 
-            var role = await _roleManager.FindByNameAsync(request.Role.ToLower().Trim());
+            ApplicationRole role = await _roleManager.FindByNameAsync(request.Role.ToLower().Trim());
             if (role == null)
                 throw new InvalidOperationException("Project does not exist");
 
@@ -49,28 +47,24 @@ namespace TaskManager.Services.Implementations
             };
         }
 
-
         public async Task<SuccessResponse> CreateRoleAync(RoleDto request)
         {
             ApplicationRole role = await _roleManager.FindByNameAsync(request.Name.Trim().ToLower());
             if (role != null)
                 throw new InvalidOperationException("Project does not exist");
 
-            var applicationRole = new ApplicationRole
+            ApplicationRole applicationRole = new()
             {
                 Name = request.Name,
             };
 
-
             await _roleManager.CreateAsync(applicationRole);
             return new SuccessResponse
             {
-
                 Success = true,
                 Data = applicationRole
             };
         }
-
 
         public async Task<SuccessResponse> DeleteRole(string name)
         {
@@ -81,11 +75,9 @@ namespace TaskManager.Services.Implementations
             await _roleManager.DeleteAsync(role);
             return new SuccessResponse
             {
-
                 Success = true
             };
         }
-
 
         public async Task<SuccessResponse> EditRole(string id, string Name)
         {
@@ -102,15 +94,13 @@ namespace TaskManager.Services.Implementations
             };
         }
 
-
         public async Task<SuccessResponse> RemoveUserFromRole(AddUserToRoleRequest request)
         {
             ApplicationUser user = await _userManager.FindByNameAsync(request.Email.Trim().ToLower());
             if (user == null)
                 throw new InvalidOperationException("Project does not exist");
 
-
-            var myRoles = _roleManager.Roles.Select(x => x.Name);
+            IQueryable<string> myRoles = _roleManager.Roles.Select(x => x.Name);
             if (!myRoles.Contains(request.Role))
             {
                 return new SuccessResponse
@@ -119,13 +109,12 @@ namespace TaskManager.Services.Implementations
                 };
             }
 
-            var userIsInRole = await _userManager.RemoveFromRoleAsync(user, request.Role);
+            IdentityResult userIsInRole = await _userManager.RemoveFromRoleAsync(user, request.Role);
             return new SuccessResponse
             {
                 Success = true
             };
         }
-
 
         public async Task<IEnumerable<string>> GetUserRoles(string userName)
         {
@@ -142,13 +131,12 @@ namespace TaskManager.Services.Implementations
             return userRoles;
         }
 
-
         public async Task<IEnumerable<RoleResponse>> GetAllRoles()
         {
-            var roleQueryable = await _roleRepo.GetAllAsync(include: u => u.Include(x => x.RoleClaims));
+            IEnumerable<ApplicationRole> roleQueryable = await _roleRepo.GetAllAsync(include: u => u.Include(x => x.RoleClaims));
             roleQueryable = roleQueryable.Where(r => r.Active);
 
-            var roleResponseQueryable = roleQueryable.Select(s => new RoleResponse
+            IEnumerable<RoleResponse> roleResponseQueryable = roleQueryable.Select(s => new RoleResponse
             {
                 Name = s.Name,
                 Claims = s.RoleClaims.Where(r => r.ClaimValue.ToLower() is not null && r.Active),
@@ -157,6 +145,5 @@ namespace TaskManager.Services.Implementations
 
             return roleResponseQueryable;
         }
-
     } 
 }

@@ -24,7 +24,6 @@ namespace TaskManager.Services.Implementations
             _httpContextAccessor = httpContextAccessor;
         }
 
-
         public async Task<object> SendEmailAsync(string email, string subject, string message)
         {
             if (string.IsNullOrEmpty(_configuration["EmailSenderOptions:Password"]))
@@ -34,15 +33,14 @@ namespace TaskManager.Services.Implementations
             return true;
         }
 
-
         public async Task<bool> Execute(string email, string subject, string htmlMessage)
         {
-            var message = new MimeMessage();
+            MimeMessage message = new MimeMessage();
             message.From.Add(new MailboxAddress("TaskManager", _configuration["EmailSenderOptions:Username"]));
             message.To.Add(new MailboxAddress(email, email));
             message.Subject = subject;
 
-            var bodyBuilder = new BodyBuilder();
+            BodyBuilder bodyBuilder = new BodyBuilder();
             bodyBuilder.HtmlBody = htmlMessage;
             message.Body = bodyBuilder.ToMessageBody();
 
@@ -62,12 +60,12 @@ namespace TaskManager.Services.Implementations
         {
             using (var httpClient = new HttpClient())
             {
-                var parameters = $"api_key={_configuration["ZeroBounceConfig:ApiKey"]}&email={emailAddress}";
-                var response = await httpClient.GetAsync($"{_configuration["ZeroBounceConfig:Url"]}?{parameters}");
+                string parameters = $"api_key={_configuration["ZeroBounceConfig:ApiKey"]}&email={emailAddress}";
+                HttpResponseMessage response = await httpClient.GetAsync($"{_configuration["ZeroBounceConfig:Url"]}?{parameters}");
                 response.EnsureSuccessStatusCode();
 
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var getResponse = JsonConvert.DeserializeObject<dynamic>(responseContent).status;
+                string responseContent = await response.Content.ReadAsStringAsync();
+                dynamic getResponse = JsonConvert.DeserializeObject<dynamic>(responseContent).status;
                 if (getResponse == "valid")
                 {
                     return true;
@@ -76,25 +74,23 @@ namespace TaskManager.Services.Implementations
             }
         }
 
-
         public async Task<bool> RegistrationMail(ApplicationUser user)
         {
             var page = _serviceFactory.GetService<IGenerateEmailPage>().EmailVerificationPage;
-            var validToken = await _serviceFactory.GetService<IOtpService>().GenerateUniqueOtpAsync(user.Id.ToString(), OtpOperation.EmailConfirmation);
+            string validToken = await _serviceFactory.GetService<IOtpService>().GenerateUniqueOtpAsync(user.Id.ToString(), OtpOperation.EmailConfirmation);
 
             string appUrl = $"{_configuration["AppUrl:Url"]}/api/Auth/confirm-email?token={validToken}";
             await SendEmailAsync(user.Email, "Confirm your email", page(user.FirstName, appUrl));
             return true;
         }
 
-
         public async Task<string> ResetPasswordMail(ApplicationUser user)
         {
-            var validToken = await _serviceFactory.GetService<IOtpService>().GenerateUniqueOtpAsync(user.Id.ToString(), OtpOperation.PasswordReset);
+            string validToken = await _serviceFactory.GetService<IOtpService>().GenerateUniqueOtpAsync(user.Id.ToString(), OtpOperation.PasswordReset);
             string appUrl = $"{_configuration["AppUrl:Url"]}api/Auth/reset-password?Token={validToken}";
 
 
-            var page = _serviceFactory.GetService<IGenerateEmailPage>().PasswordResetPage(appUrl);
+            string page = _serviceFactory.GetService<IGenerateEmailPage>().PasswordResetPage(appUrl);
             await SendEmailAsync(user.Email, "Reset Password", page);
             return validToken;
         }

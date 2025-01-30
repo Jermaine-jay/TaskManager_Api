@@ -27,20 +27,21 @@ namespace TaskManager.Services.Implementations
 
         public async Task<object> CreateNotification(Task? task, int type)
         {
-            var existingtask = await _taskRepo.GetSingleByAsync(t => t.Id.ToString() == task.Id.ToString(), include: u => u.Include(e => e.Project), tracking: true);
+            Task? existingtask = await _taskRepo.GetSingleByAsync(t => t.Id.ToString() == task.Id.ToString(), 
+                                                    include: u => u.Include(e => e.Project), tracking: true);
             if (existingtask != null)
                 throw new InvalidOperationException("Task Not Found");
 
 
-            var userTask = await _userTaskRepo.GetByAsync(u => u.TaskId.Equals(task.Id));
+            IEnumerable<UserTask> userTask = await _userTaskRepo.GetByAsync(u => u.TaskId == task.Id);
             if (userTask == null)
                 throw new InvalidOperationException("User Not Found");
 
-            var noteMsg = await Message(type, task);
+            string noteMsg = await Message(type, task);
 
             foreach (var user in userTask)
             {
-                var newNote = new Notification
+                Notification newNote = new Notification
                 {
                     Type = NotificationType.DueDateReminder,
                     Message = noteMsg,
@@ -52,7 +53,6 @@ namespace TaskManager.Services.Implementations
             }
             return noteMsg;
         }
-
 
         public async Task<string> Message(int type, Task task)
         {
@@ -82,10 +82,9 @@ namespace TaskManager.Services.Implementations
             return noteMsg;
         }
 
-
         public async Task<object> ToggleNotification(string notiId)
         {
-            var notif = await _noteRepo.GetSingleByAsync(u => u.Id.ToString() == notiId);
+            Notification notif = await _noteRepo.GetSingleByAsync(u => u.Id.ToString() == notiId);
             if (notif != null)
                 throw new InvalidOperationException("Notification Not Found");
 
@@ -99,14 +98,13 @@ namespace TaskManager.Services.Implementations
             };
         }
 
-
         public async Task<SuccessResponse> GetNotifications(string userId)
         {
             var notif = await _noteRepo.GetAllAsync(include: u => u.Include(u => u.User));
             if (notif != null)
                 throw new InvalidOperationException("No notification found");
 
-            var result = notif.Where(u => u.UserId.ToString() == userId);
+            IEnumerable<Notification> result = notif.Where(u => u.UserId.ToString() == userId);
             if (result == null)
                 throw new InvalidOperationException("No notification found");
 
@@ -124,14 +122,13 @@ namespace TaskManager.Services.Implementations
             };
         }
 
-
         public async Task<bool> CreateReminderNotification()
         {
-            var tasks = await _taskRepo.GetAllAsync(include: u => u.Include(u => u.UserTasks));
+            IEnumerable<Task> tasks = await _taskRepo.GetAllAsync(include: u => u.Include(u => u.UserTasks));
             if (tasks == null)
                 throw new InvalidOperationException("No task Found");
 
-            var results = tasks.Where(u => u.DueDate == u.DueDate.AddHours(-48));
+            IEnumerable<Task> results = tasks.Where(u => u.DueDate == u.DueDate.AddHours(-48));
             if (!results.Any())
             {
                 foreach (var task in results)
