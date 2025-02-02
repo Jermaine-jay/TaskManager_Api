@@ -31,11 +31,11 @@ namespace TaskManager.Services.Implementations
 
         public async Task<AddUserToRoleResponse> AddUserToRole(AddUserToRoleRequest request)
         {
-            ApplicationUser user = await _userManager.FindByNameAsync(request.Email.Trim().ToLower());
+            ApplicationUser? user = await _userManager.FindByNameAsync(request.Email.Trim().ToLower());
             if (user == null)
                 throw new InvalidOperationException("Project does not exist");
 
-            ApplicationRole role = await _roleManager.FindByNameAsync(request.Role.ToLower().Trim());
+            ApplicationRole? role = await _roleManager.FindByNameAsync(request.Role.ToLower().Trim());
             if (role == null)
                 throw new InvalidOperationException("Project does not exist");
 
@@ -49,7 +49,7 @@ namespace TaskManager.Services.Implementations
 
         public async Task<SuccessResponse> CreateRoleAync(RoleDto request)
         {
-            ApplicationRole role = await _roleManager.FindByNameAsync(request.Name.Trim().ToLower());
+            ApplicationRole? role = await _roleManager.FindByNameAsync(request.Name.Trim().ToLower());
             if (role != null)
                 throw new InvalidOperationException("Project does not exist");
 
@@ -68,7 +68,7 @@ namespace TaskManager.Services.Implementations
 
         public async Task<SuccessResponse> DeleteRole(string name)
         {
-            ApplicationRole role = await _roleManager.FindByNameAsync(name.Trim().ToLower());
+            ApplicationRole? role = await _roleManager.FindByNameAsync(name.Trim().ToLower());
             if (role == null)
                 throw new InvalidOperationException("Project does not exist");
 
@@ -81,7 +81,7 @@ namespace TaskManager.Services.Implementations
 
         public async Task<SuccessResponse> EditRole(string id, string Name)
         {
-            ApplicationRole role = await _roleManager.FindByNameAsync(id.Trim().ToLower());
+            ApplicationRole? role = await _roleManager.FindByNameAsync(id.Trim().ToLower());
             if (role == null)
                 throw new InvalidOperationException("Project does not exist");
 
@@ -96,7 +96,7 @@ namespace TaskManager.Services.Implementations
 
         public async Task<SuccessResponse> RemoveUserFromRole(AddUserToRoleRequest request)
         {
-            ApplicationUser user = await _userManager.FindByNameAsync(request.Email.Trim().ToLower());
+            ApplicationUser? user = await _userManager.FindByNameAsync(request.Email.Trim().ToLower());
             if (user == null)
                 throw new InvalidOperationException("Project does not exist");
 
@@ -118,7 +118,7 @@ namespace TaskManager.Services.Implementations
 
         public async Task<IEnumerable<string>> GetUserRoles(string userName)
         {
-            ApplicationUser user = await _userManager.FindByNameAsync(userName);
+            ApplicationUser? user = await _userManager.FindByNameAsync(userName);
             if (user == null)
                 throw new InvalidOperationException("Project does not exist");
 

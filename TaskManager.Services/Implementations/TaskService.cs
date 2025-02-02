@@ -33,22 +33,22 @@ namespace TaskManager.Services.Implementations
 
         public async Task<SuccessResponse> CreateTask(string userId, CreateTaskRequest request)
         {
-            var user = await _userRepo.GetSingleByAsync(u => u.Id.ToString() == userId, include: u => u.Include(u => u.Projects));
+            ApplicationUser user = await _userRepo.GetSingleByAsync(u => u.Id.ToString() == userId, include: u => u.Include(u => u.Projects));
             if (user == null)
                 throw new InvalidOperationException("User Not Found");
 
-            var project = await _projectRepo.GetSingleByAsync(p => p.Id.ToString() == request.ProjectId, include: u => u.Include(u => u.Tasks));
+            Project project = await _projectRepo.GetSingleByAsync(p => p.Id.ToString() == request.ProjectId, include: u => u.Include(u => u.Tasks));
             if (project == null)
                 throw new InvalidOperationException("Project does not exist");
 
             if (project.UserId != user.Id)
                 throw new InvalidOperationException("You cannot add task to this project");
 
-            var existingTile = project.Tasks.Any(u => u.Title == request.Title);
+            bool existingTile = project.Tasks.Any(u => u.Title == request.Title);
             if (existingTile)
                 throw new InvalidOperationException("Task Title already exist");
 
-            var priority = Priority.Low;
+            Priority priority = Priority.Low;
             switch (request.Priority)
             {
                 case (int)Priority.Low:
@@ -64,7 +64,7 @@ namespace TaskManager.Services.Implementations
                     break;
             }
 
-            var newTask = new Task
+            Task newTask = new Task
             {
                 Title = request.Title,
                 Description = request.Description,
@@ -84,11 +84,11 @@ namespace TaskManager.Services.Implementations
 
         public async Task<SuccessResponse> DeleteTask(string userId, string taskId)
         {
-            var project = await _projectRepo.GetSingleByAsync(user => user.UserId.ToString() == userId, include: u => u.Include(u => u.Tasks));
+            Project? project = await _projectRepo.GetSingleByAsync(user => user.UserId.ToString() == userId, include: u => u.Include(u => u.Tasks));
             if (project == null)
                 throw new InvalidOperationException("Project does not exist");
 
-            var task = project.Tasks.Where(u => u.Id.ToString() == taskId).FirstOrDefault();
+            Task? task = project.Tasks?.Where(u => u.Id.ToString() == taskId).SingleOrDefault();
             if (task == null)
                 throw new InvalidOperationException("Task does not exist");
 
@@ -101,15 +101,15 @@ namespace TaskManager.Services.Implementations
 
         public async Task<SuccessResponse> UpdateTask(string userId, UpdateTaskRequest request)
         {
-            var project = await _projectRepo.GetSingleByAsync(user => user.UserId.ToString() == userId, include: u => u.Include(u => u.Tasks));
+            Project? project = await _projectRepo.GetSingleByAsync(user => user.UserId.ToString() == userId, include: u => u.Include(u => u.Tasks));
             if (project == null)
                 throw new InvalidOperationException("Project does not exist");
 
-            var task = project.Tasks.Where(u => u.Id.ToString() == request.TaskId).FirstOrDefault();
+            Task? task = project.Tasks?.Where(u => u.Id.ToString() == request.TaskId).SingleOrDefault();
             if (task == null)
                 throw new InvalidOperationException("User does not exist");
 
-            var newTask = new Task
+            Task newTask = new Task
             {
                 Title = request.Title,
                 DueDate = DateTime.Parse(request.DueDate),
@@ -126,11 +126,11 @@ namespace TaskManager.Services.Implementations
 
         public async Task<UpdateTaskResponse> UpdateStatus(string userId, UpdateStatusRequest request)
         {
-            var project = await _projectRepo.GetSingleByAsync(user => user.UserId.ToString() == userId, include: u => u.Include(u => u.Tasks));
+            Project? project = await _projectRepo.GetSingleByAsync(user => user.UserId.ToString() == userId, include: u => u.Include(u => u.Tasks));
             if (project == null)
                 throw new InvalidOperationException("Project does not exist");
 
-            var task = project.Tasks.Where(u => u.Id.ToString() == request.TaskId).FirstOrDefault();
+            Task? task = project.Tasks.Where(u => u.Id.ToString() == request.TaskId).SingleOrDefault();
             if (task == null)
                 throw new InvalidOperationException("User does not exist");
 
@@ -168,11 +168,11 @@ namespace TaskManager.Services.Implementations
 
         public async Task<UpdateTaskResponse> UpdatePriority(string userId, UpdatePriorityRequest request)
         {
-            var project = await _projectRepo.GetSingleByAsync(user => user.UserId.ToString() == userId, include: u => u.Include(u => u.Tasks));
+            Project? project = await _projectRepo.GetSingleByAsync(user => user.UserId.ToString() == userId, include: u => u.Include(u => u.Tasks));
             if (project == null)
                 throw new InvalidOperationException("Project does not exist");
 
-            var task = project.Tasks.Where(u => u.Id.ToString() == request.TaskId).FirstOrDefault();
+            Task? task = project.Tasks?.Where(u => u.Id.ToString() == request.TaskId).SingleOrDefault();
             if (task == null)
                 throw new InvalidOperationException("User does not exist");
 
@@ -205,8 +205,6 @@ namespace TaskManager.Services.Implementations
                 Success = true,
                 Data = task,
             };
-        }
-
-       
+        }      
     }
 }

@@ -42,7 +42,6 @@ namespace TaskManager.Services.Implementations
             if (project != null)
                 throw new InvalidOperationException("Project Name already exist");
 
-
             Project newProj = new Project
             {
                 Name = request.Name.ToLower(),
@@ -58,7 +57,6 @@ namespace TaskManager.Services.Implementations
                 Status = HttpStatusCode.Created,
                 Success = true,
                 Data = user,
-
             };
         }
 

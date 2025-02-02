@@ -51,7 +51,7 @@ namespace TaskManager.Services.Implementations
                 throw new InvalidOperationException($"User already exists with Email {request.Email}");
 
 
-            var verifyEmail = await _emailService.VerifyEmailAddress(request.Email);
+            bool verifyEmail = await _emailService.VerifyEmailAddress(request.Email);
             if (!verifyEmail)
                 throw new InvalidOperationException($"Email {request.Email} is invalid");
 
@@ -78,12 +78,12 @@ namespace TaskManager.Services.Implementations
             }
 
 
-            var registerMail = await _emailService.RegistrationMail(user);
+            bool registerMail = await _emailService.RegistrationMail(user);
             if (!registerMail)
                 throw new InvalidOperationException($"Could not send verification mail");
 
 
-            var role = UserType.User.GetStringValue();
+            string role = UserType.User.GetStringValue();
             bool roleExists = await _roleManager.RoleExistsAsync(role);
 
             if (!roleExists)
@@ -92,7 +92,7 @@ namespace TaskManager.Services.Implementations
                 await _roleManager.CreateAsync(newRole);
             }
 
-            var newUser = new ApplicationUserDto
+            ApplicationUserDto newUser = new()
             {
                 Id = user.Id.ToString(),
                 FirstName = user.FirstName,
@@ -116,7 +116,7 @@ namespace TaskManager.Services.Implementations
         {
             var (existingUser, operation) = await DecodeToken.DecodeVerificationToken(validToken);
 
-            var user = await _userManager.FindByIdAsync(existingUser);
+            ApplicationUser user = await _userManager.FindByIdAsync(existingUser);
             if (user == null)
                 throw new InvalidOperationException($"User Not Found");
 
@@ -125,7 +125,7 @@ namespace TaskManager.Services.Implementations
                 throw new InvalidOperationException($"Invalid Operation");
 
 
-            var verifyToken = await _otpService.VerifyUniqueOtpAsync(user.Id.ToString(), validToken, OtpOperation.EmailConfirmation);
+            bool verifyToken = await _otpService.VerifyUniqueOtpAsync(user.Id.ToString(), validToken, OtpOperation.EmailConfirmation);
             if (!verifyToken)
             {
                 throw new InvalidOperationException($"Invalid Token");
@@ -142,11 +142,10 @@ namespace TaskManager.Services.Implementations
 
         public async Task<AuthenticationResponse> UserLogin(LoginRequest request)
         {
-            var maxAttempt = 5;
+            int maxAttempt = 5;
             ApplicationUser? user = await _userManager.FindByEmailAsync(request.Email.ToLower().Trim());
             if (user == null)
                 throw new InvalidOperationException("Invalid username or password");
-
 
             if (!user.Active)
                 throw new InvalidOperationException("Account is not active");
@@ -176,7 +175,6 @@ namespace TaskManager.Services.Implementations
                 throw new InvalidOperationException("Invalid username or password");
             }
 
-
             JwtToken userToken = await _jwtAuthenticator.GenerateJwtToken(user);
             string? userType = user.UserType.GetStringValue();
 
@@ -199,7 +197,6 @@ namespace TaskManager.Services.Implementations
             if (verify == false)
                 throw new InvalidOperationException($"Invalid Email Address");
 
-
             var user = await _userManager.FindByEmailAsync(request.Email);
             var isConfrimed = await _userManager.IsEmailConfirmedAsync(user);
 
@@ -208,7 +205,6 @@ namespace TaskManager.Services.Implementations
 
             if (user.LockoutEnd != null)
                 throw new InvalidOperationException($"User Suspended. Time Left {user.LockoutEnd - DateTimeOffset.UtcNow}");
-
 
             var result = await _emailService.ResetPasswordMail(user);
             return new ChangePasswordResponse
@@ -227,20 +223,16 @@ namespace TaskManager.Services.Implementations
             if (user == null || !user.EmailConfirmed)
                 throw new InvalidOperationException($"User does not exist");
 
-
             if (operation != OtpOperation.PasswordReset.ToString())
                 throw new InvalidOperationException($"Invalid Operation");
-
 
             bool isOtpValid = await _otpService.VerifyUniqueOtpAsync(user.Id.ToString(), request.Token, OtpOperation.PasswordReset);
             if (!isOtpValid)
                 throw new InvalidOperationException($"Invalid Token");
 
-
             IdentityResult result = await _userManager.ChangePasswordAsync(user, request.NewPassword, request.ConfirmPassword);
             if (!result.Succeeded)
                 throw new InvalidOperationException($"Could not complete operation");
-
 
             return new SuccessResponse
             {
@@ -261,14 +253,14 @@ namespace TaskManager.Services.Implementations
             if (payload == null)
                 throw new InvalidOperationException("Invalid Payload");
 
-            var info = new UserLoginInfo(externalAuthDto.Provider, payload.Subject, externalAuthDto.Provider);
-            var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+            UserLoginInfo info = new UserLoginInfo(externalAuthDto.Provider, payload.Subject, externalAuthDto.Provider);
+            ApplicationUser user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
             if (user == null)
             {
                 user = await _userManager.FindByEmailAsync(payload.Email);
                 if (user == null)
                 {
-                    var newuser = new ApplicationUser
+                    ApplicationUser newuser = new()
                     {
                         Email = payload.Email,
                         UserName = payload.Email,
@@ -293,7 +285,7 @@ namespace TaskManager.Services.Implementations
             }
 
 
-            var fullName = $"{user.LastName} {user.FirstName}";
+            string fullName = $"{user.LastName} {user.FirstName}";
             JwtToken userToken = await _jwtAuthenticator.GenerateJwtToken(user);
             return new AuthenticationResponse
             {

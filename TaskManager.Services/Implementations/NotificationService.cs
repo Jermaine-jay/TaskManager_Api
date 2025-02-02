@@ -63,7 +63,7 @@ namespace TaskManager.Services.Implementations
 
             string PriorityMsg = $"Task {task.Title} priority changed to {task.Priority}";
 
-            var noteMsg = "";
+            string noteMsg = "";
             switch (type)
             {
                 case (int)NotificationType.DueDateReminder:
@@ -100,7 +100,7 @@ namespace TaskManager.Services.Implementations
 
         public async Task<SuccessResponse> GetNotifications(string userId)
         {
-            var notif = await _noteRepo.GetAllAsync(include: u => u.Include(u => u.User));
+            IEnumerable<Notification> notif = await _noteRepo.GetAllAsync(include: u => u.Include(u => u.User));
             if (notif != null)
                 throw new InvalidOperationException("No notification found");
 
@@ -117,7 +117,6 @@ namespace TaskManager.Services.Implementations
                     Timestamp = DateTime.Parse(u.Timestamp.ToString("dd MMMM yyyy HH: mm:ss")),
                     Read = u.Read,
                     User = u.User,
-
                 })
             };
         }
@@ -136,6 +135,7 @@ namespace TaskManager.Services.Implementations
                     await CreateNotification(task, (int)NotificationType.DueDateReminder);
                 }
             }
+
             return false;
         }
     }

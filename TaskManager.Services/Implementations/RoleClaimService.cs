@@ -25,7 +25,6 @@ namespace TaskManager.Services.Implementations
             _roleRepo = _unitOfWork.GetRepository<ApplicationRole>();
         }
 
-
         public async Task<ServiceResponse<RoleClaimResponse>> AddClaim(RoleClaimRequest request)
         {
             ApplicationRole getRole = await _roleRepo.GetSingleByAsync(r => r.Name.ToLower() == request.Role.ToLower());
@@ -35,7 +34,6 @@ namespace TaskManager.Services.Implementations
             ApplicationRoleClaim checkExisting = await _roleClaimRepo.GetSingleByAsync(x => x.ClaimType == request.ClaimType && x.RoleId == getRole.Id);
             if (checkExisting != null)
                 throw new InvalidOperationException("Identical claim value already exist for this role");
-
 
             ApplicationRoleClaim newClaim = new()
             {

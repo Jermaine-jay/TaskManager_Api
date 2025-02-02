@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Data.Interfaces;
-using TaskManager.Models.Dtos;
 using TaskManager.Models.Dtos.Request;
 using TaskManager.Models.Dtos.Response;
 using TaskManager.Models.Entities;
@@ -21,10 +20,9 @@ namespace TaskManager.Services.Implementations
         private readonly IRepository<UserTask> _userTaskRepo;
         private readonly IUnitOfWork _unitOfWork;
 
-
         public UserService(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
         {
-            _unitOfWork = unitOfWork; 
+            _unitOfWork = unitOfWork;
             _userManager = userManager;
             _taskRepo = _unitOfWork.GetRepository<Task>();
             _projectRepo = _unitOfWork.GetRepository<Project>();
@@ -32,14 +30,11 @@ namespace TaskManager.Services.Implementations
             _userTaskRepo = _unitOfWork.GetRepository<UserTask>();
         }
 
-
         public async Task<SuccessResponse> ChangePassword(string userId, ChangePasswordRequest request)
         {
-
-            ApplicationUser user = await _userManager.FindByIdAsync(userId);
+            ApplicationUser? user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 throw new InvalidOperationException("User Not Found");
-
 
             await _userManager.ChangePasswordAsync(user, request.NewPassword, request.CurrentPassword);
             return new SuccessResponse
@@ -50,7 +45,7 @@ namespace TaskManager.Services.Implementations
 
         public async Task<SuccessResponse> DeleteUser(string userId)
         {
-            var user = await _userRepo.GetSingleByAsync(user => user.Id.ToString() == userId);
+            ApplicationUser user = await _userRepo.GetSingleByAsync(user => user.Id.ToString() == userId);
             if (user == null)
                 throw new InvalidOperationException("User Not Found");
 
@@ -63,11 +58,11 @@ namespace TaskManager.Services.Implementations
 
         public async Task<ProfileResponse> GetUser(string userId)
         {
-            var user = await _userRepo.GetSingleByAsync(user => user.Id.ToString() == userId);
+            ApplicationUser user = await _userRepo.GetSingleByAsync(user => user.Id.ToString() == userId);
             if (user == null)
                 throw new InvalidOperationException("User Not Found");
 
-            var result = new ProfileResponse
+            ProfileResponse result = new()
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
@@ -82,7 +77,7 @@ namespace TaskManager.Services.Implementations
 
         public async Task<SuccessResponse> UpdateUser(string userId, UpdateUserRequest request)
         {
-            var user = await _userRepo.GetSingleByAsync(user => user.Id.ToString() == userId);
+            ApplicationUser user = await _userRepo.GetSingleByAsync(user => user.Id.ToString() == userId);
             if (user == null)
                 throw new InvalidOperationException("User Not Found");
 
@@ -98,15 +93,14 @@ namespace TaskManager.Services.Implementations
             };
         }
 
-
         public async Task<SuccessResponse> GetAllTask(string userId)
         {
-            var userTask = await _userTaskRepo.GetAllAsync(include: u => u.Include(e => e.User));
+            IEnumerable<UserTask> userTask = await _userTaskRepo.GetAllAsync(include: u => u.Include(e => e.User));
             if (userTask == null)
                 throw new InvalidOperationException("User Does Not Exist");
 
 
-            var result = userTask.Where(u => u.UserId.ToString() == userId).Select(u => new Task
+            IEnumerable<Task> result = userTask.Where(u => u.UserId.ToString() == userId).Select(u => new Task
             {
                 Title = u.Task.Title,
                 Description = u.Task.Description,
@@ -125,22 +119,21 @@ namespace TaskManager.Services.Implementations
             };
         }
 
-
         public async Task<SuccessResponse> GetAllProject(string userId)
         {
-            var user = await _userManager.FindByIdAsync(userId);
+            ApplicationUser? user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 throw new InvalidOperationException("User Not Found");
 
-            var projects = await _projectRepo.GetAllAsync(include: u => u.Include(u => u.Tasks));
+            IEnumerable<Project> projects = await _projectRepo.GetAllAsync(include: u => u.Include(u => u.Tasks));
             if (!projects.Any())
                 throw new InvalidOperationException("No project found");
 
-            var result = projects.Where(u => u.UserId.ToString() == user.Id.ToString()).ToList();
+            List<Project> result = projects.Where(u => u.UserId.ToString() == user.Id.ToString()).ToList();
             if (!result.Any())
                 throw new InvalidOperationException("User Projects Not Found");
 
-            var response = result.Select(u => new Project
+            IEnumerable<Project> response = result.Select(u => new Project
             {
                 Name = u.Name,
                 Description = u.Description,
@@ -153,22 +146,21 @@ namespace TaskManager.Services.Implementations
             };
         }
 
-
         public async Task<SuccessResponse> AllProjectWithTask(string userId)
         {
-            var user = await _userManager.FindByIdAsync(userId);
+            ApplicationUser? user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 throw new InvalidOperationException("User Not Found");
 
-            var projects = await _projectRepo.GetAllAsync(include: u => u.Include(u => u.Tasks));
+            IEnumerable<Project> projects = await _projectRepo.GetAllAsync(include: u => u.Include(u => u.Tasks));
             if (!projects.Any())
                 throw new InvalidOperationException("No project found");
 
-            var result = projects.Where(u => u.UserId.ToString() == user.Id.ToString());
+            IEnumerable<Project> result = projects.Where(u => u.UserId.ToString() == user.Id.ToString());
             if (!result.Any())
                 throw new InvalidOperationException("User Not Found");
 
-            var res = result.Select(u => new Project
+            IEnumerable<Project> res = result.Select(u => new Project
             {
                 Name = u.Name,
                 Description = u.Description,
@@ -189,23 +181,23 @@ namespace TaskManager.Services.Implementations
             };
         }
 
-
         public async Task<SuccessResponse> AddUserToTask(string userId, UserTaskRequest request)
         {
-            var user = await _userManager.FindByIdAsync(request.UserId);
+            ApplicationUser? user = await _userManager.FindByIdAsync(request.UserId);
             if (user == null)
                 throw new InvalidOperationException("User Not Found");
 
-            var task = await _taskRepo.GetSingleByAsync(u => u.Id.ToString() == request.TaskId);
+            Task? task = await _taskRepo.GetSingleByAsync(u => u.Id.ToString() == request.TaskId);
             if (task == null)
                 throw new InvalidOperationException("Task does not exist");
 
-            var proj = await _projectRepo.GetAllAsync(include: u => u.Include(u => u.Tasks));
-            var project = proj.Where(u => u.Tasks.Any(u => u.Id == task.Id)).FirstOrDefault();
+            IEnumerable<Project> proj = await _projectRepo.GetAllAsync(include: u => u.Include(u => u.Tasks));
+
+            Project? project = proj.Where(u => u.Tasks.Any(u => u.Id == task.Id)).SingleOrDefault();
             if (project.UserId.ToString() != userId)
                 throw new InvalidOperationException("You cannot perform this operation");
 
-            var newUserTask = new UserTask
+            UserTask newUserTask = new UserTask
             {
                 TaskId = task.Id,
                 User = user,
@@ -222,19 +214,18 @@ namespace TaskManager.Services.Implementations
 
         public async Task<SuccessResponse> PickTask(string userId, string taskId)
         {
-            var user = await _userManager.FindByIdAsync(userId);
+            ApplicationUser? user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 throw new InvalidOperationException("User Not Found");
 
-            var task = await _taskRepo.GetSingleByAsync(u => u.Id.ToString() == taskId, include: u=> u.Include(u=> u.UserTasks));
+            Task? task = await _taskRepo.GetSingleByAsync(u => u.Id.ToString() == taskId, include: u => u.Include(u => u.UserTasks));
             if (task == null)
                 throw new InvalidOperationException("Task does not exist");
-           
-            var existinguser = task.UserTasks.Where(u=> u.UserId == user.Id ).FirstOrDefault()
-                ??throw new InvalidOperationException("User already has this task");
-        
 
-            var newUserTask = new UserTask
+            UserTask? existinguser = task.UserTasks.Where(u => u.UserId == user.Id).SingleOrDefault()
+                ?? throw new InvalidOperationException("User already has this task");
+
+            UserTask newUserTask = new()
             {
                 TaskId = task.Id,
                 User = user,
@@ -245,7 +236,6 @@ namespace TaskManager.Services.Implementations
             {
                 Success = true
             };
-
         }
     }
 }
