@@ -18,6 +18,7 @@ namespace TaskManager.Services.Extensions
             ZeroBounceConfig ZeroBounceConfig = new();
             EmailSenderOptions EmailSenderOptions = new();
 
+            configuration.GetSection("Settings").Bind(settings);
             configuration.GetSection("JwtConfig").Bind(JwtConfig);
             configuration.GetSection("RedisConfig").Bind(redisConfig);
             configuration.GetSection("AppConstants").Bind(appConstants);

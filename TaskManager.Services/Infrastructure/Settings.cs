@@ -6,6 +6,6 @@ namespace TaskManager.Services.Infrastructure
 {
     public class Settings
     {
-        
+        public string AppName { get; set; }
     }
 }
