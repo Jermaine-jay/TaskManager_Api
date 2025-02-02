@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using TaskManager.Api.Extensions;
 using TaskManager.Data.Seeds;
+using TaskManager.Services.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +24,7 @@ builder.Services.AddRedisCache(builder.Configuration);
 
 builder.Services.AddHostedService<ConsumeScopedServiceHostedService>();
 
+builder.Services.BindConfigurations(builder.Configuration);
 
 // Add services to the container.
 
@@ -64,7 +65,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
-if(app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
     app.UseSwagger();
