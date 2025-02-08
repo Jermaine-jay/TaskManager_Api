@@ -24,14 +24,13 @@ namespace TaskManager.Api.Controllers
         [HttpGet("get-claims", Name = "get-claims")]
         [SwaggerOperation(Summary = "claims of selected role")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Returns claim types and values", Type = typeof(RoleClaimResponse))]
-        [SwaggerResponse(StatusCodes.Status400BadRequest, Description = " ", Type = typeof(ErrorResponse))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "Role Does Not exist", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
         public async Task<IActionResult> GetClaims(string role)
         {
             var result = await _userClaimsService.GetUserClaims(role);
             return Ok(result);
         }
-
 
 
         [HttpPost("add-claim", Name = "add-claim")]
@@ -46,7 +45,6 @@ namespace TaskManager.Api.Controllers
         }
 
 
-
         [HttpDelete("delete-claim", Name = "delete-claim")]
         [SwaggerOperation(Summary = "deletes claims")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Success")]
@@ -57,7 +55,6 @@ namespace TaskManager.Api.Controllers
             await _userClaimsService.RemoveUserClaims(claimValue, role);
             return Ok();
         }
-
 
 
         [HttpPut("edit-claim", Name = "edit-claim")]

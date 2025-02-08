@@ -26,7 +26,6 @@ namespace TaskManager.Api.Controllers
         }
 
 
-
         [HttpPost("create-project", Name = "create-project")]
         [SwaggerOperation(Summary = "Create new project")]
         [SwaggerResponse(StatusCodes.Status201Created, Description = "A New Project", Type = typeof(CreateTaskResponse))]
@@ -41,7 +40,6 @@ namespace TaskManager.Api.Controllers
         }
 
 
-
         [HttpDelete("delete-project", Name = "delete-project")]
         [SwaggerOperation(Summary = "Delete a project")]
         [SwaggerResponse(StatusCodes.Status201Created, Description = "true or false", Type = typeof(SuccessResponse))]
@@ -53,7 +51,6 @@ namespace TaskManager.Api.Controllers
             var response = await _projectService.DeleteProject(userId, projectId);
             return Ok(response);
         }
-
 
 
         [HttpPut("update-project", Name = "update-project")]
