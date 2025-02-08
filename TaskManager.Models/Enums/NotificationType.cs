@@ -4,7 +4,8 @@
     {
         DueDateReminder,
         StatusUpdate,
-        PriorityUpdate
+        PriorityUpdate,
+        NewTaskAssigned
     }
 
     public static class NotificationTypeExtension
@@ -16,6 +17,7 @@
                 NotificationType.DueDateReminder => "DueDateReminder",
                 NotificationType.StatusUpdate => "StatusUpdate",
                 NotificationType.PriorityUpdate => "PriorityUpdate",
+                NotificationType.NewTaskAssigned => "NewTaskAssigned",
                 _ => null
             };
         }
