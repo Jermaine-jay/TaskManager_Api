@@ -10,15 +10,14 @@ using TaskManager.Services.Interfaces;
 
 namespace TaskManager.Api.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     [Authorize(Policy = "Authorization")]
     public class UserController : ControllerBase
     {
-
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IUserService _userService;
         private readonly INotificationService _noteService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public UserController(IHttpContextAccessor contextAccessor, IUserService userService, INotificationService noteService)
         {
@@ -35,7 +34,7 @@ namespace TaskManager.Api.Controllers
         public async Task<IActionResult> GetUser()
         {
             string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
-            var response = await _userService.GetUser(userId);
+            ProfileResponse response = await _userService.GetUser(userId);
             return Ok(response);
         }
 
@@ -49,7 +48,7 @@ namespace TaskManager.Api.Controllers
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
         {
             string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
-            var response = await _userService.ChangePassword(userId, request);
+            SuccessResponse response = await _userService.ChangePassword(userId, request);
             return Ok(response);
         }
 
@@ -63,7 +62,7 @@ namespace TaskManager.Api.Controllers
         public async Task<IActionResult> DeleteUser()
         {
             string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
-            var response = await _userService.DeleteUser(userId);
+            SuccessResponse response = await _userService.DeleteUser(userId);
             return Ok(response);
         }
 
@@ -77,7 +76,7 @@ namespace TaskManager.Api.Controllers
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserRequest request)
         {
             string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
-            var response = await _userService.UpdateUser(userId, request);
+            SuccessResponse response = await _userService.UpdateUser(userId, request);
             return Ok(response);
         }
 
@@ -92,7 +91,7 @@ namespace TaskManager.Api.Controllers
         public async Task<IActionResult> GetAllTask()
         {
             string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
-            var response = await _userService.GetAllTask(userId);
+            SuccessResponse response = await _userService.GetAllTask(userId);
             return Ok(response);
         }
 
@@ -106,7 +105,7 @@ namespace TaskManager.Api.Controllers
         public async Task<IActionResult> GetAllProjects()
         {
             string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
-            var response = await _userService.GetAllProject(userId);
+            SuccessResponse response = await _userService.GetAllProject(userId);
             return Ok(response);
         }
 
@@ -119,7 +118,7 @@ namespace TaskManager.Api.Controllers
         public async Task<IActionResult> AllProjectWithTask()
         {
             string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
-            var response = await _userService.AllProjectWithTask(userId);
+            SuccessResponse response = await _userService.AllProjectWithTask(userId);
             return Ok(response);
         }
 
@@ -134,7 +133,7 @@ namespace TaskManager.Api.Controllers
         public async Task<IActionResult> AddUserToTask([FromBody] UserTaskRequest request)
         {
             string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
-            var response = await _userService.AddUserToTask(userId, request);
+            SuccessResponse response = await _userService.AddUserToTask(userId, request);
             return Ok(response);
         }
 
@@ -148,7 +147,7 @@ namespace TaskManager.Api.Controllers
         public async Task<IActionResult> PickTask(string taskId)
         {
             string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
-            var response = await _userService.PickTask(userId, taskId);
+            SuccessResponse response = await _userService.PickTask(userId, taskId);
             return Ok(response);
         }
 
@@ -161,7 +160,7 @@ namespace TaskManager.Api.Controllers
         public async Task<IActionResult> AllNotifications()
         {
             string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
-            var response = await _noteService.GetNotifications(userId);
+            SuccessResponse response = await _noteService.GetNotifications(userId);
             return Ok(response);
         }
     }

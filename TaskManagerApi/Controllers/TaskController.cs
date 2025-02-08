@@ -10,8 +10,8 @@ using TaskManager.Services.Interfaces;
 
 namespace TaskManager.Api.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     [Authorize(Policy = "Authorization")]
     public class TaskController : ControllerBase
     {

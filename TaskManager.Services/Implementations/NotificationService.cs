@@ -25,13 +25,12 @@ namespace TaskManager.Services.Implementations
         }
 
 
-        public async Task<object> CreateNotification(Task? task, int type)
+        public async Task<string> CreateNotification(Task? task, NotificationType type)
         {
             Task? existingtask = await _taskRepo.GetSingleByAsync(t => t.Id.ToString() == task.Id.ToString(), 
                                                     include: u => u.Include(e => e.Project), tracking: true);
             if (existingtask != null)
                 throw new InvalidOperationException("Task Not Found");
-
 
             IEnumerable<UserTask> userTask = await _userTaskRepo.GetByAsync(u => u.TaskId == task.Id);
             if (userTask == null)
@@ -43,18 +42,18 @@ namespace TaskManager.Services.Implementations
             {
                 Notification newNote = new Notification
                 {
-                    Type = NotificationType.DueDateReminder,
+                    Type = type,
                     Message = noteMsg,
                     Timestamp = DateTime.UtcNow,
                     Read = false,
                     UserId = user.UserId
                 };
-                await _noteRepo.AddAsync(newNote);
+                _noteRepo.Add(newNote);
             }
             return noteMsg;
         }
 
-        public async Task<string> Message(int type, Task task)
+        public async Task<string> Message(NotificationType type, Task task)
         {
             string reminderMsg = $"This is a reminder that your task {task.Title}, assigned to you on {task.CreatedAt.ToString("dd MMMM yyyy HH: mm:ss")}, is due in 48 hours." +
                $"Please make sure that you have completed all of the necessary steps and that your work is ready to be submitted by the deadline.";
@@ -63,26 +62,31 @@ namespace TaskManager.Services.Implementations
 
             string PriorityMsg = $"Task {task.Title} priority changed to {task.Priority}";
 
+            string newTaskAssigned = $"You Have been assigned to a new task {task.Title} with a due date of {task.DueDate}. You are adviced to update your card as you progress";
+
             string noteMsg = "";
             switch (type)
             {
-                case (int)NotificationType.DueDateReminder:
+                case NotificationType.DueDateReminder:
                     noteMsg = reminderMsg;
                     break;
 
-                case (int)NotificationType.StatusUpdate:
+                case NotificationType.StatusUpdate:
                     noteMsg = StatusMsg;
                     break;
 
-                case (int)NotificationType.PriorityUpdate:
+                case NotificationType.PriorityUpdate:
                     noteMsg = PriorityMsg;
+                    break;
+                case NotificationType.NewTaskAssigned:
+                    noteMsg = newTaskAssigned;
                     break;
             }
 
             return noteMsg;
         }
 
-        public async Task<object> ToggleNotification(string notiId)
+        public async Task<SuccessResponse> ToggleNotification(string notiId)
         {
             Notification notif = await _noteRepo.GetSingleByAsync(u => u.Id.ToString() == notiId);
             if (notif != null)
@@ -132,7 +136,7 @@ namespace TaskManager.Services.Implementations
             {
                 foreach (var task in results)
                 {
-                    await CreateNotification(task, (int)NotificationType.DueDateReminder);
+                    await CreateNotification(task, NotificationType.DueDateReminder);
                 }
             }
 
