@@ -22,7 +22,6 @@ namespace TaskManager.Api.Controllers
         }
 
 
-
         [HttpGet("get-all-routes", Name = "get-all-routes")]
         [SwaggerOperation(Summary = "Gets all routes ")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Routes Retrieved")]
@@ -30,15 +29,12 @@ namespace TaskManager.Api.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
         public async Task<IActionResult> GetRoutes()
         {
-            var endpoints = _endpointSources.SelectMany(es => es.Endpoints)
-            .OfType<RouteEndpoint>();
+            IEnumerable<RouteEndpoint> endpoints = _endpointSources.SelectMany(es => es.Endpoints).OfType<RouteEndpoint>();
             IEnumerable<string?> output = endpoints.Select(e =>
             {
-                var controller = e.Metadata
-                    .OfType<ControllerActionDescriptor>()
+                ControllerActionDescriptor? controller = e.Metadata.OfType<ControllerActionDescriptor>()
                     .FirstOrDefault();
-                var httpMethod = controller?.MethodInfo
-                    .GetCustomAttributes<HttpMethodAttribute>()
+                string? httpMethod = controller?.MethodInfo.GetCustomAttributes<HttpMethodAttribute>()
                     .FirstOrDefault()
                     ?.Name;
 
