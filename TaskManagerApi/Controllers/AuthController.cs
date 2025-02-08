@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using TaskManager.Models.Dtos;
 using TaskManager.Models.Dtos.Request;
 using TaskManager.Models.Dtos.Response;
 using TaskManager.Services.Infrastructure;
@@ -34,7 +33,6 @@ namespace TaskManager.Api.Controllers
             var response = await _authService.RegisterUser(request);
             return Ok(response);
         }
-
 
 
         [HttpGet("confirm-email", Name = "confirm-email")]

@@ -26,6 +26,7 @@ namespace TaskManager.Api.Controllers
             _noteService = noteService;
         }
 
+
         [HttpGet("my-account", Name = "my-account")]
         [SwaggerOperation(Summary = "get loggedin user account ")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "user", Type = typeof(ProfileResponse))]
@@ -37,7 +38,6 @@ namespace TaskManager.Api.Controllers
             ProfileResponse response = await _userService.GetUser(userId);
             return Ok(response);
         }
-
 
 
         [HttpPut("change-password", Name = "change-password")]
@@ -53,7 +53,6 @@ namespace TaskManager.Api.Controllers
         }
 
 
-
         [HttpDelete("delete-user", Name = "delete-user")]
         [SwaggerOperation(Summary = "delete a user")]
         [SwaggerResponse(StatusCodes.Status201Created, Description = "user", Type = typeof(SuccessResponse))]
@@ -65,7 +64,6 @@ namespace TaskManager.Api.Controllers
             SuccessResponse response = await _userService.DeleteUser(userId);
             return Ok(response);
         }
-
 
 
         [HttpPut("update-user", Name = "update-user")]
@@ -81,7 +79,6 @@ namespace TaskManager.Api.Controllers
         }
 
 
-
         [HttpGet("user-tasks", Name = "user-tasks")]
         [SwaggerOperation(Summary = "all user tasks")]
         [SwaggerResponse(StatusCodes.Status201Created, Description = "user task", Type = typeof(SuccessResponse))]
@@ -94,7 +91,6 @@ namespace TaskManager.Api.Controllers
             SuccessResponse response = await _userService.GetAllTask(userId);
             return Ok(response);
         }
-
 
 
         [HttpGet("user-projects", Name = "user-projects")]
@@ -121,7 +117,6 @@ namespace TaskManager.Api.Controllers
             SuccessResponse response = await _userService.AllProjectWithTask(userId);
             return Ok(response);
         }
-
 
 
         [HttpPost("add-user-task", Name = "add-user-task")]

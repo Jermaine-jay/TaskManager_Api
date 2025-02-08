@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using TaskManager.Models.Dtos.Request;
+using TaskManager.Models.Dtos.Response;
 using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Interfaces;
-using TaskManager.Services.Implementations;
-using TaskManager.Models.Dtos.Response;
-using TaskManager.Models.Dtos.Request;
 
 namespace TaskManager.Api.Controllers
 {
@@ -16,12 +15,10 @@ namespace TaskManager.Api.Controllers
     {
         private readonly IRoleService _roleservice;
 
-
         public RoleController(IRoleService roleservice)
         {
             _roleservice = roleservice;
         }
-
 
 
         [HttpPost("create-role", Name = "create-role")]
@@ -37,8 +34,6 @@ namespace TaskManager.Api.Controllers
         }
 
 
-
- 
         [HttpPost("add-user-role", Name = "add-user-role")]
         [SwaggerOperation(Summary = "add user to role")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Role", Type = typeof(RoleResponse))]
@@ -52,8 +47,6 @@ namespace TaskManager.Api.Controllers
         }
 
 
-
-   
         [HttpPut("remove-user-role", Name = "remove-user-role")]
         [SwaggerOperation(Summary = "remove user from role")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Role", Type = typeof(RoleResponse))]
@@ -67,8 +60,6 @@ namespace TaskManager.Api.Controllers
         }
 
 
-
-     
         [HttpPut("edit-role", Name = "edit-role")]
         [SwaggerOperation(Summary = "edit role")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Role", Type = typeof(RoleResponse))]
@@ -82,8 +73,6 @@ namespace TaskManager.Api.Controllers
         }
 
 
-
-     
         [HttpDelete("delete-role", Name = "delete-role")]
         [SwaggerOperation(Summary = "Delete role")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Role", Type = typeof(RoleResponse))]
@@ -97,8 +86,6 @@ namespace TaskManager.Api.Controllers
         }
 
 
-
-  
         [HttpGet("get-roles", Name = "Get-roles")]
         [SwaggerOperation(Summary = "All roles")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Role", Type = typeof(RoleResponse))]
@@ -112,7 +99,6 @@ namespace TaskManager.Api.Controllers
         }
 
 
-
         [HttpGet("get-user-roles", Name = "get-User-roles")]
         [SwaggerOperation(Summary = "Get user Rles")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Roles")]
@@ -121,8 +107,8 @@ namespace TaskManager.Api.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
         public async Task<IActionResult> GetUserRolesAync(string Username)
         {
-            var response = await _roleservice.GetUserRoles(Username);        
-                return Ok(response);
+            var response = await _roleservice.GetUserRoles(Username);
+            return Ok(response);
         }
 
     }

@@ -137,7 +137,6 @@ namespace TaskManager.Services.Implementations
             if (task == null)
                 throw new InvalidOperationException("User does not exist");
 
-
             switch (request.Status)
             {
                 case (int)Status.InProgress:

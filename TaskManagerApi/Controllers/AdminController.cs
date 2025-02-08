@@ -22,7 +22,6 @@ namespace TaskManager.Api.Controllers
             _projectService = projectService;
         }
 
-
         [HttpGet("all-users", Name = "all-users")]
         [SwaggerOperation(Summary = "Get All Registered Users")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "Users", Type = typeof(ApplicationUserDto))]
@@ -33,7 +32,6 @@ namespace TaskManager.Api.Controllers
             var response = await _adminService.GetUsers();
             return Ok(response);
         }
-
 
 
         [HttpDelete("remove-user", Name = "remove-user")]
@@ -49,7 +47,6 @@ namespace TaskManager.Api.Controllers
         }
 
 
-
         [HttpGet("get-a-user", Name = "get-a-user")]
         [SwaggerOperation(Summary = "Get A Registered User")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "successful", Type = typeof(ApplicationUserDto))]
@@ -60,7 +57,6 @@ namespace TaskManager.Api.Controllers
             var response = await _adminService.GetUser(userId);
             return Ok(response);
         }
-
 
 
         [HttpPost("lock-user", Name = "lock-user")]
@@ -86,7 +82,7 @@ namespace TaskManager.Api.Controllers
             return Ok(response);
         }
 
-        [AllowAnonymous]
+
         [HttpGet("all-users-projects", Name = "all-users-projects")]
         [SwaggerOperation(Summary = "all users projects")]
         [SwaggerResponse(StatusCodes.Status200OK, Description = "users projects with tasks", Type = typeof(SuccessResponse))]
@@ -110,6 +106,5 @@ namespace TaskManager.Api.Controllers
             var response = await _projectService.DeleteProject(userId, projectId);
             return Ok(response);
         }
-
     }
 }

@@ -23,12 +23,10 @@ namespace TaskManager.Api.Controllers
             _httpContextAccessor = contextAccessor;
             _taskService = taskService;
         }
-
-
     
         [HttpPost("create-task", Name = "create-task")]
         [SwaggerOperation(Summary = "Create new task")]
-        [SwaggerResponse(StatusCodes.Status201Created, Description = "Task", Type = typeof(CreateTaskResponse))]
+        [SwaggerResponse(StatusCodes.Status201Created, Description = "Task", Type = typeof(SuccessResponse))]
         [SwaggerResponse(StatusCodes.Status404NotFound, Description = "User Not Found", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status404NotFound, Description = "Project does not exist", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "Task Tile already Exist", Type = typeof(ErrorResponse))]
@@ -37,10 +35,9 @@ namespace TaskManager.Api.Controllers
         {
             string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
            
-            var response = await _taskService.CreateTask(userId, request);
+            SuccessResponse response = await _taskService.CreateTask(userId, request);
             return Ok(response);
         }
-
 
    
         [HttpDelete("delete-task", Name = "delete-task")]
@@ -51,10 +48,9 @@ namespace TaskManager.Api.Controllers
         public async Task<IActionResult> DeleteTask(string taskId)
         {
             string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
-            var response = await _taskService.DeleteTask(taskId, userId);
+            SuccessResponse response = await _taskService.DeleteTask(taskId, userId);
             return Ok(response);
         }
-
 
       
         [HttpPut("update-task", Name = "update-task")]
@@ -68,7 +64,6 @@ namespace TaskManager.Api.Controllers
             var response = await _taskService.UpdateTask(userId, request);
             return Ok(response);
         }
-
 
     
         [HttpPut("update-priority", Name = "update-priority")]
@@ -87,7 +82,7 @@ namespace TaskManager.Api.Controllers
 
         [HttpPut("update-status", Name = "update-status")]
         [SwaggerOperation(Summary = "update task status")]
-        [SwaggerResponse(StatusCodes.Status201Created, Description = "Tak", Type = typeof(SuccessResponse))]
+        [SwaggerResponse(StatusCodes.Status201Created, Description = "update existing task", Type = typeof(UpdateTaskResponse))]
         [SwaggerResponse(StatusCodes.Status404NotFound, Description = "User Not Found", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status404NotFound, Description = "Project name already exist", Type = typeof(ErrorResponse))]
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
@@ -95,7 +90,7 @@ namespace TaskManager.Api.Controllers
         {
 
             string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
-            var response = await _taskService.UpdateStatus(userId,request);
+            UpdateTaskResponse response = await _taskService.UpdateStatus(userId,request);
             return Ok(response);
         }
     }
