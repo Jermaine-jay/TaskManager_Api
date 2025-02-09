@@ -18,31 +18,29 @@ namespace TaskManager.Services.Implementations
 {
     public class AuthService : IAuthService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<ApplicationRole> _roleManager;
-        private readonly IJwtAuthenticator _jwtAuthenticator;
-        private readonly IConfiguration _configuration;
-        private readonly IEmailService _emailService;
         private readonly IOtpService _otpService;
         private readonly ICacheService _cacheService;
+        private readonly IEmailService _emailService;
+        private readonly IConfiguration _configuration;
         private readonly ILockoutAttempt _lockoutAttempt;
-
+        private readonly IJwtAuthenticator _jwtAuthenticator;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
 
         public AuthService(IJwtAuthenticator jwtAuthenticator,
             UserManager<ApplicationUser> userManager,RoleManager<ApplicationRole> roleManager, 
             IConfiguration configuration, IEmailService emailService, IOtpService otpService, 
             ICacheService cacheService, ILockoutAttempt lockoutAttempt)
         {
+            _otpService = otpService;
             _roleManager = roleManager;
             _userManager = userManager;
-            _jwtAuthenticator = jwtAuthenticator;
-            _configuration = configuration;
             _emailService = emailService;
-            _otpService = otpService;
             _cacheService = cacheService;
+            _configuration = configuration;
             _lockoutAttempt = lockoutAttempt;
+            _jwtAuthenticator = jwtAuthenticator;
         }
-
 
         public async Task<SuccessResponse> RegisterUser(UserRegistrationRequest request)
         {
@@ -54,7 +52,6 @@ namespace TaskManager.Services.Implementations
             bool verifyEmail = await _emailService.VerifyEmailAddress(request.Email);
             if (!verifyEmail)
                 throw new InvalidOperationException($"Email {request.Email} is invalid");
-
 
             ApplicationUser user = new()
             {
@@ -69,7 +66,6 @@ namespace TaskManager.Services.Implementations
                 Projects = new List<Project>(),
             };
 
-
             IdentityResult result = await _userManager.CreateAsync(user, request.Password);
             if (!result.Succeeded)
             {
@@ -77,11 +73,9 @@ namespace TaskManager.Services.Implementations
                 throw new InvalidOperationException(message);
             }
 
-
             bool registerMail = await _emailService.RegistrationMail(user);
             if (!registerMail)
                 throw new InvalidOperationException($"Could not send verification mail");
-
 
             string role = UserType.User.GetStringValue();
             bool roleExists = await _roleManager.RoleExistsAsync(role);
@@ -120,10 +114,8 @@ namespace TaskManager.Services.Implementations
             if (user == null)
                 throw new InvalidOperationException($"User Not Found");
 
-
             if (operation != OtpOperation.EmailConfirmation.ToString())
                 throw new InvalidOperationException($"Invalid Operation");
-
 
             bool verifyToken = await _otpService.VerifyUniqueOtpAsync(user.Id.ToString(), validToken, OtpOperation.EmailConfirmation);
             if (!verifyToken)

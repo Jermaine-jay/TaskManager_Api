@@ -10,5 +10,6 @@ namespace TaskManager.Services.Interfaces
         Task<string> CreateNotification(Task? task, NotificationType type);
         Task<SuccessResponse> GetNotifications(string userId);
         Task<bool> CreateReminderNotification();
+        Task<bool> CreateNewTaskNotification();
     }
 }
