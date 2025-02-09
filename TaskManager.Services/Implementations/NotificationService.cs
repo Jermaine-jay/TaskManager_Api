@@ -10,24 +10,25 @@ namespace TaskManager.Services.Implementations
 {
     public class NotificationService : INotificationService
     {
-        private readonly IRepository<Task> _taskRepo;
-        private readonly IRepository<Notification> _noteRepo;
-        private readonly IRepository<UserTask> _userTaskRepo;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IRepository<Task> _taskRepo;
+        private readonly IServiceFactory _serviceFactory;
+        private readonly IRepository<UserTask> _userTaskRepo;
+        private readonly IRepository<Notification> _noteRepo;
 
-
-        public NotificationService(IUnitOfWork unitOfWork)
+        public NotificationService(IUnitOfWork unitOfWork, IServiceFactory serviceFactory)
         {
             _unitOfWork = unitOfWork;
+            _serviceFactory = serviceFactory;
             _taskRepo = _unitOfWork.GetRepository<Task>();
-            _noteRepo = _unitOfWork.GetRepository<Notification>();
             _userTaskRepo = _unitOfWork.GetRepository<UserTask>();
+            _noteRepo = _unitOfWork.GetRepository<Notification>();
         }
 
 
         public async Task<string> CreateNotification(Task? task, NotificationType type)
         {
-            Task? existingtask = await _taskRepo.GetSingleByAsync(t => t.Id.ToString() == task.Id.ToString(), 
+            Task? existingtask = await _taskRepo.GetSingleByAsync(t => t.Id.ToString() == task.Id.ToString(),
                                                     include: u => u.Include(e => e.Project), tracking: true);
             if (existingtask != null)
                 throw new InvalidOperationException("Task Not Found");
@@ -48,7 +49,9 @@ namespace TaskManager.Services.Implementations
                     Read = false,
                     UserId = user.UserId
                 };
+
                 _noteRepo.Add(newNote);
+                await _serviceFactory.GetService<IEmailService>().TaskMail(user.Task.Id.ToString(), user.User.Email, noteMsg, type);
             }
 
             await _unitOfWork.SaveChangesAsync();
@@ -142,7 +145,20 @@ namespace TaskManager.Services.Implementations
                 }
             }
 
-            return false;
+            return true;
+        }
+
+        public async Task<bool> CreateNewTaskNotification()
+        {
+            Task? tasks = await _taskRepo.GetSingleByAsync(include: u => u.Include(u => u.UserTasks))
+                ?? throw new InvalidOperationException("No task Found");
+
+            foreach (var task in tasks.UserTasks)
+            {
+                await CreateNotification(task.Task, NotificationType.NewTaskAssigned);
+            }
+
+            return true;
         }
     }
 }

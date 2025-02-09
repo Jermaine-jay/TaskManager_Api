@@ -110,9 +110,9 @@ namespace TaskManager.Services.Implementations
             return validToken;
         }
 
-        public async Task<bool> TaskMail(Task task, string email, string message, NotificationType notification)
+        public async Task<bool> TaskMail(string taskId, string email, string message, NotificationType notification)
         {
-            string appUrl = $"{_appConstants.AppUrl}api/Task/get-task/{task.Id}";
+            string appUrl = $"{_appConstants.AppUrl}api/Task/get-task/{taskId}";
             string page = _serviceFactory.GetService<IGenerateEmailPage>().TaskNotificationPage(message, appUrl, notification);
 
             string subject = Regex.Replace(notification.GetStringValue(), "(?<!^)([A-Z])", " $1");
