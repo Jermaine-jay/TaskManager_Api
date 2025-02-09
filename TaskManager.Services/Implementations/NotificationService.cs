@@ -50,6 +50,8 @@ namespace TaskManager.Services.Implementations
                 };
                 _noteRepo.Add(newNote);
             }
+
+            await _unitOfWork.SaveChangesAsync();
             return noteMsg;
         }
 

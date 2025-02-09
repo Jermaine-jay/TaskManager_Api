@@ -107,5 +107,10 @@ namespace TaskManager.Services.Implementations
             return validToken;
         }
 
+        public async Task<bool> TaskMail()
+        {
+            
+        }
+
     }
 }
