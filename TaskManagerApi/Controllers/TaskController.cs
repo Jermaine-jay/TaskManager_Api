@@ -39,7 +39,22 @@ namespace TaskManager.Api.Controllers
             return Ok(response);
         }
 
-   
+        [HttpPost("get-task", Name = "get-task")]
+        [SwaggerOperation(Summary = "get existing task")]
+        [SwaggerResponse(StatusCodes.Status201Created, Description = "get task data", Type = typeof(SuccessResponse))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "task Not Found", Type = typeof(ErrorResponse))]
+        [SwaggerResponse(StatusCodes.Status404NotFound, Description = "user does not exist", Type = typeof(ErrorResponse))]
+        [SwaggerResponse(StatusCodes.Status400BadRequest, Description = "Task Tile already Exist", Type = typeof(ErrorResponse))]
+        [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
+        public async Task<IActionResult> GetTask(string taskId)
+        {
+            string? userId = _httpContextAccessor?.HttpContext?.User?.GetUserId();
+
+            SuccessResponse response = await _taskService.GetTask(taskId, userId);
+            return Ok(response);
+        }
+
+
         [HttpDelete("delete-task", Name = "delete-task")]
         [SwaggerOperation(Summary = "delete a task")]
         [SwaggerResponse(StatusCodes.Status201Created, Description = "Task", Type = typeof(SuccessResponse))]

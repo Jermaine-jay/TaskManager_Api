@@ -85,6 +85,32 @@ namespace TaskManager.Services.Implementations
             };
         }
 
+        public async Task<SuccessResponse> GetTask(string taskId, string userId)
+        {
+            Task? task = await _taskRepo.GetSingleByAsync(x => x.Id.ToString() == taskId, include: x => x.Include(x => x.UserTasks).Include(x => x.Project))
+                ?? throw new InvalidDataException("Task Does not exist");
+
+            ApplicationUser user = await _userRepo.GetSingleByAsync(u => u.Id.ToString() == userId)
+                ?? throw new InvalidOperationException("User Not Found");
+
+            if (task.Project.UserId.ToString() == userId 
+                || task.UserTasks.Any(x => x.UserId.ToString() == userId))
+            {
+                TaskResponse response = new()
+                { 
+                    Title = task.Title,
+                    Description = task.Description,
+                    DueDate = task.DueDate.ToString(),
+                    Priority = task.Priority.ToString(),
+                    Status = task.Status.ToString(),
+                };
+
+                return new SuccessResponse { Success = true, Data = response };
+            }
+
+            return new SuccessResponse { Success = false};
+        }
+
         public async Task<SuccessResponse> DeleteTask(string userId, string taskId)
         {
             Project? project = await _projectRepo.GetSingleByAsync(user => user.UserId.ToString() == userId, include: u => u.Include(u => u.Tasks));

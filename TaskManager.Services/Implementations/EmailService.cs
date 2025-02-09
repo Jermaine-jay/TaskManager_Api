@@ -1,13 +1,16 @@
-﻿using MailKit.Net.Smtp;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using MimeKit;
+﻿using MimeKit;
 using Newtonsoft.Json;
+using MailKit.Net.Smtp;
+using TaskManager.Models.Enums;
+using Microsoft.AspNetCore.Http;
 using TaskManager.Models.Entities;
-using TaskManager.Services.Configurations.Cache.Otp;
-using TaskManager.Services.Configurations.Email;
-using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Interfaces;
+using Microsoft.Extensions.Configuration;
+using TaskManager.Services.Infrastructure;
+using Task = TaskManager.Models.Entities.Task;
+using TaskManager.Services.Configurations.Email;
+using TaskManager.Services.Configurations.Cache.Otp;
+using System.Text.RegularExpressions;
 
 
 namespace TaskManager.Services.Implementations
@@ -107,9 +110,16 @@ namespace TaskManager.Services.Implementations
             return validToken;
         }
 
-        public async Task<bool> TaskMail()
+        public async Task<bool> TaskMail(Task task, string email, string message, NotificationType notification)
         {
-            
+            string appUrl = $"{_appConstants.AppUrl}api/Task/get-task/{task.Id}";
+            string page = _serviceFactory.GetService<IGenerateEmailPage>().TaskNotificationPage(message, appUrl, notification);
+
+            string subject = Regex.Replace(notification.GetStringValue(), "(?<!^)([A-Z])", " $1");
+
+            await SendEmailAsync(email, subject, page);
+
+            return true;
         }
 
     }
