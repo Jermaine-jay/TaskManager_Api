@@ -9,6 +9,7 @@ using TaskManager.Models.Dtos.Response;
 using TaskManager.Services.Infrastructure;
 using Task = TaskManager.Models.Entities.Task;
 using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
 
 
 namespace TaskManager.Services.Implementations
@@ -88,7 +89,7 @@ namespace TaskManager.Services.Implementations
         public async Task<SuccessResponse> GetTask(string taskId, string userId)
         {
             Task? task = await _taskRepo.GetSingleByAsync(x => x.Id.ToString() == taskId, include: x => x.Include(x => x.UserTasks).Include(x => x.Project))
-                ?? throw new InvalidDataException("Task Does not exist");
+                ?? throw new InvalidDataException("Task does not exist");
 
             ApplicationUser user = await _userRepo.GetSingleByAsync(u => u.Id.ToString() == userId)
                 ?? throw new InvalidOperationException("User Not Found");
@@ -109,6 +110,29 @@ namespace TaskManager.Services.Implementations
             }
 
             return new SuccessResponse { Success = false};
+        }
+
+        public async Task<bool> AssignTask(string taskId, List<string> usersid)
+        {
+            Task? task = await _taskRepo.GetSingleByAsync(x => x.Id.ToString() == taskId, include: x => x.Include(x => x.UserTasks).Include(x => x.Project))
+                ?? throw new InvalidDataException("Task Does Not Exist");
+
+            foreach (string userid in usersid)
+            {
+                var user = await _userRepo.GetSingleByAsync(x => x.Id.ToString() == userid);
+                if (!task.UserTasks.Any(x => x.UserId.ToString() == userid))
+                {
+                    UserTask userTask = new()
+                    {
+                        User = user,
+                        Task = task,
+                    };
+                    task.UserTasks.Add(userTask);
+                }
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+            return true;
         }
 
         public async Task<SuccessResponse> DeleteTask(string userId, string taskId)

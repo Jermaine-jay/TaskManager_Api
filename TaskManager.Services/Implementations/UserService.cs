@@ -183,7 +183,7 @@ namespace TaskManager.Services.Implementations
 
         public async Task<SuccessResponse> AddUserToTask(string userId, UserTaskRequest request)
         {
-            ApplicationUser? user = await _userManager.FindByIdAsync(request.UserId);
+            ApplicationUser? user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 throw new InvalidOperationException("User Not Found");
 
@@ -197,13 +197,21 @@ namespace TaskManager.Services.Implementations
             if (project.UserId.ToString() != userId)
                 throw new InvalidOperationException("You cannot perform this operation");
 
-            UserTask newUserTask = new UserTask
+            foreach (string userid in request.UsersId)
             {
-                TaskId = task.Id,
-                User = user,
-            };
-
-            await _userTaskRepo.AddAsync(newUserTask);
+                ApplicationUser? getUser = await _userRepo.GetSingleByAsync(x => x.Id.ToString() == userid);
+                if (!task.UserTasks.Any(x => x.UserId.ToString() == userid))
+                {
+                    UserTask userTask = new()
+                    {
+                        User = getUser,
+                        Task = task,
+                    };
+                    task.UserTasks.Add(userTask);
+                }
+            }
+            
+            await _unitOfWork.SaveChangesAsync();
             return new SuccessResponse
             {
                 Success = true
