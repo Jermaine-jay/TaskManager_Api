@@ -16,11 +16,11 @@ namespace TaskManager.Services.Implementations
 {
     public class ProjectService : IProjectService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IRepository<ApplicationUser> _userRepo;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository<Task> _taskRepo;
         private readonly IRepository<Project> _projectRepo;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IRepository<ApplicationUser> _userRepo;
+        private readonly UserManager<ApplicationUser> _userManager;
 
 
         public ProjectService(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)

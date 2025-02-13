@@ -12,21 +12,21 @@ namespace TaskManager.Services.Implementations
 {
     public class RoleService : IRoleService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IServiceFactory _serviceFactory;
         private readonly IRepository<ApplicationRole> _roleRepo;
+        private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IRepository<ApplicationRoleClaim> _roleClaimRepo;
-        private readonly IUnitOfWork _unitOfWork;
 
         public RoleService(IServiceFactory serviceFactory)
         {
             _serviceFactory = serviceFactory;
             _unitOfWork = _serviceFactory.GetService<IUnitOfWork>();
-            _userManager = _serviceFactory.GetService<UserManager<ApplicationUser>>();
-            _roleManager = _serviceFactory.GetService<RoleManager<ApplicationRole>>();
             _roleRepo = _unitOfWork.GetRepository<ApplicationRole>();
             _roleClaimRepo = _unitOfWork.GetRepository<ApplicationRoleClaim>();
+            _userManager = _serviceFactory.GetService<UserManager<ApplicationUser>>();
+            _roleManager = _serviceFactory.GetService<RoleManager<ApplicationRole>>();
         }
 
         public async Task<AddUserToRoleResponse> AddUserToRole(AddUserToRoleRequest request)

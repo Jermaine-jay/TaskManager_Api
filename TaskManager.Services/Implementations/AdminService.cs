@@ -15,17 +15,17 @@ namespace TaskManager.Services.Implementations
     public class AdminService : IAdminService
     {
 
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IRepository<Project> _projectRepo;
         private readonly IRepository<ApplicationUser> _userRepo;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IUnitOfWork _unitOfWork;
 
         public AdminService(UserManager<ApplicationUser> userManager, IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
-            _userRepo = _unitOfWork.GetRepository<ApplicationUser>();
             _projectRepo = _unitOfWork.GetRepository<Project>();
+            _userRepo = _unitOfWork.GetRepository<ApplicationUser>();
         }
 
 
