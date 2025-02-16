@@ -30,7 +30,7 @@ namespace TaskManager.Api.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
         public async Task<IActionResult> CreateUser([FromBody] UserRegistrationRequest request)
         {
-            var response = await _authService.RegisterUser(request);
+            SuccessResponse response = await _authService.RegisterUser(request);
             return Ok(response);
         }
 
@@ -44,7 +44,7 @@ namespace TaskManager.Api.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
         public async Task<IActionResult> ConfirmEmail(string token)
         {
-            var response = await _authService.ConfirmEmail(token);
+            SuccessResponse response = await _authService.ConfirmEmail(token);
             return Ok(response);
         }
 
@@ -56,7 +56,7 @@ namespace TaskManager.Api.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
         public async Task<IActionResult> LoginUser([FromBody] LoginRequest loginRequest)
         {
-            var response = await _authService.UserLogin(loginRequest);
+            AuthenticationResponse response = await _authService.UserLogin(loginRequest);
             return Ok(response);
         }
 
@@ -68,7 +68,7 @@ namespace TaskManager.Api.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
         public async Task<IActionResult> GoogleLogin([FromBody] ExternalAuthRequest loginRequest)
         {
-            var response = await _authService.GoogleAuth(loginRequest);
+            AuthenticationResponse response = await _authService.GoogleAuth(loginRequest);
             return Ok(response);
         }
 
@@ -81,7 +81,7 @@ namespace TaskManager.Api.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
-            var response = await _authService.ForgotPassword(request);
+            ChangePasswordResponse response = await _authService.ForgotPassword(request);
 
             return Ok(response);
         }

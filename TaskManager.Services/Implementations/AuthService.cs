@@ -233,7 +233,7 @@ namespace TaskManager.Services.Implementations
             };
         }
 
-        public async Task<object> GoogleAuth(ExternalAuthRequest externalAuthDto)
+        public async Task<AuthenticationResponse> GoogleAuth(ExternalAuthRequest externalAuthDto)
         {
             externalAuthDto.Provider = "Google";
             var settings = new GoogleJsonWebSignature.ValidationSettings()
@@ -246,7 +246,7 @@ namespace TaskManager.Services.Implementations
                 throw new InvalidOperationException("Invalid Payload");
 
             UserLoginInfo info = new UserLoginInfo(externalAuthDto.Provider, payload.Subject, externalAuthDto.Provider);
-            ApplicationUser user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+            ApplicationUser? user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
             if (user == null)
             {
                 user = await _userManager.FindByEmailAsync(payload.Email);

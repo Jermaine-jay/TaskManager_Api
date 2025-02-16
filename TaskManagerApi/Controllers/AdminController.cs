@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using TaskManager.Models.Dtos;
 using TaskManager.Models.Dtos.Request;
+using TaskManager.Models.Entities;
 using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Interfaces;
 
@@ -29,7 +30,7 @@ namespace TaskManager.Api.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
         public async Task<IActionResult> GetAllUsers()
         {
-            var response = await _adminService.GetUsers();
+            IEnumerable<ApplicationUserDto> response = await _adminService.GetUsers();
             return Ok(response);
         }
 
@@ -41,7 +42,7 @@ namespace TaskManager.Api.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
         public async Task<IActionResult> DeleteUser(string userId)
         {
-            var response = await _adminService.DeleteUser(userId);
+            SuccessResponse response = await _adminService.DeleteUser(userId);
             return Ok(response);
 
         }
@@ -54,7 +55,7 @@ namespace TaskManager.Api.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
         public async Task<IActionResult> GetUser(string userId)
         {
-            var response = await _adminService.GetUser(userId);
+            ApplicationUserDto response = await _adminService.GetUser(userId);
             return Ok(response);
         }
 
@@ -66,7 +67,7 @@ namespace TaskManager.Api.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
         public async Task<IActionResult> LockUser([FromBody] LockUserRequest request)
         {
-            var response = await _adminService.LockUser(request);
+            SuccessResponse response = await _adminService.LockUser(request);
             return Ok(response);
         }
 
@@ -78,7 +79,7 @@ namespace TaskManager.Api.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
         public async Task<IActionResult> UserProjectsWithTasks(string userId)
         {
-            var response = await _adminService.UserProjectsWithTasks(userId);
+            SuccessResponse response = await _adminService.UserProjectsWithTasks(userId);
             return Ok(response);
         }
 
@@ -91,7 +92,7 @@ namespace TaskManager.Api.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
         public async Task<IActionResult> AllUsersProjectsWithTasks()
         {
-            var response = await _adminService.AllUsersProjectsWithTasks();
+            IEnumerable<Project> response = await _adminService.AllUsersProjectsWithTasks();
             return Ok(response);
         }
 
@@ -103,7 +104,7 @@ namespace TaskManager.Api.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError, Description = "It's not you, it's us", Type = typeof(ErrorResponse))]
         public async Task<IActionResult> DeleteProject([FromQuery] string userId, string projectId)
         {
-            var response = await _projectService.DeleteProject(userId, projectId);
+            SuccessResponse response = await _projectService.DeleteProject(userId, projectId);
             return Ok(response);
         }
     }

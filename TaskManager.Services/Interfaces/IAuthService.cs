@@ -11,6 +11,6 @@ namespace TaskManager.Services.Interfaces
         Task<AuthenticationResponse> UserLogin(LoginRequest request);
         Task<SuccessResponse> ResetPassword(ResetPasswordRequest request);
         Task<ChangePasswordResponse> ForgotPassword(ForgotPasswordRequest request);
-        Task<object> GoogleAuth(ExternalAuthRequest externalAuthDto);
+        Task<AuthenticationResponse> GoogleAuth(ExternalAuthRequest externalAuthDto);
     }
 }
