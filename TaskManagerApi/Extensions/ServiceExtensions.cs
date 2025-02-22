@@ -52,7 +52,6 @@ namespace TaskManager.Api.Extensions
            {
            });
 
-
         public static void ConfigureCors(this IServiceCollection services) =>
              services.AddCors(options =>
              {
@@ -61,7 +60,6 @@ namespace TaskManager.Api.Extensions
                  .AllowAnyMethod()
                  .AllowAnyHeader());
              });
-
 
         public static void RegisterDbContext(this IServiceCollection services, string? configuration)
         {
@@ -75,7 +73,6 @@ namespace TaskManager.Api.Extensions
                 });
             });
         }
-
 
         public static void ConfigureIdentity(this IServiceCollection services, IConfiguration configuration)
         {
@@ -100,7 +97,6 @@ namespace TaskManager.Api.Extensions
                      options.ClientSecret = configuration["Authentication:Google:ClientSecret"];
                  });
         }
-
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration jwtConfig)
         {
@@ -140,7 +136,6 @@ namespace TaskManager.Api.Extensions
             });
         }
 
-
         public static void AddRedisCache(this IServiceCollection services, IConfiguration config)
         {
             ConfigurationOptions configurationOptions = new ConfigurationOptions();
@@ -150,7 +145,6 @@ namespace TaskManager.Api.Extensions
             configurationOptions.Password = config["RedisConfig:Password"];
             configurationOptions.AbortOnConnectFail = false;
             configurationOptions.EndPoints.Add(config["RedisConfig:Host"], 10641);
-
 
             services.AddStackExchangeRedisCache(options =>
             {

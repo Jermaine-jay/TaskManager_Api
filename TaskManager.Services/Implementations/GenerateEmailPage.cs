@@ -214,7 +214,7 @@ namespace TaskManager.Services.Implementations
                   <div class=""container"">
                      <h1>{notificationType.GetStringValue()} Notification</h1>
                         <p>{message}.</p>
-                        <p>We need a little more information to complete your account recovery.</p>
+                        <p></p>
 	                    <p>Click below to view.</p>
                         <div>
                             <a href='{callbackUrl}'>Click</a>
