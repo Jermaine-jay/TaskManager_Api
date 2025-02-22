@@ -27,23 +27,23 @@ namespace TaskManager.Api.Extensions
     {
         public static void RegisterServices(this IServiceCollection services)
         {
-            services.AddScoped<IUnitOfWork, UnitOfWork<ApplicationDbContext>>();
-            services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IJwtAuthenticator, JwtAuthenticator>();
-            services.AddScoped<IEmailService, EmailService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IAuthorizationHandler, AuthHandler>();
-            services.AddScoped<IAdminService, AdminService>();
-            services.AddScoped<ITaskService, TaskService>();
-            services.AddScoped<IProjectService, ProjectService>();
-            services.AddScoped<IServiceFactory, ServiceFactory>();
-            services.AddTransient<ICacheService, CacheService>();
             services.AddScoped<IOtpService, OtpService>();
-            services.AddScoped<IGenerateEmailPage, GenerateEmailPage>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ITaskService, TaskService>();
             services.AddScoped<IRoleService, RoleService>();
-            services.AddScoped<IRoleClaimService, RoleClaimService>();
-            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IAdminService, AdminService>();
+            services.AddTransient<ICacheService, CacheService>();
+            services.AddScoped<IServiceFactory, ServiceFactory>();
+            services.AddScoped<IProjectService, ProjectService>();
             services.AddScoped<ILockoutAttempt, LockoutAttempt>();
+            services.AddScoped<IAuthorizationHandler, AuthHandler>();
+            services.AddScoped<IJwtAuthenticator, JwtAuthenticator>();
+            services.AddScoped<IRoleClaimService, RoleClaimService>();
+            services.AddScoped<IGenerateEmailPage, GenerateEmailPage>();
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork<ApplicationDbContext>>();
             services.AddSingleton<INotificationServiceFactory, NotificationServiceFactory>();
         }
 
