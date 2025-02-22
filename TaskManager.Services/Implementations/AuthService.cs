@@ -3,15 +3,15 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using TaskManager.Models.Dtos;
 using TaskManager.Models.Dtos.Request;
-using TaskManager.Models.Dtos.Response;
-using TaskManager.Models.Entities;
 using TaskManager.Models.Enums;
-using TaskManager.Services.Configurations.Cache.CacheServices;
+using TaskManager.Models.Entities;
+using TaskManager.Services.Utilities;
+using TaskManager.Services.Interfaces;
+using TaskManager.Models.Dtos.Response;
+using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Configurations.Cache.Otp;
 using TaskManager.Services.Configurations.Cache.Security;
-using TaskManager.Services.Infrastructure;
-using TaskManager.Services.Interfaces;
-using TaskManager.Services.Utilities;
+using TaskManager.Services.Configurations.Cache.CacheServices;
 
 
 namespace TaskManager.Services.Implementations
@@ -48,21 +48,20 @@ namespace TaskManager.Services.Implementations
             if (existingUser != null)
                 throw new InvalidOperationException($"User already exists with Email {request.Email}");
 
-
             bool verifyEmail = await _emailService.VerifyEmailAddress(request.Email);
             if (!verifyEmail)
                 throw new InvalidOperationException($"Email {request.Email} is invalid");
 
             ApplicationUser user = new()
             {
+                Active = true,
                 Id = Guid.NewGuid(),
                 Email = request.Email,
                 UserName = request.Email,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                PhoneNumber = request.PhoneNumber,
-                Active = true,
                 UserType = UserType.User,
+                LastName = request.LastName,
+                FirstName = request.FirstName,
+                PhoneNumber = request.PhoneNumber,
                 Projects = new List<Project>(),
             };
 
@@ -77,7 +76,7 @@ namespace TaskManager.Services.Implementations
             if (!registerMail)
                 throw new InvalidOperationException($"Could not send verification mail");
 
-            string role = UserType.User.GetStringValue();
+            string? role = UserType.User.GetStringValue();
             bool roleExists = await _roleManager.RoleExistsAsync(role);
 
             if (!roleExists)
@@ -88,12 +87,12 @@ namespace TaskManager.Services.Implementations
 
             ApplicationUserDto newUser = new()
             {
-                Id = user.Id.ToString(),
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                PhoneNumber = user.PhoneNumber,
                 Email = user.Email,
-                UserType = user.UserType
+                Id = user.Id.ToString(),
+                LastName = user.LastName,
+                UserType = user.UserType,
+                FirstName = user.FirstName,
+                PhoneNumber = user.PhoneNumber,
             };
 
             await _userManager.AddToRoleAsync(user, role);
@@ -110,7 +109,7 @@ namespace TaskManager.Services.Implementations
         {
             var (existingUser, operation) = await DecodeToken.DecodeVerificationToken(validToken);
 
-            ApplicationUser user = await _userManager.FindByIdAsync(existingUser);
+            ApplicationUser? user = await _userManager.FindByIdAsync(existingUser);
             if (user == null)
                 throw new InvalidOperationException($"User Not Found");
 
@@ -148,8 +147,8 @@ namespace TaskManager.Services.Implementations
             if (user.LockoutEnd != null)
                 throw new InvalidOperationException($"User Suspended. Time Left {user.LockoutEnd - DateTimeOffset.UtcNow}");
 
-            var key = await _lockoutAttempt.LoginAttemptAsync(user.Id.ToString());
-            var check = await _lockoutAttempt.CheckLoginAttemptAsync(user.Id.ToString());
+            string? key = await _lockoutAttempt.LoginAttemptAsync(user.Id.ToString());
+            OtpCodeDto check = await _lockoutAttempt.CheckLoginAttemptAsync(user.Id.ToString());
             if (check.Attempts == maxAttempt)
             {
                 DateTimeOffset lockoutEnd = DateTimeOffset.UtcNow.AddSeconds(300);
@@ -179,18 +178,16 @@ namespace TaskManager.Services.Implementations
                 TwoFactor = false,
                 UserId = user.Id.ToString()
             };
-
         }
 
         public async Task<ChangePasswordResponse> ForgotPassword(ForgotPasswordRequest request)
         {
-
-            var verify = await _emailService.VerifyEmailAddress(request.Email);
+            bool verify = await _emailService.VerifyEmailAddress(request.Email);
             if (verify == false)
                 throw new InvalidOperationException($"Invalid Email Address");
 
-            var user = await _userManager.FindByEmailAsync(request.Email);
-            var isConfrimed = await _userManager.IsEmailConfirmedAsync(user);
+            ApplicationUser? user = await _userManager.FindByEmailAsync(request.Email);
+            bool isConfrimed = await _userManager.IsEmailConfirmedAsync(user);
 
             if (user == null || !isConfrimed)
                 throw new InvalidOperationException($"User does not exist");
@@ -198,7 +195,7 @@ namespace TaskManager.Services.Implementations
             if (user.LockoutEnd != null)
                 throw new InvalidOperationException($"User Suspended. Time Left {user.LockoutEnd - DateTimeOffset.UtcNow}");
 
-            var result = await _emailService.ResetPasswordMail(user);
+            string result = await _emailService.ResetPasswordMail(user);
             return new ChangePasswordResponse
             {
                 Message = "Token sent",
@@ -211,7 +208,7 @@ namespace TaskManager.Services.Implementations
         {
             var (existingUser, operation) = await DecodeToken.DecodeVerificationToken(request.Token);
 
-            ApplicationUser user = await _userManager.FindByIdAsync(existingUser);
+            ApplicationUser? user = await _userManager.FindByIdAsync(existingUser);
             if (user == null || !user.EmailConfirmed)
                 throw new InvalidOperationException($"User does not exist");
 
@@ -268,7 +265,6 @@ namespace TaskManager.Services.Implementations
 
                     await _userManager.AddToRoleAsync(newuser, role);
                     await _userManager.AddLoginAsync(newuser, info);
-
                 }
                 else
                 {
@@ -276,9 +272,9 @@ namespace TaskManager.Services.Implementations
                 }
             }
 
-
             string fullName = $"{user.LastName} {user.FirstName}";
             JwtToken userToken = await _jwtAuthenticator.GenerateJwtToken(user);
+
             return new AuthenticationResponse
             {
                 JwtToken = userToken,
@@ -288,6 +284,5 @@ namespace TaskManager.Services.Implementations
                 UserId = user.Id.ToString()
             };
         }
-
     }
 }

@@ -10,19 +10,18 @@ namespace TaskManager.Services.Implementations
 
     public class RoleClaimService : IRoleClaimService
     {
-        private readonly IRepository<ApplicationRoleClaim> _roleClaimRepo;
-        private readonly IRepository<ApplicationRole> _roleRepo;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IServiceFactory _serviceFactory;
-
+        private readonly IRepository<ApplicationRole> _roleRepo;
+        private readonly IRepository<ApplicationRoleClaim> _roleClaimRepo;
 
         public RoleClaimService(IServiceFactory serviceFactory, IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
             _serviceFactory = serviceFactory;
             _unitOfWork = _serviceFactory.GetService<IUnitOfWork>();
-            _roleClaimRepo = _unitOfWork.GetRepository<ApplicationRoleClaim>();
             _roleRepo = _unitOfWork.GetRepository<ApplicationRole>();
+            _roleClaimRepo = _unitOfWork.GetRepository<ApplicationRoleClaim>();
         }
 
         public async Task<ServiceResponse<RoleClaimResponse>> AddClaim(RoleClaimRequest request)
@@ -77,11 +76,13 @@ namespace TaskManager.Services.Implementations
 
         public async Task<ServiceResponse> RemoveUserClaims(string claimType, string role)
         {
-            ApplicationRole getRole = await _roleRepo.GetSingleByAsync(x => x.Name.ToLower() == role.ToLower());
+            ApplicationRole getRole = await _roleRepo.GetSingleByAsync(x 
+                => x.Name.ToLower() == role.ToLower());
             if (getRole == null)
                 throw new InvalidOperationException("Role Does Not exist");
 
-            ApplicationRoleClaim claim = await _roleClaimRepo.GetSingleByAsync(x => x.ClaimType == claimType && x.RoleId == getRole.Id);
+            ApplicationRoleClaim claim = await _roleClaimRepo.GetSingleByAsync(x 
+                => x.ClaimType == claimType && x.RoleId == getRole.Id);
             if (claim == null)
                 throw new InvalidOperationException("Claim value does not exist for this role");
 
@@ -91,7 +92,6 @@ namespace TaskManager.Services.Implementations
                 Message = $"{claim} claim Removed From {getRole} Role",
                 StatusCode = HttpStatusCode.OK,
             };
-
         }
 
         public async Task<RoleClaimResponse> UpdateRoleClaims(UpdateRoleClaimsDto request)
@@ -100,9 +100,10 @@ namespace TaskManager.Services.Implementations
             if (getRole == null)
                 throw new InvalidOperationException("Role does not Exist, Ensure there are no spaces in the text entered");
 
-
             IEnumerable<ApplicationRoleClaim> claims = await _roleClaimRepo.GetAllAsync();
-            ApplicationRoleClaim result = claims.Where(x => x.ClaimType == request.ClaimType && x.RoleId == getRole.Id).FirstOrDefault();
+            ApplicationRoleClaim? result = claims.Where(x 
+                => x.ClaimType == request.ClaimType 
+                && x.RoleId == getRole.Id).FirstOrDefault();
 
             result.ClaimType = request.NewClaim;
             await _roleClaimRepo.UpdateAsync(result);
@@ -113,6 +114,5 @@ namespace TaskManager.Services.Implementations
                 Role = getRole.Name
             };
         }
-
     } 
 }

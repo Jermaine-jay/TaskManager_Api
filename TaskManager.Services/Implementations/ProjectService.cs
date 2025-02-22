@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 using System.Net;
 using TaskManager.Data.Interfaces;
 using TaskManager.Models.Dtos.Request;
 using TaskManager.Models.Dtos.Response;
 using TaskManager.Models.Entities;
-using TaskManager.Models.Enums;
 using TaskManager.Services.Infrastructure;
 using TaskManager.Services.Interfaces;
 using Task = TaskManager.Models.Entities.Task;
@@ -38,7 +36,7 @@ namespace TaskManager.Services.Implementations
             if (user == null)
                 throw new InvalidOperationException("User Not Found");
 
-            Project? project = await _projectRepo.GetSingleByAsync(p => p.Name ==  request.Name.ToLower());
+            Project? project = await _projectRepo.GetSingleByAsync(p => p.Name == request.Name.ToLower());
             if (project != null)
                 throw new InvalidOperationException("Project Name already exist");
 
@@ -47,7 +45,7 @@ namespace TaskManager.Services.Implementations
                 Name = request.Name.ToLower(),
                 Description = request.Description,
                 UserId = user.Id,
-                CreatedAt = DateTime.UtcNow,    
+                CreatedAt = DateTime.UtcNow,
             };
 
             await _projectRepo.AddAsync(newProj);
@@ -70,7 +68,7 @@ namespace TaskManager.Services.Implementations
             if (project == null)
                 throw new InvalidOperationException("Project does not exist");
 
-            if(user.Projects.Any(x=> x.Id != project.Id))
+            if (user.Projects.Any(x => x.Id != project.Id))
                 throw new InvalidOperationException("You are not allowed to perform this action");
 
             await _projectRepo.DeleteAsync(project);
@@ -86,10 +84,10 @@ namespace TaskManager.Services.Implementations
             if (user == null)
                 throw new InvalidOperationException("User does not exist");
 
-            List<Project> itemList = user.Projects.ToList()??
+            List<Project> itemList = user.Projects.ToList() ??
                 throw new InvalidOperationException("No project");
 
-            await System.Threading.Tasks.Task.WhenAll(itemList.Select( item => _projectRepo.DeleteAsync(item)));
+            await System.Threading.Tasks.Task.WhenAll(itemList.Select(item => _projectRepo.DeleteAsync(item)));
 
             return new SuccessResponse
             {
@@ -99,7 +97,8 @@ namespace TaskManager.Services.Implementations
 
         public async Task<SuccessResponse> UpdateProject(string userId, UpdateProjectRequest request)
         {
-            ApplicationUser user = await _userRepo.GetSingleByAsync(user => user.Id.ToString() == userId, include: u => u.Include(u => u.Projects));
+            ApplicationUser user = await _userRepo.GetSingleByAsync(user 
+                => user.Id.ToString() == userId, include: u => u.Include(u => u.Projects));
             if (user == null)
                 throw new InvalidOperationException("User does not exist");
 

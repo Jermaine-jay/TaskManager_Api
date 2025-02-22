@@ -34,11 +34,13 @@ namespace TaskManager.Services.Implementations
 
         public async Task<SuccessResponse> CreateTask(string userId, CreateTaskRequest request)
         {
-            ApplicationUser user = await _userRepo.GetSingleByAsync(u => u.Id.ToString() == userId, include: u => u.Include(u => u.Projects));
+            ApplicationUser user = await _userRepo.GetSingleByAsync(u 
+                => u.Id.ToString() == userId, include: u => u.Include(u => u.Projects));
             if (user == null)
                 throw new InvalidOperationException("User Not Found");
 
-            Project project = await _projectRepo.GetSingleByAsync(p => p.Id.ToString() == request.ProjectId, include: u => u.Include(u => u.Tasks));
+            Project project = await _projectRepo.GetSingleByAsync(p 
+                => p.Id.ToString() == request.ProjectId, include: u => u.Include(u => u.Tasks));
             if (project == null)
                 throw new InvalidOperationException("Project does not exist");
 
@@ -76,7 +78,8 @@ namespace TaskManager.Services.Implementations
             };
 
             _taskRepo.Add(newTask);
-            await _serviceProvider.GetService<INotificationService>().CreateNotification(newTask, NotificationType.NewTaskAssigned);
+            await _serviceProvider.GetService<INotificationService>()
+                .CreateNotification(newTask, NotificationType.NewTaskAssigned);
 
             await _unitOfWork.SaveChangesAsync();
             return new SuccessResponse
@@ -88,10 +91,13 @@ namespace TaskManager.Services.Implementations
 
         public async Task<SuccessResponse> GetTask(string taskId, string userId)
         {
-            Task? task = await _taskRepo.GetSingleByAsync(x => x.Id.ToString() == taskId, include: x => x.Include(x => x.UserTasks).Include(x => x.Project))
+            Task? task = await _taskRepo.GetSingleByAsync(x 
+                => x.Id.ToString() == taskId, include: x 
+                => x.Include(x => x.UserTasks).Include(x => x.Project))
                 ?? throw new InvalidDataException("Task does not exist");
 
-            ApplicationUser user = await _userRepo.GetSingleByAsync(u => u.Id.ToString() == userId)
+            ApplicationUser user = await _userRepo.GetSingleByAsync(u 
+                => u.Id.ToString() == userId)
                 ?? throw new InvalidOperationException("User Not Found");
 
             if (task.Project.UserId.ToString() == userId 
@@ -114,7 +120,9 @@ namespace TaskManager.Services.Implementations
 
         public async Task<bool> AssignTask(string taskId, List<string> usersid)
         {
-            Task? task = await _taskRepo.GetSingleByAsync(x => x.Id.ToString() == taskId, include: x => x.Include(x => x.UserTasks).Include(x => x.Project))
+            Task? task = await _taskRepo.GetSingleByAsync(x 
+                => x.Id.ToString() == taskId, include: x 
+                => x.Include(x => x.UserTasks).Include(x => x.Project))
                 ?? throw new InvalidDataException("Task Does Not Exist");
 
             foreach (string userid in usersid)
@@ -137,7 +145,8 @@ namespace TaskManager.Services.Implementations
 
         public async Task<SuccessResponse> DeleteTask(string userId, string taskId)
         {
-            Project? project = await _projectRepo.GetSingleByAsync(user => user.UserId.ToString() == userId, include: u => u.Include(u => u.Tasks));
+            Project? project = await _projectRepo.GetSingleByAsync(user 
+                => user.UserId.ToString() == userId, include: u => u.Include(u => u.Tasks));
             if (project == null)
                 throw new InvalidOperationException("Project does not exist");
 
@@ -154,7 +163,8 @@ namespace TaskManager.Services.Implementations
 
         public async Task<SuccessResponse> UpdateTask(string userId, UpdateTaskRequest request)
         {
-            Project? project = await _projectRepo.GetSingleByAsync(user => user.UserId.ToString() == userId, include: u => u.Include(u => u.Tasks));
+            Project? project = await _projectRepo.GetSingleByAsync(user 
+                => user.UserId.ToString() == userId, include: u => u.Include(u => u.Tasks));
             if (project == null)
                 throw new InvalidOperationException("Project does not exist");
 
@@ -179,11 +189,13 @@ namespace TaskManager.Services.Implementations
 
         public async Task<UpdateTaskResponse> UpdateStatus(string userId, UpdateStatusRequest request)
         {
-            Project? project = await _projectRepo.GetSingleByAsync(user => user.UserId.ToString() == userId, include: u => u.Include(u => u.Tasks));
+            Project? project = await _projectRepo.GetSingleByAsync(user 
+                => user.UserId.ToString() == userId, include: u => u.Include(u => u.Tasks));
             if (project == null)
                 throw new InvalidOperationException("Project does not exist");
 
-            Task? task = project.Tasks.Where(u => u.Id.ToString() == request.TaskId).SingleOrDefault();
+            Task? task = project.Tasks.Where(u 
+                => u.Id.ToString() == request.TaskId).SingleOrDefault();
             if (task == null)
                 throw new InvalidOperationException("User does not exist");
 
@@ -208,7 +220,8 @@ namespace TaskManager.Services.Implementations
                     break;
             }
 
-            await _serviceProvider.GetService<INotificationService>().CreateNotification(task, NotificationType.StatusUpdate);
+            await _serviceProvider.GetService<INotificationService>()
+                    .CreateNotification(task, NotificationType.StatusUpdate);
 
             await _unitOfWork.SaveChangesAsync();
 
@@ -223,7 +236,8 @@ namespace TaskManager.Services.Implementations
 
         public async Task<UpdateTaskResponse> UpdatePriority(string userId, UpdatePriorityRequest request)
         {
-            Project? project = await _projectRepo.GetSingleByAsync(user => user.UserId.ToString() == userId, include: u => u.Include(u => u.Tasks));
+            Project? project = await _projectRepo.GetSingleByAsync(user 
+                => user.UserId.ToString() == userId, include: u => u.Include(u => u.Tasks));
             if (project == null)
                 throw new InvalidOperationException("Project does not exist");
 
